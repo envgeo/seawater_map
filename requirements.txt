@@ -1,8 +1,8 @@
 streamlit
 cartopy
-#openpyxl #だめ？
 numpy
 pandas
+openpyxl
 datetime
 seaborn
 #io #だめ
