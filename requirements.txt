@@ -3,6 +3,6 @@ streamlit
 numpy
 pandas
 datetime
-#seaborn
-#io
+seaborn
+io
 folium
