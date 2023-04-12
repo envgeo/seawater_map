@@ -10,5 +10,3 @@ streamlit_folium
 ##io #だめ
 openpyxl
 numpy
-streamlit
-rinoh-typeface-arial
