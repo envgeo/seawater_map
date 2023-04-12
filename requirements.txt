@@ -9,3 +9,4 @@ seaborn
 #io #だめ
 folium
 sklearn
+sklearn.metrics
