@@ -7,6 +7,6 @@ datetime
 seaborn
 #io #だめ
 folium
-sklearn
+#sklearn
 scikit-metrics
 streamlit_folium
