@@ -1,8 +1,9 @@
+--upgrade pip
 streamlit
 cartopy
 numpy
 pandas
-openpyxl
+#openpyxl
 datetime
 seaborn
 #io #だめ
