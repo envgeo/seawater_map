@@ -1,5 +1,7 @@
 streamlit
 #cartopy #だめ
+python-cartopy
+python3-cartopy
 numpy
 pandas
 datetime
