@@ -9,5 +9,5 @@ streamlit_folium
 ##sklearn
 ##io #だめ
 ##openpyxl
-##numpy
-##streamlit
+numpy
+streamlit
