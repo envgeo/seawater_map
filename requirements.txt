@@ -2,7 +2,7 @@ streamlit
 #cartopy
 numpy
 pandas
-#datetime
+datetime
 #seaborn
 #io
 folium
