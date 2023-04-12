@@ -1,6 +1,6 @@
-streamlit
+#streamlit
 cartopy
-numpy
+#numpy
 pandas
 #openpyxl
 datetime
