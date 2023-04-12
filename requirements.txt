@@ -8,6 +8,6 @@ scikit-metrics
 streamlit_folium
 ##sklearn
 ##io #だめ
-##openpyxl
+openpyxl
 numpy
 streamlit
