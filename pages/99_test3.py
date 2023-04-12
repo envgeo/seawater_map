@@ -1,11 +1,22 @@
 import streamlit as st
+import pandas as pd
+from sklearn import datasets
 
-check = st.checkbox("チェックボックス") #引数に入れることでboolを返す
 
-if check:
-   st.button("ボタン") #引数に入れるとboolで返す
-   st.selectbox("メニューリスト", ("選択肢1", "選択肢2", "選択肢3")) #第一引数：リスト名、第二引数：選択肢
-   st.multiselect("メニューリスト（複数選択可）", ("選択肢1", "選択肢2", "選択肢3")) #第一引数：リスト名、第二引数：選択肢、複数選択可
-   st.radio("ラジオボタン", ("選択肢1", "選択肢2", "選択肢3")) #第一引数：リスト名（選択肢群の上に表示）、第二引数：選択肢
-   st.text_input("文字入力欄") #引数に入力内容を渡せる
-   st.text_area("テキストエリア")
+@st.cache
+def load_data():
+    iris = datasets.load_iris()
+    df = pd.DataFrame(iris.data, columns=iris.feature_names)
+    df['target'] = iris.target_names[iris.target]
+    return df
+
+
+df = load_data()
+targets = list(df.target.unique())
+selected_targets = st.multiselect('select targets', targets, default=targets)
+df = df[df.target.isin(selected_targets)]
+
+st.dataframe(df.style.highlight_max(axis=0))
+
+df.hist()
+st.pyplot()
