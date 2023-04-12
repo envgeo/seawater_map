@@ -1,12 +1,12 @@
-#streamlit
-cartopy
-#numpy
-pandas
-#openpyxl
-datetime
-seaborn
-#io #だめ
-folium
-#sklearn
-scikit-metrics
-streamlit_folium
+#cartopy
+#pandas
+#datetime
+#seaborn
+#folium
+#scikit-metrics
+#streamlit_folium
+##sklearn
+##io #だめ
+##openpyxl
+##numpy
+##streamlit
