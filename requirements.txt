@@ -8,5 +8,5 @@ seaborn
 #io #だめ
 folium
 sklearn
-#sklearn.metrics #だめ
+sklearn.metrics
 streamlit_folium
