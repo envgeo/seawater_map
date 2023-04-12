@@ -5,3 +5,4 @@ pandas
 #datetime
 #seaborn
 #io
+folium
