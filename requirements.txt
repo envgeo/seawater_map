@@ -1,6 +1,6 @@
 streamlit
 cartopy
-openpyxl
+#openpyxl #だめ？
 numpy
 pandas
 datetime
