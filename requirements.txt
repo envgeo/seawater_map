@@ -6,3 +6,4 @@ datetime
 seaborn
 #io #だめ
 folium
+sklearn
