@@ -1,10 +1,11 @@
-#cartopy
+matplotlib
+cartopy
 #pandas
 #datetime
-#seaborn
+seaborn
 #folium
-#scikit-metrics
-#streamlit_folium
+scikit-metrics
+streamlit_folium
 ##sklearn
 ##io #だめ
 ##openpyxl
