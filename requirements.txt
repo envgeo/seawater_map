@@ -10,3 +10,4 @@ seaborn
 folium
 sklearn
 #sklearn.metrics #だめ
+streamlit_folium
