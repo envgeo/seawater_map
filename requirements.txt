@@ -1,5 +1,5 @@
 streamlit
-#cartopy #だめ
+cartopy
 #python-cartopy #だめ
 #python3-cartopy #だめ
 numpy
