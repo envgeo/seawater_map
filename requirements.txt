@@ -1,8 +1,8 @@
 streamlit
-#cartopy
+#cartopy #だめ
 numpy
 pandas
 datetime
 seaborn
-io
+#io #だめ
 folium
