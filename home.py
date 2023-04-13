@@ -2,26 +2,27 @@
 
 import streamlit as st
 
-
+@st.cache_resource
 def main():
     # タイトル
-    st.title('SEAWATER DATA around JAPAN WEB ')
+    st.title('SEAWATER DATA JAPAN (b01)')
+    # サブレベルヘッダ
+    st.subheader('select sub menu')
     # ヘッダ
     # st.header('by TOYOHO ISHIMURA')
     # 純粋なテキスト
-    st.text('powered by streamlit')
+    st.text('original data: xxx in prep.')
     # 純粋なテキスト
-    st.text('by TOYOHO ISHIMURA')
-    # サブレベルヘッダ
-    st.subheader('select sub menu')
+    st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
+
     # # マークダウンテキスト
     # st.markdown('**Markdown is available **')
     # # LaTeX テキスト
     # st.latex(r'\bar{X} = \frac{1}{N} \sum_{n=1}^{N} x_i')
     # # コードスニペット
     # st.code('print(\'Hello, World!\')')
-    # エラーメッセージ
-    st.error('in case of error: push reload button or reload this site')
+    # # エラーメッセージ
+    # st.error('in case of error: push reload button or reload this site')
     # # 警告メッセージ
     # st.warning('Warning message')
     # # 情報メッセージ
@@ -42,7 +43,12 @@ def main():
 
     # st.write('in case of error: push reload button or reload this site')
 
+    video_file = open('data/d18O_all.mp4', 'rb')
+    video_bytes = video_file.read()
 
-
+    st.video(video_bytes)
+    
+    st.write('movie output by GMT')
+    
 if __name__ == '__main__':
     main()
