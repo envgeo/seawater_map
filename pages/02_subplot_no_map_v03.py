@@ -71,7 +71,7 @@ def main():
     
     
     
-    st.sidebar.subheader(':blue[---for data range---]') 
+    st.sidebar.subheader(':blue[--- for data range ---]') 
     
 
     # country=st.sidebar.text_input('国を入力', 'Japan')
@@ -183,11 +183,9 @@ def main():
       
     
     #スペース入れる
-    
-
-    st.sidebar.subheader(':blue[  ]') 
-    st.sidebar.subheader(':blue[  ]') 
-    st.sidebar.subheader(':blue[---for fig scale only---]')
+    st.sidebar.subheader(':blue[  ]')
+    st.sidebar.subheader(':blue[  ]')
+    st.sidebar.subheader(':blue[--- for fig scale only ---]')
     
     
     #地図の描画範囲（拡大）
@@ -940,7 +938,7 @@ def main():
     
     # # excel_file = 'd18O_20210626-3_NA2.xlsx'
     # #全体のplotは元データ全てを使うので，シート１
-    # sheet_num = 1
+    sheet_num = 1
     
     # df = pd.read_excel(excel_file, sheet_name=sheet_num)
     
