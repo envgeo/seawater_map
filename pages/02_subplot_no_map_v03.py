@@ -71,7 +71,7 @@ def main():
     
     
     
-    st.sidebar.subheader(':blue[---描画データ範囲の設定---]') 
+    st.sidebar.subheader(':blue[---for data range---]') 
     
 
     # country=st.sidebar.text_input('国を入力', 'Japan')
@@ -183,7 +183,11 @@ def main():
       
     
     #スペース入れる
-    st.sidebar.subheader(':blue[---以下は表示範囲の設定---]')
+    
+
+    st.sidebar.subheader(':blue[  ]') 
+    st.sidebar.subheader(':blue[  ]') 
+    st.sidebar.subheader(':blue[---for fig scale only---]')
     
     
     #地図の描画範囲（拡大）
@@ -207,7 +211,7 @@ def main():
     
     
     # st.sidebar.subheader('描画水深の範囲')
-    fig_depth_min, fig_depth_max = st.sidebar.slider(label='Map　Latitude selected',
+    fig_depth_min, fig_depth_max = st.sidebar.slider(label='Water depth selected',
                                 min_value=0,
                                 max_value=1000,
                                 value=(0, 500),
