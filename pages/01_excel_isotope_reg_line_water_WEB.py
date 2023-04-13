@@ -61,7 +61,7 @@ from sklearn.metrics import r2_score
 
 
 
-
+@st.cache_resource(experimental_allow_widgets=True)
 def main():
     
         
@@ -87,7 +87,7 @@ def main():
 
 
     #年の範囲       # サブレベルヘッダ
-    st.sidebar.subheader('年の範囲')
+    # st.sidebar.subheader('年の範囲')
     
     sld_year_min, sld_year_max = st.sidebar.slider(label='Year selected',
                                 min_value=2013,
@@ -97,7 +97,7 @@ def main():
     # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
     
     #月の範囲       # サブレベルヘッダ
-    st.sidebar.subheader('月の範囲')
+    # st.sidebar.subheader('月の範囲')
     
     sld_month_min, sld_month_max = st.sidebar.slider(label='Month selected',
                                 min_value=1,
@@ -108,7 +108,7 @@ def main():
     
     
     #経度longitudeの範囲   
-    st.sidebar.subheader('経度の範囲')
+    # st.sidebar.subheader('経度の範囲')
     sld_lon_min, sld_lon_max = st.sidebar.slider(label='Longitude selected',
                                 min_value=115,
                                 max_value=145,
@@ -118,7 +118,7 @@ def main():
     
     
     #緯度の範囲   
-    st.sidebar.subheader('緯度の範囲')
+    # st.sidebar.subheader('緯度の範囲')
     sld_lat_min, sld_lat_max = st.sidebar.slider(label='Latitude selected',
                                 min_value=20,
                                 max_value=45,
@@ -128,7 +128,7 @@ def main():
     
     
     #水深の範囲   
-    st.sidebar.subheader('水深の範囲')
+    # st.sidebar.subheader('水深の範囲')
     sld_depth_min, sld_depth_max = st.sidebar.slider(label='Water depth selected',
                                 min_value=0,
                                 max_value=1000,
@@ -137,7 +137,7 @@ def main():
     # st.sidebar.write(f'Selected: {sld_depth_min} ~ {sld_depth_max}')
     
     #塩分の範囲   
-    st.sidebar.subheader('塩分の範囲')
+    # st.sidebar.subheader('塩分の範囲')
     sld_sal_min, sld_sal_max = st.sidebar.slider(label='Salinity selected',
                                 min_value=0,
                                 max_value=40,
@@ -146,7 +146,7 @@ def main():
     # st.sidebar.write(f'Selected: {sld_sal_min} ~ {sld_sal_max}')
     
         
-    st.sidebar.subheader('航海区の範囲')
+    # st.sidebar.subheader('航海区の範囲')
     selected_cruise = st.sidebar.multiselect('Choose cruise area',
                                 ['CK',
                                   'Nansei',
@@ -446,9 +446,9 @@ def main():
     
     
     
-    # sub fig (d13C-d18O)
-    PDF_export_SUB = 2
-    PNG_export_SUB = 2
+    # # sub fig (d13C-d18O)
+    # PDF_export_SUB = 2
+    # PNG_export_SUB = 2
     
     
     
@@ -892,17 +892,17 @@ def main():
     
         
             
-        if PDF_export_SUB == 1:
-            plt.savefig('Fig_'+X_data+'_'+Y_data+'_'+selected_area+'.pdf')
-            print('pdfに書き出しました')
-        else:
-            print('pdf書き出し無し')
+        # if PDF_export_SUB == 1:
+        #     plt.savefig('Fig_'+X_data+'_'+Y_data+'_'+selected_area+'.pdf')
+        #     print('pdfに書き出しました')
+        # else:
+        #     print('pdf書き出し無し')
         
-        if PNG_export_SUB == 1:
-            plt.savefig('Fig_'+X_data+'_'+Y_data+'_'+selected_area+'.png')
-            print('pngに書き出しました')
-        else:
-            print('png書き出し無し')
+        # if PNG_export_SUB == 1:
+        #     plt.savefig('Fig_'+X_data+'_'+Y_data+'_'+selected_area+'.png')
+        #     print('pngに書き出しました')
+        # else:
+        #     print('png書き出し無し')
     
     
     
@@ -1044,6 +1044,20 @@ def main():
     
     # Matplotlib の Figure を指定して可視化する
     st.pyplot(fig)
+
+
+
+    
+    ##########採取地点のmap　拡大可能##################
+    
+    df1['lat'] = df1['Latitude_degN']
+    df1['lon'] = df1 ['Longitude_degE']
+    
+    # df = pd.DataFrame(
+    #     np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
+    #     columns=['lat', 'lon'])
+    
+    st.map(df1)
 
 
 if __name__ == '__main__':
