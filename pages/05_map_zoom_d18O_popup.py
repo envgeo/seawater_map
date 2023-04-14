@@ -56,7 +56,7 @@ def main():
     #     import pandas as pd
     
     # center on Liberty Bell
-    m = folium.Map(location=[36.56583, 139.88361], zoom_start=5)
+    m = folium.Map(location=[36.56583, 139.88361], tiles="Stamen Terrain", zoom_start=5)
     
     # add marker for Liberty Bell
     # tooltip = "Liberty Bell"
