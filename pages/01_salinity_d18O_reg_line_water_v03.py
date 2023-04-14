@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import streamlit as st
-import pandas as pd
-import numpy as np
+# import streamlit as st
+# import pandas as pd
+# import numpy as np
 
 
 # def main():
@@ -44,12 +44,12 @@ import numpy as np
     
     
     
-    
+import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import datetime
-import matplotlib.dates as dates
+# import datetime
+# import matplotlib.dates as dates
 from matplotlib.ticker import FormatStrFormatter
 # from matplotlib.ticker import MultipleLocator
 # import matplotlib.ticker as ticker
@@ -61,7 +61,8 @@ from sklearn.metrics import r2_score
 
 
 
-@st.cache_resource(experimental_allow_widgets=True)
+# @st.cache_resource(experimental_allow_widgets=True)
+
 def main():
     
         
@@ -92,7 +93,7 @@ def main():
     sld_year_min, sld_year_max = st.sidebar.slider(label='Year selected',
                                 min_value=2013,
                                 max_value=2022,
-                                value=(2014, 2020),
+                                value=(2015, 2020),
                                 )
     # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
     
@@ -1086,4 +1087,11 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
+    
+    
+st.cache_data.clear()
+st.cache_resource.clear()
+    
+    
     

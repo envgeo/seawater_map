@@ -18,7 +18,8 @@ import pandas as pd
 #     )
 
 
-@st.cache_resource(experimental_allow_widgets=True)
+# @st.cache_resource(experimental_allow_widgets=True)
+
 def main():
 
     ############################################################
@@ -27,13 +28,13 @@ def main():
         
         
         
-    st.sidebar.subheader(':blue[---水深範囲の設定---]') 
+    # st.sidebar.subheader(':blue[---水深範囲の設定---]') 
         
     
     
     
     #水深の範囲   
-    st.sidebar.subheader('水深の範囲')
+    # st.sidebar.subheader('水深の範囲')
     sld_depth_min, sld_depth_max = st.sidebar.slider(label='Water depth selected',
                                 min_value=0,
                                 max_value=1000,
@@ -108,7 +109,8 @@ if __name__ == '__main__':
 
 
 
-
+st.cache_data.clear()
+st.cache_resource.clear()
 
 
 

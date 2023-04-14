@@ -62,7 +62,7 @@ from sklearn.metrics import r2_score
 
 
 
-@st.cache_resource(experimental_allow_widgets=True)
+# @st.cache_resource(experimental_allow_widgets=True)
 def main():
     
     
@@ -189,23 +189,23 @@ def main():
     
     
     #地図の描画範囲（拡大）
-    # 120-0.001, 145+0.001, 20-0.001, 45+0.001
+    # # 120-0.001, 145+0.001, 20-0.001, 45+0.001
     
-    # st.sidebar.subheader('地図の経度の範囲（拡大）')
-    map_lon_min, map_lon_max = st.sidebar.slider(label='Map Longitude selected',
-                                min_value=120-0.001,
-                                max_value=145+0.001,
-                                value=(120-0.001, 145+0.001),
-                                )
-    # st.sidebar.write(f'Selected: {map_lon_min} ~ {map_lon_max}')
+    # # st.sidebar.subheader('地図の経度の範囲（拡大）')
+    # map_lon_min, map_lon_max = st.sidebar.slider(label='Map Longitude selected',
+    #                             min_value=120-0.001,
+    #                             max_value=145+0.001,
+    #                             value=(120-0.001, 145+0.001),
+    #                             )
+    # # st.sidebar.write(f'Selected: {map_lon_min} ~ {map_lon_max}')
     
-    # st.sidebar.subheader('地図の緯度の範囲（拡大）')
-    map_lat_min, map_lat_max = st.sidebar.slider(label='Map　Latitude selected',
-                                min_value=20-0.001,
-                                max_value=45+0.001,
-                                value=(20-0.001, 45+0.001),
-                                )
-    # st.sidebar.write(f'Selected: {map_lat_min} ~ {map_lat_max}')
+    # # st.sidebar.subheader('地図の緯度の範囲（拡大）')
+    # map_lat_min, map_lat_max = st.sidebar.slider(label='Map Latitude selected',
+    #                             min_value=20-0.001,
+    #                             max_value=45+0.001,
+    #                             value=(20-0.001, 45+0.001),
+    #                             )
+    # # st.sidebar.write(f'Selected: {map_lat_min} ~ {map_lat_max}')
     
     
     # st.sidebar.subheader('描画水深の範囲')
@@ -392,6 +392,12 @@ def main():
             
             #描画する年範囲を指定
             df1 = df1[(df1['Year'] <= sld_year_max) & (df1['Year'] >= sld_year_min) | df1.isnull().all(axis=1)] 
+
+
+
+
+                                    
+    
 
             
             return df1
@@ -2367,4 +2373,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
+st.cache_data.clear()
+st.cache_resource.clear()
     
