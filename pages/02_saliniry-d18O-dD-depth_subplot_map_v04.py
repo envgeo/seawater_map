@@ -169,7 +169,7 @@ def main():
                     
                         
         
-    fig = plt.figure(figsize = (18, 30),dpi=150)
+    fig = plt.figure(figsize = (18, 24),dpi=150)
     
     fig.subplots_adjust(wspace=0.3, hspace=0.3)
     
@@ -611,6 +611,32 @@ def main():
                     df_fig_add = df1
                     
                     
+                    
+                    
+                    #df1が空になっているかどうかを確認する
+                    df30m = df1[(df1['Depth_m'] == 'xxx') 
+                            |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] >= 30)]
+                            # |(df1['Depth_m'] <= 200) & (df1['Depth_m'] > 10)
+                            # |(df1['Depth_m'] <= 500) & (df1['Depth_m'] > 200)
+                            # |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] > 500)
+                              # | df_fiｇ_add.isnull().all(axis=1)] 
+   
+                    
+                    df30m_empty = df30m.empty
+                
+                    # st.write(df_empty)
+                    data_found_num = str(len(df30m["d18O"]))
+                
+                    
+                    # # バリデーション処理
+                    # if df30m_empty == 1:  #データが無かったとき
+                    #     st.warning('no data found')
+                    #     # 条件を満たないときは処理を停止する
+                    #     st.stop()
+                    # elif df30m_empty == 0: #データがあったとき
+                    #     st.write(data_found_num,'data found for depth profile (below 30m)')
+                    st.write(data_found_num,'data found for depth profile (below 30m)')
+                    
                        
                     #########月ごとに色分けする場合######################
                     lw_add = 0.6 #線の太さ
@@ -710,12 +736,12 @@ def main():
     
     
     
-    # #描画する水深範囲を指定 m
+    #描画する水深範囲を指定 m
     # df1 = df1[(df1['Depth_m'] == 'xxx') 
     #             |(df1['Depth_m'] < 30) & (df1['Depth_m'] >= 0)
     #           |(df1['Depth_m'] <= 500) & (df1['Depth_m'] >= 30)
     #           |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] > 500)
-    #           ] 
+              # ] 
     
     
     # """水深図から条件を引用する場合には以下はいらない"""
@@ -723,8 +749,8 @@ def main():
     
     
     # #描画　鉛直サンプリングの全観測点
-    # df_depth_all = pd.read_excel(excel_file, sheet_name=sheet_num_add)
-    # plt.scatter(df_depth_all["Longitude_degE"], df_depth_all["Latitude_degN"], c='lightblue', s=10, alpha=1, transform=ccrs.PlateCarree(), label="ALL")
+    df_depth_all = pd.read_excel(excel_file, sheet_name=sheet_num_add)
+    plt.scatter(df_depth_all["Longitude_degE"], df_depth_all["Latitude_degN"], c='lightblue', s=10, alpha=1, transform=ccrs.PlateCarree(), label="ALL")
     
     #描画　選択した観測点　単一職
     plt.scatter(df1["Longitude_degE"], df1["Latitude_degN"], c='red', s=10, alpha=1, transform=ccrs.PlateCarree(), label='selected')
@@ -916,13 +942,30 @@ def main():
     df1 = data_limit()
     df_fig_add_salinity_d18O = df1
     
+    #df1が空になっているかどうかを確認する
+    df_empty = df1.empty
+
+    # st.write(df_empty)
+    data_found_num = str(len(df1["d18O"]))
+
+    
+    # バリデーション処理
+    if df_empty == 1:  #データが無かったとき
+        st.warning('no data found')
+        # 条件を満たないときは処理を停止する
+        st.stop()
+    elif df_empty == 0: #データがあったとき
+        st.write(data_found_num,'data found for all data')
+    
+
+    
     
     #表層15m以浅のみ地図に描画
     df1 = df1[(df1['Depth_m'] == 'xxx') 
-            |(df1['Depth_m'] <= 15) & (df1['Depth_m'] >= 0)
-            |(df1['Depth_m'] <= 200) & (df1['Depth_m'] > 10)
-            |(df1['Depth_m'] <= 500) & (df1['Depth_m'] > 200)
-            |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] > 500)
+            |(df1['Depth_m'] <= 30) & (df1['Depth_m'] >= 0)
+            # |(df1['Depth_m'] <= 200) & (df1['Depth_m'] > 10)
+            # |(df1['Depth_m'] <= 500) & (df1['Depth_m'] > 200)
+            # |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] > 500)
             | df1.isnull().all(axis=1)] 
     
     
