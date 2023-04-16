@@ -585,10 +585,10 @@ def main():
         #グラフ表示
             plt.plot(Xa, y1, label='regression line (ALL)', c=X_Y_C)
         
-            reg_line = 'ALL:  y' + ' = ' + '{:.2f}'.format(coef[0]) + 'x ' +' + ' + '{:.2f}'.format(coef[1]) 
+            reg_line = 'ALL:  y' + ' = ' + '{:.2f}'.format(coef[0]) + 'x ' +' + (' + '{:.2f}'.format(coef[1]) 
             line_r = np.corrcoef(Xa, Ya)
         
-            ax.text(0.99, 0.05+0.01, reg_line + "    (R=" + '{:.2f}'.format(line_r[0,1])+', N=' + str(d_select_main_sum)+')', horizontalalignment='right', transform=ax.transAxes)
+            ax.text(0.99, 0.05+0.01, reg_line + ")   (R=" + '{:.2f}'.format(line_r[0,1])+', N=' + str(d_select_main_sum)+')', horizontalalignment='right', transform=ax.transAxes)
         # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
     
     
@@ -665,10 +665,11 @@ def main():
                     #グラフ表示
                         plt.plot(X_add, y1_add, label='regression line (' + sheet_names[sheet_num_add]+')', c=X_Y_C_add,)
                     
-                        reg_line_add = sheet_names[sheet_num_add] + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + ' + '{:.2f}'.format(coef_add[1]) 
+                        reg_line_add = sheet_names[sheet_num_add] + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + (' + '{:.2f}'.format(coef_add[1]) 
+                        reg_line = 'ALL:  y' + ' = ' + '{:.2f}'.format(coef[0]) + 'x ' +' + (' + '{:.2f}'.format(coef[1]) 
                         line_r_add = np.corrcoef(X_add, Y_add)
                     
-                        ax.text(0.99, 0.05*3.5+0.01, reg_line_add + "    (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add_sum)+')', horizontalalignment='right', transform=ax.transAxes)
+                        ax.text(0.99, 0.05*3.5+0.01, reg_line_add + ")   (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add_sum)+')', horizontalalignment='right', transform=ax.transAxes)
                     # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
                     
                     
@@ -898,10 +899,10 @@ def main():
                     #グラフ表示
                         plt.plot(X_add, y1_add, label='regression line (' + sheet_names_add2 +')', c=X_Y_C_add,)
                     
-                        reg_line_add = sheet_names_add2 + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + ' + '{:.2f}'.format(coef_add[1]) 
+                        reg_line_add = sheet_names_add2 + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + (' + '{:.2f}'.format(coef_add[1]) 
                         line_r_add = np.corrcoef(X_add, Y_add)
                     
-                        ax.text(0.99, 0.05*3+0.01, reg_line_add + "    (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add2_sum)+')', horizontalalignment='right', transform=ax.transAxes)
+                        ax.text(0.99, 0.05*3+0.01, reg_line_add + ")   (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add2_sum)+')', horizontalalignment='right', transform=ax.transAxes)
                         # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
                     
                     
