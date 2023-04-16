@@ -184,7 +184,7 @@ def main():
     
     # """図のフォント設定、サイズも"""
     ##### ベースのフォントとフォントサイズの指定
-    # plt.rcParams['font.family'] = 'Arial'
+    plt.rcParams['font.family'] = 'Arial'
     plt.rcParams["font.size"] = 10
     
     
@@ -946,6 +946,7 @@ def main():
     df_empty = df1.empty
 
     # st.write(df_empty)
+    data_found = len(df1["d18O"])
     data_found_num = str(len(df1["d18O"]))
 
     
@@ -957,7 +958,11 @@ def main():
     elif df_empty == 0: #データがあったとき
         st.write(data_found_num,'data found for all data')
     
-
+              
+    if data_found == 1:
+        st.warning('only 1 data found , could not analyze the data')
+        st.stop()
+                    
     
     
     #表層15m以浅のみ地図に描画
@@ -1041,7 +1046,7 @@ def main():
     
     # """図のフォント設定、サイズも"""
     ##### ベースのフォントとフォントサイズの指定
-    # plt.rcParams['font.family'] = 'Arial'
+    plt.rcParams['font.family'] = 'Arial'
     plt.rcParams["font.size"] = 15
     
     # """図のサイズと解像度"""

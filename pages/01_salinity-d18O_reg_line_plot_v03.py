@@ -836,6 +836,7 @@ def main():
                     df_empty = df1.empty
                 
                     # st.write(df_empty)
+                    data_found = len(df1["d18O"])
                     data_found_num = str(len(df1["d18O"]))
                 
                     
@@ -846,8 +847,10 @@ def main():
                         st.stop()
                     elif df_empty == 0: #データがあったとき
                         st.write(data_found_num,'data found')
-                
-                    
+                        
+                    if data_found == 1:
+                        st.warning('only 1 data found , could not analyze the data')
+                        st.stop()
                     
     
                     
