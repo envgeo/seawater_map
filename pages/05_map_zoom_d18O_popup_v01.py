@@ -18,7 +18,7 @@ import pandas as pd
 #     )
 
 
-# @st.cache_resource(experimental_allow_widgets=True)
+@st.cache_resource(experimental_allow_widgets=True)
 
 def main():
 
@@ -78,7 +78,7 @@ def main():
     sld_depth_min, sld_depth_max = st.sidebar.slider(label='Water depth selected',
                                 min_value=0,
                                 max_value=1000,
-                                value=(0, 1000),
+                                value=(0, 15),
                                 )
     # st.sidebar.write(f'Selected: {sld_depth_min} ~ {sld_depth_max}')
     
@@ -244,6 +244,7 @@ def main():
     folium_static(m)
     # st.map(df)
 
+    
 
 
 
