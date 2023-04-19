@@ -61,7 +61,10 @@ from sklearn.metrics import r2_score
 
 
 
-# @st.cache_resource(experimental_allow_widgets=True)
+@st.cache_resource(experimental_allow_widgets=True)
+
+# @st.cache_data.clear()
+# @st.cache_resource.clear()
 
 def main():
     
@@ -1073,7 +1076,7 @@ def main():
     
     # Matplotlib の Figure を指定して可視化する
     st.pyplot(fig)
-
+   
 
 
     
@@ -1092,10 +1095,12 @@ def main():
 if __name__ == '__main__':
     main()
     
-    
-    
+# plt.show()
 st.cache_data.clear()
 st.cache_resource.clear()
+        
+    
+
     
     
     
