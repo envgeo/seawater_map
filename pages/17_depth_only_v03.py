@@ -854,3 +854,6 @@ def main():
 if __name__ == '__main__':
     main()
     
+    
+st.cache_data.clear()
+st.cache_resource.clear()
