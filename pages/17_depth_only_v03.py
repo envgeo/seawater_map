@@ -188,24 +188,24 @@ def main():
     st.sidebar.subheader(':blue[--- for fig scale only ---]')
     
     
-    #地図の描画範囲（拡大）
-    # 120-0.001, 145+0.001, 20-0.001, 45+0.001
+    # #地図の描画範囲（拡大）
+    # # 120-0.001, 145+0.001, 20-0.001, 45+0.001
     
-    # st.sidebar.subheader('地図の経度の範囲（拡大）')
-    map_lon_min, map_lon_max = st.sidebar.slider(label='Map Longitude selected',
-                                min_value=120-0.001,
-                                max_value=145+0.001,
-                                value=(120-0.001, 145+0.001),
-                                )
-    # st.sidebar.write(f'Selected: {map_lon_min} ~ {map_lon_max}')
+    # # st.sidebar.subheader('地図の経度の範囲（拡大）')
+    # map_lon_min, map_lon_max = st.sidebar.slider(label='Map Longitude selected',
+    #                             min_value=120-0.001,
+    #                             max_value=145+0.001,
+    #                             value=(120-0.001, 145+0.001),
+    #                             )
+    # # st.sidebar.write(f'Selected: {map_lon_min} ~ {map_lon_max}')
     
-    # st.sidebar.subheader('地図の緯度の範囲（拡大）')
-    map_lat_min, map_lat_max = st.sidebar.slider(label='Map　Latitude selected',
-                                min_value=20-0.001,
-                                max_value=45+0.001,
-                                value=(20-0.001, 45+0.001),
-                                )
-    # st.sidebar.write(f'Selected: {map_lat_min} ~ {map_lat_max}')
+    # # st.sidebar.subheader('地図の緯度の範囲（拡大）')
+    # map_lat_min, map_lat_max = st.sidebar.slider(label='Map　Latitude selected',
+    #                             min_value=20-0.001,
+    #                             max_value=45+0.001,
+    #                             value=(20-0.001, 45+0.001),
+    #                             )
+    # # st.sidebar.write(f'Selected: {map_lat_min} ~ {map_lat_max}')
     
     
     # st.sidebar.subheader('描画水深の範囲')
