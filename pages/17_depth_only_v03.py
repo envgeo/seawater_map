@@ -401,7 +401,7 @@ def main():
     
         
     #全体のタイトル名　　手入力
-    main_title = 'DEPTH PRIFILE (b02)'
+    main_title = 'DEPTH PROFILE (b02)'
     sub_title = 'Lon:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', Lat:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', Y:'+str(sld_year_min)+'-'+str(sld_year_max)+', M:'+str(sld_month_min)+'-'+str(sld_month_max)+', S:'+str(sld_sal_min)+'-'+str(sld_sal_max)+', D:'+str(sld_depth_min)+'-'+str(sld_depth_max)+'m'
     # sub_title = 'Area B (N:25-130,E:135-140,D:>10m)'
     # sub_title = '(N:25-130,E:135-140,D:>10m)'
