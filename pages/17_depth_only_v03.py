@@ -711,6 +711,23 @@ def main():
                     df_fig_add = df1
                     
                     
+                        
+    
+                    #df1が空になっているかどうかを確認する
+                    df_empty = df1.empty
+                
+                    # st.write(df_empty)
+                    data_found_num = str(len(df1["d18O"]))
+                
+                    
+                    # バリデーション処理
+                    if df_empty == 1:  #データが無かったとき
+                        st.warning('no data found')
+                        # 条件を満たないときは処理を停止する
+                        st.stop()
+                    elif df_empty == 0: #データがあったとき
+                        st.write(data_found_num,'data found')
+                    
                        
                     #########月ごとに色分けする場合######################
                     lw_add = 0.6 #線の太さ
