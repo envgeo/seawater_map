@@ -9,9 +9,9 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 import cartopy.crs as ccrs
 
-st.cache_data.clear()
-st.cache_resource.clear()
-# @st.cache_resource(experimental_allow_widgets=True)
+# st.cache_data.clear()
+# st.cache_resource.clear()
+@st.cache_resource(experimental_allow_widgets=True)
 def main():
     
     
@@ -846,7 +846,7 @@ def main():
     
     
     
-    #描画する水深範囲を指定 m
+    #描画する水深範囲を指定 m　全データのプロット用
     df1 = df[(df['Depth_m'] == 'xxx') 
               |(df['Depth_m'] <=30) & (df['Depth_m'] >= 0)
                 # |(df['Depth_m'] <= 500) & (df['Depth_m'] >= 30)
@@ -965,12 +965,12 @@ def main():
                     
     
     
-    #表層15m以浅のみ地図に描画
+    #選択したデータをプロット
     df1 = df1[(df1['Depth_m'] == 'xxx') 
             |(df1['Depth_m'] <= 30) & (df1['Depth_m'] >= 0)
-            # |(df1['Depth_m'] <= 200) & (df1['Depth_m'] > 10)
-            # |(df1['Depth_m'] <= 500) & (df1['Depth_m'] > 200)
-            # |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] > 500)
+            |(df1['Depth_m'] <= 200) & (df1['Depth_m'] > 10)
+            |(df1['Depth_m'] <= 500) & (df1['Depth_m'] > 200)
+            |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] > 500)
             | df1.isnull().all(axis=1)] 
     
     
