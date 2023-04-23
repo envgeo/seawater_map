@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import streamlit as st
+from PIL import Image
 
 @st.cache_resource
 def main():
+
+
+
+    #logo_file = Image.open('data/logo.gif')
+    #st.image(logo_file,caption='SEAWATER ISOTOPE JAPAN')
+
+    
+    
     # タイトル
     st.title('SEAWATER DATA JAPAN (b01)')
     # サブレベルヘッダ
@@ -52,3 +61,7 @@ def main():
     
 if __name__ == '__main__':
     main()
+    
+    
+st.cache_data.clear()
+st.cache_resource.clear()
