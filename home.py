@@ -57,7 +57,7 @@ def main():
 
     st.video(video_bytes)
     
-    st.write('movie output by GMT')
+    st.write('movie output by GMT(The Generic Mapping Tools)')
     
 if __name__ == '__main__':
     main()
