@@ -61,7 +61,7 @@ def main():
     
 
     image = Image.open('data/qr.jpg')
-    st.image(image, caption='QR code')
+    st.image.subheader(image, caption='QR code')
     
     
 if __name__ == '__main__':
