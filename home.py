@@ -59,6 +59,11 @@ def main():
     
     st.write('movie output by GMT(The Generic Mapping Tools)')
     
+
+    image = Image.open('data/qr.jpg')
+    st.image(image, caption='QR code')
+    
+    
 if __name__ == '__main__':
     main()
     
