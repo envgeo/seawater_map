@@ -48,6 +48,7 @@ def main():
     #                               'Tsushima',
     #                               'Yamato',
     #                               'NA2',
+    #                               'ECS2021',
     #                              ])
     # st.write(f'Selected: {selected_cruise}')
     
@@ -63,7 +64,7 @@ def main():
     sld_year_min, sld_year_max = st.sidebar.slider(label='Year selected',
                                 min_value=2013,
                                 max_value=2022,
-                                value=(2015, 2020),
+                                value=(2013, 2022),
                                 )
     # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
     
@@ -132,6 +133,7 @@ def main():
                                   'Tsushima',
                                   'Yamato',
                                   'NA2',
+                                  'ECS2021'
                                   ],
                                 default=('CK',
                                            'Nansei',
@@ -145,7 +147,8 @@ def main():
                                            'Toyama',
                                            'Tsushima',
                                            'Yamato',
-                                           'NA2'))
+                                           'NA2',
+                                           'ECS2021'))
     
     # st.write(f'Selected: {selected_cruise}')
     
@@ -217,7 +220,7 @@ def main():
     # excel_file = 'otolith_test.xlsx'
     
     #海水
-    excel_file = 'd18O_20210626-3_NA2.xlsx'
+    excel_file = 'd18O_20230513-1_NA2_2021add.xlsx'
     
     
     
@@ -747,6 +750,7 @@ def main():
                     #                   # 'Tsushima',
                     #                   # 'Yamato',
                     #                   # 'NA2'
+                    #                   # 'ECS2021'
                     #                   ])
                 
                     df1 = df1[(df1['Transect'].isin(selected_cruise))
@@ -773,7 +777,7 @@ def main():
                                 | (df1['Transect'] == 'Tsushima')
                                 | (df1['Transect'] == 'Yamato')
                                 | (df1['Transect'] == 'NA2') 
-                                
+                                | (df1['Transect'] == 'ECS2021') 
                                 | df1.isnull().all(axis=1)]      
                       
     

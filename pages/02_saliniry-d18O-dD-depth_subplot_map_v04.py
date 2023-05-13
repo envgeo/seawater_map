@@ -30,7 +30,7 @@ def main():
     sld_year_min, sld_year_max = st.sidebar.slider(label='Year selected',
                                 min_value=2013,
                                 max_value=2022,
-                                value=(2014, 2020),
+                                value=(2013, 2022),
                                 )
     # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
     
@@ -101,6 +101,7 @@ def main():
                                   'Tsushima',
                                   'Yamato',
                                   'NA2',
+                                  'ECS2021',
                                   ],
                                 default=('CK',
                                            'Nansei',
@@ -114,7 +115,8 @@ def main():
                                            'Toyama',
                                            'Tsushima',
                                            'Yamato',
-                                           'NA2'))
+                                           'NA2',
+                                           'ECS2021'))
     
     # st.write(f'Selected: {selected_cruise}')
     
@@ -176,7 +178,7 @@ def main():
     
     
     #元データ読み込み
-    excel_file = 'd18O_20210626-3_NA2.xlsx'
+    excel_file = 'd18O_20230513-1_NA2_2021add.xlsx'
     # sheet_num = 2
     
     # df = pd.read_excel(excel_file, sheet_name=sheet_num)
@@ -231,6 +233,7 @@ def main():
                         | (df1['Transect'] == 'Tsushima')
                         | (df1['Transect'] == 'Yamato')
                         | (df1['Transect'] == 'NA2') 
+                        | (df1['Transect'] == 'ECS2021') 
                         | df1.isnull().all(axis=1)]      
               
 
@@ -436,6 +439,9 @@ def main():
     # selected_area = 'Toyama'
     # selected_area = 'Tsushima'
     # selected_area = 'Yamato'
+    # selected_area = 'NA2'
+    # selected_area = 'ECS2021'
+    
     
     
     
@@ -585,6 +591,7 @@ def main():
                     #             # | (df1['Transect'] == 'Tsushima')
                     #             | (df1['Transect'] == 'Yamato')
                     #             # | (df1['Transect'] == 'NA2') 
+                    #             # | (df1['Transect'] == 'ECS2021') 
                     #             | df_fiｇ_add.isnull().all(axis=1)]
     
     
@@ -884,6 +891,7 @@ def main():
     # # selected_area = 'Tsushima'
     # # selected_area = 'Yamato'
     # # selected_area = 'NA2'
+    # # selected_area = 'ECS2021'
     
     # # df1 = df1[(df1['Transect'] == selected_area)] 
     
@@ -1144,7 +1152,7 @@ def main():
     fig_add_sort = 1
     selected_row = "Transect"
     
-    selected_area = 'CK'
+    # selected_area = 'CK'
     # selected_area = 'Nansei'
     # selected_area = 'nECS'
     # selected_area = 'Noto'
@@ -1157,7 +1165,7 @@ def main():
     # selected_area = 'Tsushima'
     # selected_area = 'Yamato'
     # selected_area = 'NA2'
-    
+    # selected_area = 'ECS2021'
     
     
     
@@ -1450,6 +1458,7 @@ def main():
                     #             # | (df1['Transect'] == 'Tsushima')
                     #             # | (df1['Transect'] == 'Yamato')
                     #             # | (df1['Transect'] == 'NA2') 
+                    #             # | (df1['Transect'] == 'ECS2021') 
                     #             ] 
     
     
@@ -1770,7 +1779,7 @@ def main():
     fig_add_sort = 1
     selected_row = "Transect"
     
-    selected_area = 'CK'
+    # selected_area = 'CK'
     # selected_area = 'Nansei'
     # selected_area = 'nECS'
     # selected_area = 'Noto'
