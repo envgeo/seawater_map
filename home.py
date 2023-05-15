@@ -6,23 +6,62 @@ from PIL import Image
 @st.cache_resource
 def main():
 
-
-
-    #logo_file = Image.open('data/logo.gif')
-    #st.image(logo_file,caption='SEAWATER ISOTOPE JAPAN')
-
-    
-    
     # タイトル
-    st.title('SEAWATER DATA JAPAN (b01)')
+    #タブページ
+    #https://welovepython.net/streamlit-layout-container/
+    st.title('SEAWATER DATA JAPAN (b02)')
+        
+    tab1, tab2, tab3, tab4 = st.tabs(["main", "about", "manual", "update"])
+    
+    with tab1:
+        # st.header("SEAWATER DATA JAPAN (b01)")
+        # st.title('SEAWATER DATA JAPAN (b01)')
+
+    
+        video_file = open('data/d18O_all.mp4', 'rb')
+        video_bytes = video_file.read()
+    
+        st.video(video_bytes)
+        
+        st.write('movie output by GMT(The Generic Mapping Tools)')
+        
+    
+        image = Image.open('data/qr.jpg')
+        st.image(image, caption='QR code')
+            
+            
+        with tab2:
+            # st.title('SEAWATER DATA JAPAN (b01)')
+
+            st.header("about")
+            # st.header('by TOYOHO ISHIMURA')
+            # 純粋なテキスト
+            st.text('original data: xxx in prep.')
+            # 純粋なテキスト
+            st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
+            
+            
+        with tab3:
+            # st.title('SEAWATER DATA JAPAN (b01)')
+
+            st.header("manual")
+            st.subheader('select sub menu')
+            st.write('負荷をかけるとよく落ちます。。。再起動までしばしお待ちください')
+            # ヘッダ
+        with tab4:
+            # st.title('SEAWATER DATA JAPAN (b01)')
+
+            st.header('update')
+            st.write('2023/05/15 version v02')
+            
+
     # サブレベルヘッダ
-    st.subheader('select sub menu')
-    # ヘッダ
+
     # st.header('by TOYOHO ISHIMURA')
     # 純粋なテキスト
-    st.text('original data: xxx in prep.')
+    # st.text('original data: xxx in prep.')
     # 純粋なテキスト
-    st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
+    # st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
 
     # # マークダウンテキスト
     # st.markdown('**Markdown is available **')
@@ -51,18 +90,12 @@ def main():
     # st.json(d)
 
     # st.write('in case of error: push reload button or reload this site')
-
-    video_file = open('data/d18O_all.mp4', 'rb')
-    video_bytes = video_file.read()
-
-    st.video(video_bytes)
     
-    st.write('movie output by GMT(The Generic Mapping Tools)')
     
-
-    image = Image.open('data/qr.jpg')
-    st.image(image, caption='QR code')
     
+    
+    #logo_file = Image.open('data/logo.gif')
+    #st.image(logo_file,caption='SEAWATER ISOTOPE JAPAN')
     
 if __name__ == '__main__':
     main()
