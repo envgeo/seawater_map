@@ -252,7 +252,7 @@ def main():
                     
                         
         
-    fig = plt.figure(figsize = (18, 24),dpi=150)
+    fig = plt.figure(figsize = (12, 16),dpi=150)
     
     fig.subplots_adjust(wspace=0.3, hspace=0.3)
     
@@ -272,7 +272,7 @@ def main():
     # """図のフォント設定、サイズも"""
     ##### ベースのフォントとフォントサイズの指定
     plt.rcParams['font.family'] = 'Arial'
-    plt.rcParams["font.size"] = 30
+    plt.rcParams["font.size"] = 20
     
     
     
@@ -396,7 +396,7 @@ def main():
     
     title_head2 = title_head.replace('_', ' ') #図のタイトル表示用
     # title_head_pdf = title_head.replace('\n', ' ') #pdf書き出し用
-    fig.suptitle(title_head2,fontsize=30)
+    fig.suptitle(title_head2,fontsize=20)
     
     
     #範囲をタイトルに入れる
@@ -630,7 +630,7 @@ def main():
         ax = fig.add_subplot(grid[0, 0])
         
         ax.set_xlabel(X_label + iso_scale_X, fontsize=30)
-        ax.set_ylabel(Y_label + iso_scale_Y, fontsize=30)  #LateX形式で特殊文字
+        ax.set_ylabel(Y_label + iso_scale_Y, fontsize=20)  #LateX形式で特殊文字
     
         
         input_sheet_name = pd.ExcelFile(excel_file).sheet_names
@@ -653,7 +653,7 @@ def main():
             # print('---------------')
     
     
-            plt.legend(fontsize = 30) # 凡例の数字のフォントサイズを設定
+            plt.legend(fontsize = 20) # 凡例の数字のフォントサイズを設定
     
     
             ax.set_xlim(lim_min_X, lim_max_X) 
@@ -673,7 +673,7 @@ def main():
             #             color = "red", arrowprops = dict())
     
         plt.title(fig_title_X_Y, fontsize=30) #
-        plt.legend(fontsize = 30) # 凡例の数字のフォントサイズを設定
+        plt.legend(fontsize = 20) # 凡例の数字のフォントサイズを設定
         
     
         
@@ -685,7 +685,7 @@ def main():
         
                 if X_Y_C_add_each == 1:
                     
-                    plt.title(fig_title_X_Y+'_with_selected', fontsize=30) #
+                    plt.title(fig_title_X_Y+'_with_selected', fontsize=20) #
                     
                     X_Y_C_add  =  color[sheet_num_add] #メインFigと同じくシート毎に分けたい場合
                     
@@ -737,7 +737,7 @@ def main():
                     print('---------------')
     
         
-                    plt.legend(fontsize = 30) # 凡例の数字のフォントサイズを設定
+                    plt.legend(fontsize = 20) # 凡例の数字のフォントサイズを設定
     
                     
                     
