@@ -329,7 +329,7 @@ def main():
     #日本地図描画
     
     # fig = plt.figure(figsize=(8, 6), facecolor="white", dpi=150,tight_layout=False)
-    fig = plt.figure(figsize=(12, 8),facecolor="white", dpi=150,tight_layout=True)
+    fig = plt.figure(figsize=(12, 8),facecolor="white", dpi=150,tight_layout=False)
     
     
     # ax = fig.add_subplot(111, projection=ccrs.Mercator(central_longitude=140.0), facecolor="white")
