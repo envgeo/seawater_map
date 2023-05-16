@@ -5,10 +5,13 @@ from PIL import Image
 import base64
 # import streamlit.components.v1 as stc
 
+st.set_page_config(page_title="Seawater Japan")
+
 @st.cache_resource
 def main():
 
     # タイトル
+
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA JAPAN (b02)')
@@ -103,7 +106,7 @@ def main():
 
     # st.write('in case of error: push reload button or reload this site')
     
-    
+
     
     
     #logo_file = Image.open('data/logo.gif')
