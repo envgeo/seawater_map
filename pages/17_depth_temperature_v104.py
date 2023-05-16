@@ -272,7 +272,7 @@ def main():
     
     # """図のフォント設定、サイズも"""
     ##### ベースのフォントとフォントサイズの指定
-    plt.rcParams['font.family'] = 'Arial'
+    # plt.rcParams['font.family'] = 'Arial'
     plt.rcParams["font.size"] = 20
     
     
