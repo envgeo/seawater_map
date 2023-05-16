@@ -131,7 +131,8 @@ def main():
         
         
         
-    
+        st.write('Cruise Area (2015-2021)')
+        st.image("data/sites_20230515.gif") 
     
           
           
