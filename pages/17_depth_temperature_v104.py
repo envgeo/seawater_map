@@ -665,7 +665,7 @@ def main():
             
             
     
-            ax.xaxis.set_major_formatter(FormatStrFormatter("%+.1f"))
+            ax.xaxis.set_major_formatter(FormatStrFormatter("%.f"))
             ax.yaxis.set_major_formatter(FormatStrFormatter("%.f"))
                 
     
