@@ -2,6 +2,8 @@
 
 import streamlit as st
 from PIL import Image
+import base64
+# import streamlit.components.v1 as stc
 
 @st.cache_resource
 def main():
@@ -30,29 +32,39 @@ def main():
         st.image(image, caption='QR code')
             
             
-        with tab2:
-            # st.title('SEAWATER DATA JAPAN (b01)')
+    with tab2:
+        # st.title('SEAWATER DATA JAPAN (b01)')
 
-            st.header("about")
-            # st.header('by TOYOHO ISHIMURA')
-            # 純粋なテキスト
-            st.text('original data: xxx in prep.')
-            # 純粋なテキスト
-            st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
-            
-            
-        with tab3:
-            # st.title('SEAWATER DATA JAPAN (b01)')
+        st.header("about")
+        # st.header('by TOYOHO ISHIMURA')
+        # 純粋なテキスト
+        st.text('original data: xxx in prep.')
+        # 純粋なテキスト
+        st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
+        st.header("")
+        #gifアニメを読み込む
+        st.write('Cruise Area (2015-2021)')
+        st.image("data/sites_20230515.gif") 
+        
+    with tab3:
+        # st.title('SEAWATER DATA JAPAN (b01)')
 
-            st.header("manual")
-            st.subheader('select sub menu')
-            st.write('負荷をかけるとよく落ちます。。。再起動までしばしお待ちください')
-            # ヘッダ
-        with tab4:
-            # st.title('SEAWATER DATA JAPAN (b01)')
+        st.header("manual")
+        st.subheader('select sub menu')
+        st.write('負荷をかけるとよく落ちます。。。再起動までしばしお待ちください')
+        
+        
 
-            st.header('update')
-            st.write('2023/05/15 version v02')
+        
+
+
+        
+        # ヘッダ
+    with tab4:
+        # st.title('SEAWATER DATA JAPAN (b01)')
+
+        st.header('update')
+        st.write('2023/05/15 version v02')
             
 
     # サブレベルヘッダ
