@@ -319,36 +319,43 @@ def main():
 
 
     #平均値と標準偏差
-    col1, col2 = st.columns(2)
-
-    with col1:
-        average = np.mean(df1['d18O'])
-        st.write('d18O   _average:', average)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col2:
+        average = np.mean(df1['d18O'])
+        average = round(average,3)
+        st.write('d18O _ave:', average)
+
+    with col3:
         stdev = np.std(df1['d18O'])
-        st.write('_stdev:', stdev)  
+        stdev = round(stdev,3)
+        st.write('stdev: ±', stdev)  
         
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3, col4 = st.columns(4)
 
-    with col1:
+    with col2:
         average = np.mean(df1['Salinity'])
-        st.write('Salinity  _average:', average)
+        average = round(average,2)
+        st.write('Sal_ave:', average)
 
-    with col2:
+    with col3:
         stdev = np.std(df1['Salinity'])
-        st.write('_stdev:', stdev)  
+        stdev = round(stdev,2)
+        st.write('stdev ±:', stdev)  
         
-    col1, col2 = st.columns(2)
-
-    with col1:
-        average = np.mean(df1['Temperature_degC'])
-        st.write('Temp (C)   _average:', average)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col2:
+        average = np.mean(df1['Temperature_degC'])
+        average = round(average,2)
+        st.write('Temp_ave:', average)
+
+    with col3:
         stdev = np.std(df1['Temperature_degC'])
-        st.write('_stdev:', stdev)  
+        stdev = round(stdev,2)
+        st.write('stdev ±:', stdev)  
+        
     
     
     
