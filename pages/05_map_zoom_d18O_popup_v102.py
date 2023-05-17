@@ -282,7 +282,7 @@ def main():
 
     with col1:
         average = np.mean(df1['Temperature_degC'])
-        st.write('Temp (C)   _stdev:', average)
+        st.write('Temp (C)   _average:', average)
 
     with col2:
         stdev = np.std(df1['Temperature_degC'])
