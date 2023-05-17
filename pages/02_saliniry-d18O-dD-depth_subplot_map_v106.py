@@ -25,7 +25,7 @@ def main():
 
     with st.sidebar.form("parameter", clear_on_submit=False):
         
-        st.header('select parameters >>> submit')
+        st.header('select parameters ➡ submit')
         
         submitted = st.form_submit_button(":red[submit]")
     
