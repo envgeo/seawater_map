@@ -317,13 +317,19 @@ def main():
     elif df_empty == 0: #データがあったとき
         st.write(data_found_num,'data found')
 
+
+    #平均値と標準偏差
+    average = np.mean(df1['d18O'])
+    stdev = np.std(df1['d18O'])
+    st.write('d18O_average (selected):', average)
+    st.write('d18O_stdev (selected):', stdev)  
+    
     
     # st.write(":red[d18O map (select parameters)]")
     st.write(":blue[--- The map area can be adjusted with 'fig scale'.---]")
 
     
-    
-    
+
     
     
     #日本地図描画

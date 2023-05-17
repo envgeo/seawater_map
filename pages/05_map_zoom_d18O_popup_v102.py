@@ -5,7 +5,7 @@ import streamlit as st
 from streamlit_folium import folium_static
 import folium
 import pandas as pd
-
+import numpy as np
 
 
 
@@ -159,7 +159,7 @@ def main():
     # st.write(""":red['test']""")
 
     
-    st.write(":red[''d18O map (defoult depth: 0-15m) with info (click!)']")
+
         
     ############################################################
     
@@ -254,6 +254,15 @@ def main():
     
     df1['lat'] = df1['Latitude_degN']
     df1['lon'] = df1['Longitude_degE']
+    
+    
+    #平均値と標準偏差
+    average = np.mean(df1['d18O'])
+    stdev = np.std(df1['d18O'])
+    st.write('d18O_average (selected):', average)
+    st.write('d18O_stdev (selected):', stdev)  
+    
+    st.write(":red[''d18O map (defoult depth: 0-15m) with info (click!)']")
     
     for i, row in df1.iterrows():
         pop=f"Transect:{row['Transect']} <br> Lon: {row['Longitude_degE']}E <br> Lat: {row['Latitude_degN']}N <br> Depth: {row['Depth_m']}m <br> Date: {row['Date']} <br> Cruise: {row['Cruise']} <br> Station: {row['Station']} <br> Salinity: {row['Salinity']} <br> Temp: {row['Temperature_degC']} <br> d18O: {row['d18O']} <br> dD: {row['dD']}" 
