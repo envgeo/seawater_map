@@ -28,12 +28,24 @@ def main():
     
         st.video(video_bytes)
         
-        st.write('movie output by GMT(The Generic Mapping Tools)')
-        
     
+        st.markdown("<h6 style='text-align: center; color: grey;'>movie output by GMT(The Generic Mapping Tools)</h6>", unsafe_allow_html=True)
+
+
+        #画像をセンタリングするためcolumnを分ける
         image = Image.open('data/qr.jpg')
-        st.image(image, caption='QR code')
-            
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.write('    ')
+
+        with col2:
+            st.image(image, caption='QR code')
+
+        with col3:
+            st.write(' ')
+
+
             
     with tab2:
         # st.title('SEAWATER DATA JAPAN (b01)')
@@ -46,8 +58,12 @@ def main():
         st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
         st.header("")
         #gifアニメを読み込む
-        st.write('Cruise Area (2015-2021)')
-        st.image("data/sites_20230515.gif") 
+        st.subheader('🚢 Cruise Area (2015-2021)')
+        st.image("data/sites_20230515.gif")
+        
+                #gifアニメを読み込む
+        st.subheader('🚢 Sampling sites by Year')
+        st.image("data/year_20230517.gif")
         
     with tab3:
         # st.title('SEAWATER DATA JAPAN (b01)')
