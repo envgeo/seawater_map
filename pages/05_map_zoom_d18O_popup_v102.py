@@ -257,10 +257,38 @@ def main():
     
     
     #平均値と標準偏差
-    average = np.mean(df1['d18O'])
-    stdev = np.std(df1['d18O'])
-    st.write('d18O_average (selected):', average)
-    st.write('d18O_stdev (selected):', stdev)  
+    col1, col2 = st.columns(2)
+
+    with col1:
+        average = np.mean(df1['d18O'])
+        st.write('d18O   _average:', average)
+
+    with col2:
+        stdev = np.std(df1['d18O'])
+        st.write('_stdev:', stdev)  
+        
+    
+    col1, col2 = st.columns(2)
+
+    with col1:
+        average = np.mean(df1['Salinity'])
+        st.write('Salinity  _average:', average)
+
+    with col2:
+        stdev = np.std(df1['Salinity'])
+        st.write('_stdev:', stdev)  
+        
+    col1, col2 = st.columns(2)
+
+    with col1:
+        average = np.mean(df1['Temperature_degC'])
+        st.write('Temp (C)   _stdev:', average)
+
+    with col2:
+        stdev = np.std(df1['Temperature_degC'])
+        st.write('_stdev:', stdev)  
+        
+        
     
     st.write(":red[''d18O map (defoult depth: 0-15m) with info (click!)']")
     
