@@ -236,23 +236,25 @@ def main():
     # st.write(df_empty)
     data_found_num = str(len(df1["d18O"]))
 
-    
+    # with表記 (推奨)
+    with st.expander("selected data", expanded=False):
 
     #選んだパラメーター表示
-    # st.write('YEAR:'+str(sld_year_min)+'-'+str(sld_year_max)+', ' 
-    #           +'MONTH:'+str(sld_month_min)+'-'+str(sld_month_max)+', '
-    #           +'Longitude:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', '
-    #           +'Latitude:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', '
-    #           +'Water_depth:'+str(sld_depth_min)+'-'+str(sld_depth_max)+', '
-    #           +'Salinity:'+str(sld_sal_min)+'-'+str(sld_sal_max))
-    # st.write('Area(Cruise)',selected_cruise)
-    selected_cruise_indicate =str(list(selected_cruise[:]))
-    st.write('Selected Area (Cruise)', selected_cruise_indicate)
-    # print('Area(Cruise)', list(selected_cruise[:]))
+        st.write('YEAR:'+str(sld_year_min)+'-'+str(sld_year_max)+', ' 
+                  +'MONTH:'+str(sld_month_min)+'-'+str(sld_month_max)+', '
+                  +'Longitude:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', '
+                  +'Latitude:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', '
+                  +'Water_depth:'+str(sld_depth_min)+'-'+str(sld_depth_max)+', '
+                  +'Salinity:'+str(sld_sal_min)+'-'+str(sld_sal_max))
+        # st.write('Area(Cruise)',selected_cruise)
+        selected_cruise_indicate =str(list(selected_cruise[:]))
+        st.write('Selected Area (Cruise)', selected_cruise_indicate)
+        # print('Area(Cruise)', list(selected_cruise[:]))
+        #テキストの色変更
+        # st.write(""":red['test']""")
+
+ 
     #テキストの色変更
-    # st.write(""":red['test']""")
-
-
 
     # # バリデーション処理
     # if df30m_empty == 1:  #データが無かったとき
