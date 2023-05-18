@@ -335,7 +335,7 @@ def main():
     st.subheader('3D depth-map-d18O')
     #3Dプロット！！！！
     # st.write(
-    color_continuous_scale= ('green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
+    color_continuous_scale= ('lightgray', 'lightgray', 'lightgray', 'gray', 'gray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
     fig2= px.scatter_3d(df1, x='lon', y='lat', z='Depth_m',
                     color='d18O', 
                     # colors=list_colors,
