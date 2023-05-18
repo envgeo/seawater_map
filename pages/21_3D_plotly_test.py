@@ -260,12 +260,17 @@ def main():
 
     df1['Depth_m_rev'] = df1['Depth_m']*(-1)
     import plotly.express as px
+    
+    
+    st.subheader('2D salinity-d18O-depth')
     st.write(px.scatter(df1, x="Salinity", y="d18O", color="Depth_m_rev", trendline='ols',trendline_color_override='darkblue', 
                 width=700,
                 height=600
                 ))
     
     
+    
+    st.subheader('3D depth-sakinity-d18O-temperature')
     st.write(
         px.scatter_3d(df1, x='Salinity', y='d18O', z='Depth_m_rev',
                     color='Temperature_degC', 
@@ -279,6 +284,8 @@ def main():
 
     import plotly.graph_objects as go
 
+
+    st.subheader('3D depth-map-d18O')
     #3Dプロット！！！！
     # st.write(
     color_continuous_scale= ('green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'blue', 'lightblue', 'red', 'orange', 'yellow')
