@@ -271,25 +271,37 @@ def main():
     
     
     st.subheader('3D depth-sakinity-d18O-temperature')
-    st.write(
-        px.scatter_3d(df1, x='Salinity', y='d18O', z='Depth_m_rev',
+    fig1=px.scatter_3d(df1, x='Salinity', y='d18O', z='Depth_m_rev',
                     color='Temperature_degC', 
                     #symbol='species'
                     width=700,
                     height=600,
                 )
-                )
+                
+
+
+    # マーカー、ラインの設定
+    fig1.update_traces(
+        # mode = 'markers+lines', # 'markers+lines', 'markers'
+        mode = 'markers', # 'markers+lines', 'markers'
+        marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+    )
+
+    st.write(fig1)
 
 
 
-    import plotly.graph_objects as go
+
+
+    # import plotly.graph_objects as go
 
 
     st.subheader('3D depth-map-d18O')
     #3Dプロット！！！！
     # st.write(
     color_continuous_scale= ('green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'blue', 'lightblue', 'red', 'orange', 'yellow')
-    fig1= px.scatter_3d(df1, x='lon', y='lat', z='Depth_m',
+    fig2= px.scatter_3d(df1, x='lon', y='lat', z='Depth_m',
                     color='d18O', 
                     # colors=list_colors,
                     #symbol='species'
@@ -300,7 +312,7 @@ def main():
                     )
                 
     # マーカー、ラインの設定
-    fig1.update_traces(
+    fig2.update_traces(
         # mode = 'markers+lines', # 'markers+lines', 'markers'
         mode = 'markers', # 'markers+lines', 'markers'
         marker = dict(size = 3),
@@ -308,7 +320,7 @@ def main():
     )
         
     
-    fig1.update_layout(
+    fig2.update_layout(
             scene = dict(
         # #各軸の範囲
         xaxis = dict(range=[145,120],),
@@ -341,7 +353,7 @@ def main():
           #       )
           #       )
               
-    st.write(fig1)
+    st.write(fig2)
     
     
     
