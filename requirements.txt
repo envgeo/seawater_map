@@ -10,3 +10,5 @@ streamlit_folium
 ##io #だめ
 openpyxl
 numpy
+plotly.express
+plotly
