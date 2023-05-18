@@ -309,9 +309,9 @@ def main():
         zaxis = dict(range=[1000,0],),
 
         #各軸のタイトル
-        xaxis_title='X AXIS TITLE',
-        yaxis_title='Y AXIS TITLE',
-        zaxis_title='Z AXIS TITLE',
+        xaxis_title='Latitude E',
+        yaxis_title='Longitude N',
+        zaxis_title='Water Depth',
         ),
         width=700,
         # margin=dict(r=20, l=10, b=10, t=10),
