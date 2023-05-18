@@ -303,7 +303,7 @@ def main():
     
     
     
-    st.subheader('3D depth-sakinity-d18O-temperature')
+    st.subheader('3D depth-salinity-d18O-temperature')
     fig1=px.scatter_3d(df1, x='Salinity', y='d18O', z='Depth_m_rev',
                     color='Temperature_degC', 
                     #symbol='species'
