@@ -282,7 +282,7 @@ def main():
     #     st.stop()
     # elif df30m_empty == 0: #データがあったとき
     #     st.write(data_found_num,'data found for depth profile (below 30m)')
-    st.write(data_found_num,'data found')
+    # st.write(data_found_num,'data found')
     
     
     
