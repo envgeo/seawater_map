@@ -54,7 +54,7 @@ def main():
         sld_year_min, sld_year_max = st.slider(label='Year selected',
                                     min_value=2013,
                                     max_value=2022,
-                                    value=(2014, 2020),
+                                    value=(2013, 2022),
                                     )
         # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
         
