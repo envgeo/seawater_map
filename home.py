@@ -5,7 +5,40 @@ from PIL import Image
 import base64
 # import streamlit.components.v1 as stc
 
-st.set_page_config(page_title="Seawater Japan")
+
+
+#ワイド表示
+# st.set_page_config(page_title="Seawater Japan",layout="wide")
+
+
+st.set_page_config(
+    page_title="Seawater Japan", 
+    # page_icon=image, 
+    # layout="wide", 
+    initial_sidebar_state="auto", 
+    menu_items={
+         'Get Help': 'https://www.google.com',
+         'Report a bug': "https://www.h.kyoto-u.ac.jp/academic_f/faculty_f/ishimura_toyoho_4dea/#mailform",
+         'About': """
+         # 日本周辺海水同位体DB
+         テスト公開中
+         """
+     })
+
+
+# #セレクトボックスのリストを作成
+# pagelist = ["page1","page2"]
+# #サイドバーのセレクトボックスを配置
+# selector=st.sidebar.selectbox( "ページ選択",pagelist)
+# if selector=="page1":
+#     if st.button('ページ1ボタン'):
+#         st.title("ページ1のタイトル")
+# elif selector=="page2":
+#     if st.button('ページ2ボタン'):
+#         st.title("ページ2のタイトル")
+
+
+
 
 @st.cache_resource
 def main():
@@ -14,13 +47,14 @@ def main():
 
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
-    st.title('SEAWATER DATA JAPAN (b02)')
+    st.title('SEAWATER DATA AROUND JAPAN')
+    st.write('b03-202305')
         
     tab1, tab2, tab3, tab4 = st.tabs(["main", "about", "manual", "update"])
     
     with tab1:
-        # st.header("SEAWATER DATA JAPAN (b01)")
-        # st.title('SEAWATER DATA JAPAN (b01)')
+        # st.header("SEAWATER DATA JAPAN (b02)")
+        # st.title('SEAWATER DATA JAPAN (b02)')
 
     
         video_file = open('data/d18O_all.mp4', 'rb')
@@ -48,7 +82,7 @@ def main():
 
             
     with tab2:
-        # st.title('SEAWATER DATA JAPAN (b01)')
+        # st.title('SEAWATER DATA JAPAN (b03)')
 
         st.header("about")
         # st.header('by TOYOHO ISHIMURA')
@@ -66,11 +100,11 @@ def main():
         st.image("data/year_20230517.gif")
         
     with tab3:
-        # st.title('SEAWATER DATA JAPAN (b01)')
+        # st.title('SEAWATER DATA JAPAN (b03)')
 
         st.header("manual")
         st.subheader('select sub menu')
-        st.write('負荷をかけるとよく落ちます。。。再起動までしばしお待ちください')
+        st.write('PC operation recommended')
         
         
 
@@ -83,7 +117,7 @@ def main():
         # st.title('SEAWATER DATA JAPAN (b01)')
 
         st.header('update')
-        st.write('2023/05/15 version v02')
+        st.write('2023/05/22 version v03')
             
 
     # サブレベルヘッダ
@@ -124,6 +158,11 @@ def main():
     
 
     
+
+    
+    
+
+
     
     #logo_file = Image.open('data/logo.gif')
     #st.image(logo_file,caption='SEAWATER ISOTOPE JAPAN')
