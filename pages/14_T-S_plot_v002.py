@@ -1156,16 +1156,35 @@ def main():
 
 
     
-    ##########採取地点のmap　拡大可能##################
+
     
-    df1['lat'] = df1['Latitude_degN']
-    df1['lon'] = df1 ['Longitude_degE']
+    # ##########採取地点のmap　拡大可能##################
     
-    # df = pd.DataFrame(
-    #     np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
-    #     columns=['lat', 'lon'])
+    # df1['lat'] = df1['Latitude_degN']
+    # df1['lon'] = df1 ['Longitude_degE']
     
-    st.map(df1)
+    # # df = pd.DataFrame(
+    # #     np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
+    # #     columns=['lat', 'lon'])
+    
+    # st.map(df1)
+
+
+    ##########採取地点のmap　その２　拡大可能##################
+
+
+    import plotly.express as px
+
+    fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
+                            # color='Month',
+                            hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
+                            opacity=0.4,
+                            )
+    
+    # fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(mapbox_style="carto-positron")
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    st.plotly_chart(fig)
 
 
 if __name__ == '__main__':
