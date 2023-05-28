@@ -990,7 +990,7 @@ def main():
     
         # fig,ax=plt.subplots(figsize=(10,10))
         #fig.suptitle(‘programmer:Hafez Ahmad’, fontsize=14, fontweight=’bold’)
-        cs = ax.contour(Sg, Tg, sigma_theta, colors='lightgrey', linestyles='dashed', zorder=0, levels=20)
+        cs = ax.contour(Sg, Tg, sigma_theta, colors='lightgrey', linestyles='dashed', zorder=0, levels=25)
         cl=plt.clabel(cs,fontsize=15,inline=True,fmt='%.1f',zorder=0, )
         # sc=plt.scatter(df['Salinity'],df['Temperature_degC'],s=10)
         # cb=plt.colorbar(sc)
