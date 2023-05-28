@@ -12,3 +12,4 @@ openpyxl
 numpy
 plotly.express
 plotly
+gsw
