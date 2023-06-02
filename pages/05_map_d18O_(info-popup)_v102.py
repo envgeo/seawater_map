@@ -106,35 +106,38 @@ def main():
             
         # st.sidebar.subheader('航海区の範囲')
         selected_cruise = st.multiselect('Choose cruise area',
-                                    ['CK',
-                                      'Nansei',
-                                      'nECS',
-                                      'Noto',
+                                    [
                                       'Pacific',
                                       'Pacific_west',
-                                      'sECS',
-                                      'Shimane&Tottori',
-                                      'SI',
+                                      'Noto',
                                       'Toyama',
-                                      'Tsushima',
+                                      'SI',
                                       'Yamato',
+                                      'Shimane&Tottori',
                                       'NA2',
-                                      'ECS2021',
+                                      'Tsushima',									  
+		                              'nECS',							  
+                                        'CK',									  
+                                      'ECS2021',									  
+                                      'sECS',									  
+                                      'Nansei',
                                       ],
-                                    default=('CK',
-                                               'Nansei',
-                                               'nECS',
-                                               'Noto',
-                                               'Pacific',
-                                               'Pacific_west',
-                                               'sECS',
-                                               'Shimane&Tottori',
-                                               'SI',
-                                               'Toyama',
-                                               'Tsushima',
-                                               'Yamato',
-                                               'NA2',
-                                               'ECS2021'))
+                                    default=(
+                                      'Pacific',
+                                      'Pacific_west',
+                                      'Noto',
+                                      'Toyama',
+                                      'SI',
+                                      'Yamato',
+                                      'Shimane&Tottori',
+                                      'NA2',
+                                      'Tsushima',									  
+		                              'nECS',							  
+                                        'CK',									  
+                                      'ECS2021',									  
+                                      'sECS',									  
+                                      'Nansei',
+                                               ))
         
         # st.write(f'Selected: {selected_cruise}')
     
@@ -296,7 +299,7 @@ def main():
         
         
     
-    st.write(":blue[''d18O map (defoult depth: 0-15m) with info (click!)']")
+    st.write(":blue[''d18O map (defoult depth: 0-15m) with info']")
     
     for i, row in df1.iterrows():
         pop=f"Transect:{row['Transect']} <br> Lon: {row['Longitude_degE']}E <br> Lat: {row['Latitude_degN']}N <br> Depth: {row['Depth_m']}m <br> Date: {row['Date']} <br> Cruise: {row['Cruise']} <br> Station: {row['Station']} <br> Salinity: {row['Salinity']} <br> Temp: {row['Temperature_degC']} <br> d18O: {row['d18O']} <br> dD: {row['dD']}" 
@@ -318,6 +321,25 @@ def main():
     # st.map(df)
 
     
+
+
+    ##########採取地点のmap　その２　拡大可能##################
+
+
+    import plotly.express as px
+
+    fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
+                            # color='Month',
+                            hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
+                            opacity=0.4,
+                            )
+    
+    # fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(mapbox_style="carto-positron")
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    st.plotly_chart(fig)
+
+
 
 
 
