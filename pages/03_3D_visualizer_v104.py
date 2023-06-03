@@ -148,7 +148,8 @@ def main():
         # st.write(f'Selected: {selected_cruise}')
         
         
-        
+        st.write('Cruise Area (2015-2021)')
+        st.image("data/sites_20230515.gif")
     
         
 
