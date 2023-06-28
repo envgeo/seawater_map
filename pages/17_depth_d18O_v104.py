@@ -219,7 +219,7 @@ def main():
         
         
         # st.sidebar.subheader('描画水深の範囲')
-        fig_depth_min, fig_depth_max = st.slider(label='Map　Latitude selected',
+        fig_depth_min, fig_depth_max = st.slider(label='Depth scale',
                                     min_value=0,
                                     max_value=1000,
                                     value=(0, 500),
