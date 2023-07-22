@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import cartopy.crs as ccrs
+# import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
 
 
@@ -436,8 +437,14 @@ def main():
     
     
     
-    # ax_cmap = ax.scatter(df1["Longitude_degE"], df1["Latitude_degN"], c=df1['d18O'],cmap='jet', s=10, alpha=0.7, vmin=-1.5, vmax=1, transform=ccrs.PlateCarree())
+    ax_cmap = ax.scatter(df1["Longitude_degE"], df1["Latitude_degN"], c=df1['d18O'],cmap='jet', s=10, alpha=0.7, vmin=-1.5, vmax=1, transform=ccrs.PlateCarree())
     
+    
+    
+    
+# =============================================================================
+#     2023/07/22ここから不具合
+# =============================================================================
     
     # #カラーバーの位置調整
     # from mpl_toolkits.axes_grid1.inset_locator import inset_axes
@@ -452,18 +459,22 @@ def main():
     
     # fig.colorbar(ax_cmap, shrink=0.65, cax=axins1,orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)')
     
-    # # ax.set_title('title', fontsize=20)
-    # # ax.set_title(selected_area, fontsize=20) #Transectでソートした場合
-    # #全体のタイトル名　　手入力
-    # main_title = 'SEAWATER $\delta^{18}$O MAP WEB (b02)'
-    # sub_title = 'Lon:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', Lat:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', Y:'+str(sld_year_min)+'-'+str(sld_year_max)+', M:'+str(sld_month_min)+'-'+str(sld_month_max)+', S:'+str(sld_sal_min)+'-'+str(sld_sal_max)+', D:'+str(sld_depth_min)+'-'+str(sld_depth_max)+'m'
-    # sub_title2 = ''
-    
-    # title_head = str(main_title+'\n'+sub_title+'\n'+sub_title2)
-    # title_head2 = title_head.replace('_', ' ') #図のタイトル表示用
-    # fig.suptitle(title_head2,fontsize=15)
         
+# =============================================================================
+# 　2023/07/22ここまで不具合
+# =============================================================================
     
+    # ax.set_title('title', fontsize=20)
+    # ax.set_title(selected_area, fontsize=20) #Transectでソートした場合
+    #全体のタイトル名　　手入力
+    main_title = 'SEAWATER $\delta^{18}$O MAP WEB (b02)'
+    sub_title = 'Lon:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', Lat:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', Y:'+str(sld_year_min)+'-'+str(sld_year_max)+', M:'+str(sld_month_min)+'-'+str(sld_month_max)+', S:'+str(sld_sal_min)+'-'+str(sld_sal_max)+', D:'+str(sld_depth_min)+'-'+str(sld_depth_max)+'m'
+    sub_title2 = ''
+    
+    title_head = str(main_title+'\n'+sub_title+'\n'+sub_title2)
+    title_head2 = title_head.replace('_', ' ') #図のタイトル表示用
+    fig.suptitle(title_head2,fontsize=15)
+        
 
     
     # import io
@@ -482,13 +493,13 @@ def main():
 
     
     #######################画像を保存するためのボタン作成########################
-    # sub_title2 = sub_title
-    # sub_title2 = sub_title2.replace(':', '') #pdf書き出し用
-    # # sub_title2 = sub_title2.replace('>', '') #pdf書き出し用
-    # # sub_title2 = sub_title2.replace('<', '') #pdf書き出し用
-    # sub_title2 = sub_title2.replace(',', '_') #pdf書き出し用
-    # sub_title2 = sub_title2.replace(' ', '') #pdf書き出し用
-    # sub_tite = str('Fig_d18O_map'+'_'+sub_title2+".png")
+    sub_title2 = sub_title
+    sub_title2 = sub_title2.replace(':', '') #pdf書き出し用
+    # sub_title2 = sub_title2.replace('>', '') #pdf書き出し用
+    # sub_title2 = sub_title2.replace('<', '') #pdf書き出し用
+    sub_title2 = sub_title2.replace(',', '_') #pdf書き出し用
+    sub_title2 = sub_title2.replace(' ', '') #pdf書き出し用
+    sub_tite = str('Fig_d18O_map'+'_'+sub_title2+".png")
 
 
     
@@ -505,17 +516,17 @@ def main():
     #     )
 
     #Save to memory first. の場合は，ローカルに保存されないので安心
-    # import io
-    # fn = sub_tite
-    # img = io.BytesIO()
-    # plt.savefig(img, format='png')
+    import io
+    fn = sub_tite
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
      
-    # btn = st.download_button(
-    #    label="Download image",
-    #    data=img,
-    #    file_name=fn,
-    #    mime="image/png"
-    #    )
+    btn = st.download_button(
+       label="Download image",
+       data=img,
+       file_name=fn,
+       mime="image/png"
+       )
     
     
     st.pyplot(fig)
@@ -538,18 +549,18 @@ def main():
     ##########採取地点のmap　その２　拡大可能##################
 
 
-    # import plotly.express as px
+    import plotly.express as px
 
-    # fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
-    #                         # color='Month',
-    #                         hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
-    #                         opacity=0.4,
-    #                         )
+    fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
+                            # color='Month',
+                            hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
+                            opacity=0.4,
+                            )
     
-    # # fig.update_layout(mapbox_style="open-street-map")
-    # fig.update_layout(mapbox_style="carto-positron")
-    # fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    # st.plotly_chart(fig)
+    # fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(mapbox_style="carto-positron")
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    st.plotly_chart(fig)
 
 
 if __name__ == '__main__':
