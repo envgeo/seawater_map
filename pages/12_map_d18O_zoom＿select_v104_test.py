@@ -518,7 +518,7 @@ def main():
     #    )
     
     
-    # st.pyplot(fig)
+    st.pyplot(fig)
 
     
   
