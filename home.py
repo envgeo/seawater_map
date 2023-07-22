@@ -49,7 +49,6 @@ def main():
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA AROUND JAPAN')
     st.write('b03-202305')
-    st.write('※　現在バージョン変更により一部不具合で描画できません。時間が取れたら改修します。。。')
         
     tab1, tab2, tab3, tab4 = st.tabs(["main", "about", "manual", "update"])
     
