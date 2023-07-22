@@ -436,32 +436,32 @@ def main():
     
     
     
-    ax_cmap = ax.scatter(df1["Longitude_degE"], df1["Latitude_degN"], c=df1['d18O'],cmap='jet', s=10, alpha=0.7, vmin=-1.5, vmax=1, transform=ccrs.PlateCarree())
+    # ax_cmap = ax.scatter(df1["Longitude_degE"], df1["Latitude_degN"], c=df1['d18O'],cmap='jet', s=10, alpha=0.7, vmin=-1.5, vmax=1, transform=ccrs.PlateCarree())
     
     
-    #カラーバーの位置調整
-    from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-    axins1 = inset_axes(ax,
-                       width="50%",  # width = 10% of parent_bbox width
-                       height="2%",  # height : 50%
-                       loc='lower right',
-                       bbox_to_anchor=(-0.02, 0.1, 1, -0.7),
-                       bbox_transform=ax.transAxes,
-                       )
+    # #カラーバーの位置調整
+    # from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+    # axins1 = inset_axes(ax,
+    #                    width="50%",  # width = 10% of parent_bbox width
+    #                    height="2%",  # height : 50%
+    #                    loc='lower right',
+    #                    bbox_to_anchor=(-0.02, 0.1, 1, -0.7),
+    #                    bbox_transform=ax.transAxes,
+    #                    )
     
     
-    fig.colorbar(ax_cmap, shrink=0.65, cax=axins1,orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)')
+    # fig.colorbar(ax_cmap, shrink=0.65, cax=axins1,orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)')
     
-    # ax.set_title('title', fontsize=20)
-    # ax.set_title(selected_area, fontsize=20) #Transectでソートした場合
-    #全体のタイトル名　　手入力
-    main_title = 'SEAWATER $\delta^{18}$O MAP WEB (b02)'
-    sub_title = 'Lon:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', Lat:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', Y:'+str(sld_year_min)+'-'+str(sld_year_max)+', M:'+str(sld_month_min)+'-'+str(sld_month_max)+', S:'+str(sld_sal_min)+'-'+str(sld_sal_max)+', D:'+str(sld_depth_min)+'-'+str(sld_depth_max)+'m'
-    sub_title2 = ''
+    # # ax.set_title('title', fontsize=20)
+    # # ax.set_title(selected_area, fontsize=20) #Transectでソートした場合
+    # #全体のタイトル名　　手入力
+    # main_title = 'SEAWATER $\delta^{18}$O MAP WEB (b02)'
+    # sub_title = 'Lon:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', Lat:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', Y:'+str(sld_year_min)+'-'+str(sld_year_max)+', M:'+str(sld_month_min)+'-'+str(sld_month_max)+', S:'+str(sld_sal_min)+'-'+str(sld_sal_max)+', D:'+str(sld_depth_min)+'-'+str(sld_depth_max)+'m'
+    # sub_title2 = ''
     
-    title_head = str(main_title+'\n'+sub_title+'\n'+sub_title2)
-    title_head2 = title_head.replace('_', ' ') #図のタイトル表示用
-    fig.suptitle(title_head2,fontsize=15)
+    # title_head = str(main_title+'\n'+sub_title+'\n'+sub_title2)
+    # title_head2 = title_head.replace('_', ' ') #図のタイトル表示用
+    # fig.suptitle(title_head2,fontsize=15)
         
     
 
