@@ -482,13 +482,13 @@ def main():
 
     
     #######################画像を保存するためのボタン作成########################
-    sub_title2 = sub_title
-    sub_title2 = sub_title2.replace(':', '') #pdf書き出し用
-    # sub_title2 = sub_title2.replace('>', '') #pdf書き出し用
-    # sub_title2 = sub_title2.replace('<', '') #pdf書き出し用
-    sub_title2 = sub_title2.replace(',', '_') #pdf書き出し用
-    sub_title2 = sub_title2.replace(' ', '') #pdf書き出し用
-    sub_tite = str('Fig_d18O_map'+'_'+sub_title2+".png")
+    # sub_title2 = sub_title
+    # sub_title2 = sub_title2.replace(':', '') #pdf書き出し用
+    # # sub_title2 = sub_title2.replace('>', '') #pdf書き出し用
+    # # sub_title2 = sub_title2.replace('<', '') #pdf書き出し用
+    # sub_title2 = sub_title2.replace(',', '_') #pdf書き出し用
+    # sub_title2 = sub_title2.replace(' ', '') #pdf書き出し用
+    # sub_tite = str('Fig_d18O_map'+'_'+sub_title2+".png")
 
 
     
