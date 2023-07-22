@@ -4,7 +4,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import cartopy.crs as ccrs
-# import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
 
 
@@ -372,7 +371,7 @@ def main():
     #日本地図描画
     
     # fig = plt.figure(figsize=(8, 6), facecolor="white", dpi=150,tight_layout=False)
-    fig = plt.figure(figsize=(12, 8),facecolor="white", dpi=150)
+    fig = plt.figure(figsize=(12, 8),facecolor="white", dpi=150,tight_layout=False)
     
     
     # ax = fig.add_subplot(111, projection=ccrs.Mercator(central_longitude=140.0), facecolor="white")
@@ -539,18 +538,18 @@ def main():
     ##########採取地点のmap　その２　拡大可能##################
 
 
-    import plotly.express as px
+    # import plotly.express as px
 
-    fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
-                            # color='Month',
-                            hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
-                            opacity=0.4,
-                            )
+    # fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
+    #                         # color='Month',
+    #                         hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
+    #                         opacity=0.4,
+    #                         )
     
-    # fig.update_layout(mapbox_style="open-street-map")
-    fig.update_layout(mapbox_style="carto-positron")
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    st.plotly_chart(fig)
+    # # fig.update_layout(mapbox_style="open-street-map")
+    # fig.update_layout(mapbox_style="carto-positron")
+    # fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    # st.plotly_chart(fig)
 
 
 if __name__ == '__main__':
