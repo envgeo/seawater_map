@@ -505,20 +505,20 @@ def main():
     #     )
 
     #Save to memory first. の場合は，ローカルに保存されないので安心
-    import io
-    fn = sub_tite
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
+    # import io
+    # fn = sub_tite
+    # img = io.BytesIO()
+    # plt.savefig(img, format='png')
      
-    btn = st.download_button(
-       label="Download image",
-       data=img,
-       file_name=fn,
-       mime="image/png"
-       )
+    # btn = st.download_button(
+    #    label="Download image",
+    #    data=img,
+    #    file_name=fn,
+    #    mime="image/png"
+    #    )
     
     
-    st.pyplot(fig)
+    # st.pyplot(fig)
 
     
   
