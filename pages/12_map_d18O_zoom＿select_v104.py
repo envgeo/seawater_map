@@ -459,7 +459,7 @@ def main():
     
     # fig.colorbar(ax_cmap, shrink=0.65, cax=axins1,orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)')
     
-    cax = fig.add_axes((0.45, 0.17, 0.25, 0.015))
+    cax = fig.add_axes((0.47, 0.19, 0.25, 0.015))
     
     fig.colorbar(ax_cmap, shrink=0.2, orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)',cax=cax)
 
