@@ -13,6 +13,3 @@ numpy
 plotly.express
 plotly
 gsw
-
-#2023/07/22追加
-mpl_toolkits.axes_grid1.inset_locator
