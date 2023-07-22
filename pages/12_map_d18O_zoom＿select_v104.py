@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 
 
-@st.cache_resource(experimental_allow_widgets=True)
+
 
 def main():
     
@@ -557,7 +557,5 @@ if __name__ == '__main__':
     main()
     
     
-st.cache_data.clear()
-st.cache_resource.clear()
-    
+
     
