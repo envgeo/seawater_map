@@ -1036,9 +1036,14 @@ def main():
     
     # fig.colorbar(ax_cmap, shrink=0.65, cax=axins1,orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)')
     
-    cax = fig.add_axes((0.5, 0.2, 0.25, 0.015))
     
-    fig.colorbar(ax_cmap, shrink=0.2, orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)',cax=cax)
+    # cax = fig.add_axes((0.5, 0.2, 0.25, 0.015))
+    
+    # fig.colorbar(ax_cmap, shrink=0.2, orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)',cax=cax)
+    
+    
+    
+    fig.colorbar(ax_cmap, shrink=0.2, orientation='horizontal',label="$\delta^{18}$O"+' (VSMOW)')
 
 # =============================================================================
 # 　2023/07/22ここまで不具合 修正
