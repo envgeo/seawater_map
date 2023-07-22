@@ -13,3 +13,6 @@ numpy
 plotly.express
 plotly
 gsw
+
+#2023/07/22エラーが出たので追記
+streamlit==1.13.0
