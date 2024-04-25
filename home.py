@@ -48,9 +48,9 @@ def main():
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA AROUND JAPAN')
-    st.write('Version b03-202305')
+    st.write('b03-202305')
         
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["main", "about", "manual", "update", "note in Japanese"])
+    tab1, tab2, tab3, tab4 = st.tabs(["main", "about", "manual", "update"])
     
     with tab1:
         # st.header("SEAWATER DATA JAPAN (b02)")
@@ -63,7 +63,7 @@ def main():
         st.video(video_bytes)
         
     
-        st.markdown("<h6 style='text-align: center; color: grey;'>movie outputed by GMT (The Generic Mapping Tools)</h6>", unsafe_allow_html=True)
+        st.markdown("<h6 style='text-align: center; color: grey;'>movie output by GMT(The Generic Mapping Tools)</h6>", unsafe_allow_html=True)
 
 
         #画像をセンタリングするためcolumnを分ける
@@ -87,14 +87,9 @@ def main():
         st.header("about")
         # st.header('by TOYOHO ISHIMURA')
         # 純粋なテキスト
-        st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
+        st.text('original data: xxx in prep.')
         # 純粋なテキスト
-        st.write('_____')
-        st.header('data source')
-        st.subheader('#01 Kodama et al., 2024.')
-        st.write('Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024) Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal. (accepted)')
-
-
+        st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
         st.header("")
         #gifアニメを読み込む
         st.subheader('🚢 Cruise Area (2015-2021)')
@@ -103,10 +98,6 @@ def main():
                 #gifアニメを読み込む
         st.subheader('🚢 Sampling sites by Year')
         st.image("data/year_20230517.gif")
-        
-        st.write('_____')
-        
-        
         
     with tab3:
         # st.title('SEAWATER DATA JAPAN (b03)')
@@ -126,21 +117,9 @@ def main():
         # st.title('SEAWATER DATA JAPAN (b01)')
 
         st.header('update')
-        st.write('2024/05/25 opend to the public')
         st.write('2023/07/22 bug fix')
-        st.write('2023/05/22 version b03 pre-opened')
+        st.write('2023/05/22 version b03')
             
-
-        # ヘッダ
-    with tab5:
-        # st.title('SEAWATER DATA JAPAN (b01)')
-
-        st.header('note by T.Ishimura')
-        st.write('2024/05/11　不具合・ご要望など，ご連絡いただければ幸いです。')
-        st.write('2024/04/11　複数アクセスには対応し切れていませんので，表示が上手く行かないときには時間をおいてからおためしください')
-        st.write('2024/04/11 今後，公表されている各種データを追加してデータの拡充を予定したいと考えています')
-
-
 
     # サブレベルヘッダ
 
