@@ -136,7 +136,12 @@ def main():
         # st.title('SEAWATER DATA JAPAN (b01)')
 
         st.text('note by T.Ishimura')
-        st.text('https://www.h.kyoto-u.ac.jp/academic_f/faculty_f/ishimura_toyoho_4dea/#mailform)
+        st.markdown(
+            """<a style='display: block; text-align: center;' href="https://www.h.kyoto-u.ac.jp/academic_f/faculty_f/ishimura_toyoho_4dea/#mailform">問い合わせ</a>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.text('https://www.h.kyoto-u.ac.jp/academic_f/faculty_f/ishimura_toyoho_4dea/#mailform')
         st.subheader('2024/05/11')
         st.write('MacのSafariの古いバージョンでは表示されないようです。その他不具合・ご要望など，ご連絡いただければ幸いです。')
         st.write('複数アクセスには対応できておりませんので，表示が上手く行かないときには時間をおいてからおためしください')
