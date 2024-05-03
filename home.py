@@ -88,6 +88,9 @@ def main():
         # st.header('by TOYOHO ISHIMURA')
         # 純粋なテキスト
         st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
+        
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp")
+        
         # 純粋なテキスト
         st.write('_____')
         st.header('data source')
