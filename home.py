@@ -89,7 +89,7 @@ def main():
         # 純粋なテキスト
         st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
         
-        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp")
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
         
         # 純粋なテキスト
         st.write('_____')
@@ -108,7 +108,7 @@ def main():
         st.image("data/year_20230517.gif")
         
         st.write('_____')
-        
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
         
         
     with tab3:
@@ -117,7 +117,7 @@ def main():
         st.header("manual")
         st.subheader('select sub menu')
         st.write('PC operation recommended')
-        
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
         
 
         
@@ -144,7 +144,8 @@ def main():
             """,
             unsafe_allow_html=True,
         )
-
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+        
         st.subheader('2024/05/11')
         st.write('MacのSafariの古いバージョン(16.3以前)では表示されないようです。その他不具合・ご要望など，ご連絡いただければ幸いです。')
         st.write('複数アクセスには対応できておりませんので，表示が上手く行かないときには時間をおいてからおためしください。')
