@@ -48,8 +48,8 @@ def main():
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA AROUND JAPAN')
-    st.write('Version b03-202305')
-    st.write('This site are not able to support multiple simultaneous accesses, so if the display does not work, please try again after awhile.')
+    st.write('Version b04-202405')
+    st.text('This site is not able to support multiple simultaneous accesses, so if the display does not work, please try again after awhile.')
         
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["main", "about", "manual", "update", "note in Japanese"])
     
