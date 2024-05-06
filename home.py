@@ -118,7 +118,7 @@ def main():
         st.header("manual")
         st.subheader('select sub menu')
         st.write('PC operation recommended')
-        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+        st.link_button("Description of each page", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/#pages")
         
 
         
