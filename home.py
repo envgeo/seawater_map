@@ -17,13 +17,14 @@ st.set_page_config(
     # layout="wide", 
     initial_sidebar_state="auto", 
     menu_items={
-         'Get Help': 'https://www.google.com',
+         'Get Help': 'https://envgeo.h.kyoto-u.ac.jp/sw_jpn/',
          'Report a bug': "https://www.h.kyoto-u.ac.jp/academic_f/faculty_f/ishimura_toyoho_4dea/#mailform",
          'About': """
          # 日本周辺海水同位体DB
          テスト公開中
          """
      })
+
 
 
 # #セレクトボックスのリストを作成
@@ -50,6 +51,8 @@ def main():
     st.title('SEAWATER DATA AROUND JAPAN')
     st.write('Version b04-202405')
     st.warning('This site is not able to support multiple simultaneous accesses, so if the display does not work, please reload the page or try again after awhile.')
+        
+
         
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["main", "about", "manual", "update", "note in Japanese"])
     
@@ -90,7 +93,7 @@ def main():
         # 純粋なテキスト
         st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
         
-        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+        st.link_button("For more information and permissions for use, click here", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
         
         # 純粋なテキスト
         st.write('_____')
