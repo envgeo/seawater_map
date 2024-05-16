@@ -26,6 +26,15 @@ from sklearn.metrics import r2_score
 
 print(("--------11_salinity-d18O_reg-line_plot_v107--------"))
 
+# datetimeモジュールを使った現在の日付と時刻の取得
+import datetime
+dt = datetime.datetime.today()  # ローカルな現在の日付と時刻を取得
+print(dt)  # 2021-10-29 15:58:08.356501
+
+
+
+
+
 @st.cache_resource(experimental_allow_widgets=True)
 
 # @st.cache_data.clear()

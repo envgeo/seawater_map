@@ -10,6 +10,14 @@ from sklearn.metrics import r2_score
 import cartopy.crs as ccrs
 
 print(("--------13_compiled_figs(saliniry-d18O-dD-depth_etc)_v107--------"))
+# datetimeモジュールを使った現在の日付と時刻の取得
+import datetime
+dt = datetime.datetime.today()  # ローカルな現在の日付と時刻を取得
+print(dt)  # 2021-10-29 15:58:08.356501
+
+
+
+
 
 # st.cache_data.clear()
 # st.cache_resource.clear()

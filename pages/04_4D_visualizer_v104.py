@@ -19,6 +19,14 @@ import plotly.graph_objects as go
 
 print(("--------04_4D_visualizer_v104--------"))
 
+# datetimeモジュールを使った現在の日付と時刻の取得
+import datetime
+dt = datetime.datetime.today()  # ローカルな現在の日付と時刻を取得
+print(dt)  # 2021-10-29 15:58:08.356501
+
+
+
+
 
 # st.set_page_config(
 #     page_title="d18O mapping",

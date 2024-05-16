@@ -5,6 +5,15 @@ import pandas as pd
 import numpy as np
 
 print(("--------17_depth_d18O_v105--------"))
+# datetimeモジュールを使った現在の日付と時刻の取得
+import datetime
+dt = datetime.datetime.today()  # ローカルな現在の日付と時刻を取得
+print(dt)  # 2021-10-29 15:58:08.356501
+
+
+
+
+
 
 # def main():
 #     # 東京のランダムな経度・緯度を生成する
