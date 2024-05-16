@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+print(("--------17_depth_d18O_v105--------"))
 
 # def main():
 #     # 東京のランダムな経度・緯度を生成する
