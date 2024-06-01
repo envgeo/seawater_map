@@ -1,15 +1,16 @@
-matplotlib
-cartopy
+matplotlib==3.8.4
+Cartopy==0.23.0
 #pandas
 #datetime
 seaborn
 #folium
 scikit-metrics
-streamlit_folium
+streamlit==1.34.0
+streamlit_folium==0.20.0
 ##sklearn
 ##io #だめ
-openpyxl
-numpy
+openpyxl==3.1.2
+numpy==1.26.2
 plotly.express
-plotly
-gsw
+plotly==5.22.0
+gsw==3.6.17.post1
