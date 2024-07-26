@@ -137,6 +137,7 @@ def main():
         # st.title('SEAWATER DATA JAPAN (b01)')
 
         st.header('update')
+        st.write('2024/07/26 minor update for all visualizer')
         st.write('2024/05/15 opend to the public')
         st.write('2023/07/22 bug fix')
         st.write('2023/05/22 version b03 pre-opened')
