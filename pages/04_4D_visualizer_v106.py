@@ -7,6 +7,7 @@ Created on Sun May 21 16:00:21 2023
 @author: toyoho
 
 2023/05/21 update (axis limit)
+2024/07/27 salinity地図追加
 """
 
 
@@ -837,6 +838,101 @@ def main():
     
     
     
+    
+    ###### Fig5 #######
+    st.subheader('4D map-depth-salinity')
+    
+    import plotly.graph_objects as go
+
+    # データの準備（サンプルデータとしてランダムな3Dデータを生成）
+    y = df1['lat']
+    x = df1['lon']
+    z = df1['Depth_m']
+    c = df1['Salinity']
+    # 海岸線の座標データを手動で用意
+    coastline_excel = 'extra_data.xlsx'
+    coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
+    coastline_y = coastline_df['Latitude']  # 海岸線のx座標
+    coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
+    # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
+    color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
+
+    
+    # 3Dプロットを作成する
+    
+    fig5=px.scatter_3d(df1, x='lon', y='lat', z='Depth_m',
+                    color='Salinity', 
+                    #symbol='species'
+                    width=700,
+                    height=600,
+                    color_continuous_scale=color_continuous_scale,
+                )
+    
+    # fig5 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
+    #         marker=dict(
+    #         size=16,
+    #         color=c,  # マーカーの色をyにする
+    #         colorscale=color_continuous_scale,  # カラースケール変更
+    #         showscale=True,  # カラーバーの表示
+    #         # カラーバーの設定
+    #         colorbar=dict(
+    #         # x=0.2, 
+    #         title="Temperature(C)",
+    #         # 枠線、目盛線の設定
+    #         outlinecolor='black', ticks='outside', tickcolor='black',
+    #         len=0.8,
+    #         thicknessmode='fraction',  # カラーバーの幅の指定方法を割合モードに設定
+    #         thickness=0.02,  # カラーバーの幅（割合モードで0〜1の範囲で指定）
+    #     ),
+    #     ))])
+    
+    # fig5.update_layout(coloraxis=dict(colorbar=dict(len=0.5)))
+    
+    
+    # マーカー、ラインの設定
+    fig5.update_traces(
+        # mode = 'markers+lines', # 'markers+lines', 'markers'
+        mode = 'markers', # 'markers+lines', 'markers'
+        marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='Salinity'
+        )
+        
+    ###水深をスケールバーで変える設定
+    fig_depth_max_minus = fig_depth_max*(-1)
+    fig_depth_min_minus = fig_depth_min*(-1)
+
+
+    ##図のスケール
+
+    fig5.update_layout(
+            scene = dict(
+        # #各軸の範囲
+        xaxis = dict(range=[145,120],),
+        yaxis = dict(range=[45,20],),
+        zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
+
+
+        #各軸のタイトル
+        yaxis_title='Latitude N',
+        xaxis_title='Longitude E',
+        zaxis_title='Water Depth',
+        ),
+        width=700,
+        height=600,
+        # margin=dict(r=20, l=10, b=10, t=10),
+
+            )
+    
+    # 海岸線を底面に追加する
+    fig5.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='coastline', line=dict(color='blue', width=0.5)))
+    
+    
+    # グラフを表示する
+    # fig.show()
+    st.write(fig5)
     
     
     
