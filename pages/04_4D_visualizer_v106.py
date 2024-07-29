@@ -722,9 +722,16 @@ def main():
             )
     
     # 海岸線を底面に追加する
+    # データの最上部の場合
     fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
         # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='blue', width=0.5)))
+        name='coastline', line=dict(color='blue', width=0.8)))
+    
+    #スケールの底面の場合
+    fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='coastline', line=dict(color='gray', width=0.5)))
+    
     
     
     # グラフを表示する
@@ -824,9 +831,15 @@ def main():
             )
     
     # 海岸線を底面に追加する
+    # データの最上部の場合
     fig4.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
         # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='blue', width=0.5)))
+        name='coastline', line=dict(color='blue', width=0.8)))
+    
+    #スケールの底面の場合
+    fig4.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='coastline', line=dict(color='gray', width=0.5)))
     
     
     # グラフを表示する
@@ -925,9 +938,15 @@ def main():
             )
     
     # 海岸線を底面に追加する
+    # データの最上部の場合
     fig5.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
         # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='blue', width=0.5)))
+        name='coastline', line=dict(color='blue', width=0.8)))
+    
+    #スケールの底面の場合
+    fig5.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='coastline', line=dict(color='gray', width=0.5)))
     
     
     # グラフを表示する
@@ -1030,9 +1049,16 @@ def main():
             )
     
     # 海岸線を底面に追加する
+    # データの最上部の場合
     fig14.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
         # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='blue', width=0.5)))
+        name='coastline', line=dict(color='blue', width=0.8)))
+    
+    #スケールの底面の場合
+    fig14.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='coastline', line=dict(color='gray', width=0.5)))
+    
     
     
     # グラフを表示する
