@@ -93,9 +93,9 @@ def main():
         # st.sidebar.subheader('年の範囲')
         
         sld_year_min, sld_year_max = st.slider(label='Year selected',
-                                    min_value=2013,
+                                    min_value=1996,
                                     max_value=2028,
-                                    value=(2013,2028),
+                                    value=(1996,2028),
                                     )
         # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
         
@@ -115,7 +115,7 @@ def main():
         sld_lon_min, sld_lon_max = st.slider(label='Longitude selected',
                                     min_value=-180,
                                     max_value=180,
-                                    value=(115, 145),
+                                    value=(115, 170),
                                     )
         # st.sidebar.write(f'Selected: {sld_lon_min} ~ {sld_lon_max}')
         
@@ -124,8 +124,8 @@ def main():
         # st.sidebar.subheader('緯度の範囲')
         sld_lat_min, sld_lat_max = st.slider(label='Latitude selected',
                                     min_value=-70,
-                                    max_value=45,
-                                    value=(20, 45),
+                                    max_value=55,
+                                    value=(0, 55),
                                     )
         # st.sidebar.write(f'Selected: {sld_lat_min} ~ {sld_lat_max}')
         
@@ -237,15 +237,15 @@ def main():
         map_lon_min, map_lon_max = st.slider(label='Map Longitude selected',
                                     min_value=-180-0.001,
                                     max_value=180+0.001,
-                                    value=(120-0.001, 145+0.001),
+                                    value=(120-0.001, 180+0.001),
                                     )
         # # st.sidebar.write(f'Selected: {map_lon_min} ~ {map_lon_max}')
         
         # # st.sidebar.subheader('地図の緯度の範囲（拡大）')
         map_lat_min, map_lat_max = st.slider(label='Map Latitude selected',
                                     min_value=-70-0.001,
-                                    max_value=45+0.001,
-                                    value=(20-0.001, 45+0.001),
+                                    max_value=55+0.001,
+                                    value=(0-0.001, 55+0.001),
                                     )
         # # st.sidebar.write(f'Selected: {map_lat_min} ~ {map_lat_max}')
         
