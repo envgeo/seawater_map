@@ -50,7 +50,7 @@ def main():
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA AROUND JAPAN')
     st.write('Version b04-202410')
-    st.write('NEW!! 2024/09/26 added data from other references in the section of "including data from other papers"')
+    st.write('NEW!! 2024/10/7 added data from other references in the section of "including data from other papers"')
     
     st.warning('This site is not able to support multiple simultaneous accesses, so if the display does not work, please reload the page or try again after awhile.')
         
@@ -100,7 +100,7 @@ def main():
         # 純粋なテキスト
         st.write('_____')
         st.header('data source')
-        st.subheader('#01 Kodama et al., 2024.')
+        st.subheader('#01 Kodama et al., 2024. (main data set)')
         #st.write('Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024) Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal. DOI: 10.2343/geochemj.GJ24009')
         st.markdown(
             """<a style='display: block; text-align: left;' href="https://doi.org/10.2343/geochemj.GJ24009">Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024) Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal. DOI: 10.2343/geochemj.GJ24009</a>
@@ -116,6 +116,22 @@ def main():
                 #gifアニメを読み込む
         st.subheader('🚢 Sampling sites by Year')
         st.image("data/year_20230517.gif")
+        
+        
+        st.write('_____')
+        
+        st.subheader('sub data set included in the section of  "including data from other papers"')
+        st.subheader('#02 Yamamoto et al., 2001.')
+        st.write('Yamamoto, M., Tanaka, N., & Tsunogai, S. (2001). Okhotsk Sea intermediate water formation deduced from oxygen isotope systematics. Journal of Geophysical Research: Oceans, 106(C12), 31075-31084.')
+        st.subheader('#03 Sakamoto et al., 2019.')
+        st.write('Sakamoto, T., Komatsu, K., Shirai, K., Higuchi, T., Ishimura, T., Setou, T., ... & Kawabata, A. (2019). Combining microvolume isotope analysis and numerical simulation to reproduce fish migration history. Methods in Ecology and Evolution, 10(1), 59-69.')
+        st.subheader('#04 Horikawa et al., 2023.')
+        st.write('Horikawa, K., Kodaira, T., Zhang, J., & Obata, H. (2023). Salinity–oxygen isotope relationship during an El Niño (2014–2015) in the southwestern Pacific and comparisons with GEOSECS data (La Niña, 1973–1974). Marine Chemistry, 249, 104222.')
+        st.subheader('#05 Kodaira et al., 2016.')
+        st.write('Kodaira,  T.,  Horikawa,  K.,  Zhang,  J. and  Senjyu,  T. (2016) Relationship between seawater oxygen isotope ratio and salinity in the Tsushima Current, the Sea of Japan. Chikyukagaku (Geochemistry). 50, 263–277. (in Japanese with English abstract) https://doi.org/10.14934/chikyukagaku.50.263')
+        st.write('')
+        
+        
         
         st.write('_____')
         st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
