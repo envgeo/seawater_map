@@ -49,7 +49,9 @@ def main():
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA AROUND JAPAN')
-    st.write('Version b04-202405')
+    st.write('Version b04-202410')
+    st.write('NEW!! 2024/09/26 added data from other references in the section of "including data from other papers"')
+    
     st.warning('This site is not able to support multiple simultaneous accesses, so if the display does not work, please reload the page or try again after awhile.')
         
 
