@@ -1421,6 +1421,15 @@ def main():
     st.plotly_chart(fig)
 
 
+
+
+    ##選ばれたデータを表示
+    # 例：特定の列だけを選択して新しいデータフレームを作成
+    df1_table = df1[['reference','Cruise', 'Station', 'Date', 'Longitude_degE', 'Latitude_degN', 'Depth_m', 'Temperature_degC', 'Salinity', 'd18O', 'dD']]
+
+    st.dataframe(df1_table)    
+
+
 if __name__ == '__main__':
     main()
     
