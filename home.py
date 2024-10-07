@@ -49,9 +49,10 @@ def main():
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA AROUND JAPAN')
-    st.write('Version b04-202410')
-    st.write('NEW!! 2024/10/7 added data from other references in the section of "including data from other papers"')
-    
+    st.write('Version b05-202410')
+    st.write(':red[NEW!!] 2024/10/7 added data from other references in the section of "including data from other papers"')
+    # st.write('<span style="color:red;background:white">NEW!!</span> NEW',unsafe_allow_html=True)
+    # st.write("This is :blue[test]")
     st.warning('This site is not able to support multiple simultaneous accesses, so if the display does not work, please reload the page or try again after awhile.')
         
 
@@ -182,6 +183,10 @@ def main():
 
 
     # サブレベルヘッダ
+    
+    #色を変えるとき
+    #st.write('<span style="color:red;background:pink">該当するデータがありません・・・・</span>',unsafe_allow_html=True)
+
 
     # st.header('by TOYOHO ISHIMURA')
     # 純粋なテキスト
