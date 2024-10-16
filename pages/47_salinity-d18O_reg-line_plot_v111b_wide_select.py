@@ -1584,13 +1584,16 @@ def main():
 
     fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
                             # color='Month',
-                            hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
+                            hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m', "reference"],
                             opacity=0.4,
                             )
     
     # fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(mapbox_style="carto-positron")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    # fig.update_layout(autosize=False, width=1200, height=600)
+    fig.update_layout(autosize=True)
+    
     st.plotly_chart(fig)
 
 
