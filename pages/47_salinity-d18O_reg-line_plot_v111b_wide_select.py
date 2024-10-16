@@ -577,7 +577,7 @@ def main():
  
     else:
         # st.text('including data from previous reports')
-        st.write('data source:  Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023)')
+        st.write('data source (see "home > about > data source"):  Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023)')
         
         
 
@@ -1494,7 +1494,7 @@ def main():
     
     
     #全体のタイトル名　　手入力
-        main_title = 'SEAWATER DATA WEB (b01)'
+        main_title = 'SEAWATER DATA WEB (b03)'
         main_title2 = 'Lon:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', Lat:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', Y:'+str(sld_year_min)+'-'+str(sld_year_max)+', M:'+str(sld_month_min)+'-'+str(sld_month_max)+', S:'+str(sld_sal_min)+'-'+str(sld_sal_max)+', D:'+str(sld_depth_min)+'-'+str(sld_depth_max)+'m'
         # sub_title = 'Area B (N:25-130,E:135-140,D:>10m)'
         # sub_title = '(N:25-130,E:135-140,D:>10m)'
