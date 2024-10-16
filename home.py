@@ -145,6 +145,7 @@ def main():
         st.subheader('select sub menu')
         st.write('PC operation recommended')
         st.link_button("Description of each page", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/#pages")
+        st.video('data/envgeo20241016_HD720p.mp4',format="video/mp4", start_time=0, subtitles=None, end_time=None, loop=True)
         
 
         
