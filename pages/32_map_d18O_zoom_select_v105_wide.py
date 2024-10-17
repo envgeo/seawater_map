@@ -467,8 +467,10 @@ def main():
     
     # ax = fig.add_subplot(111, projection=ccrs.Mercator(central_longitude=140.0), facecolor="white")
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+    
     # ax.set_global()
-    ax.coastlines()
+    # ax.coastlines()
+    ax.coastlines(resolution='10m')
     # ax.set_extent([120-0.01, 145+0.01, 20-0.01, 45+0.01]) #この行を入れるとStreamlitでおかしくなる
     # ax.set_extent([120-0.001, 145+0.001, 20-0.001, 45+0.001], crs=ccrs.PlateCarree())
     
