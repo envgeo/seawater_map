@@ -14,12 +14,11 @@ import streamlit as st
 from streamlit_folium import folium_static
 import folium
 import pandas as pd
-
 import plotly.graph_objects as go
 
+import plotly.express as px
 from io import BytesIO
 # uploaded_file = st.file_uploader("ファイルを選択", type=["csv", "txt", "xlsx"])
-
 
 
 
@@ -38,46 +37,11 @@ if uploaded_file is not None:
 
 
 
-
-
-
-
-    
-    
-    
-    
-
-        
-
-
-
-
     ############################################################
     # リロードボタン
     st.button('Reload')
     
 
-    
-
-    
-    
-    # excel_file = 'upload_data_tmp.xlsx'
-    # sheet_num = 0
-    
-    # df1 = pd.read_excel(excel_file, sheet_name=sheet_num)
-
-    
-    
-    
-    x_value = df1.iloc[0, 0]
-    print(x_value)
-    
-
-    
-    import plotly.express as px
-    
-    
-    
     
     ###### Fig1 #######
     st.subheader('3D plot')
@@ -98,16 +62,11 @@ if uploaded_file is not None:
     #     # line = dict(width = 2), #color = 'Black',
     )
     
-
-    
-    
+  
     st.write(fig1)  
     
     
-        
 
-    
-    
     
     ###### Fig2 #######
     st.subheader('4D plot')
@@ -116,8 +75,8 @@ if uploaded_file is not None:
     fig2=px.scatter_3d(df1, x='x', y='y', z='z',
                     color='index', 
                     #symbol='species'
-                    # width=700,
-                    # height=600,
+                    width=700,
+                    height=600,
                     color_continuous_scale=color_continuous_scale,
                 )
                 
@@ -151,9 +110,6 @@ if uploaded_file is not None:
 
 
 
-
-
-
     fig2.update_layout(
             scene = dict(
         # #各軸の範囲
@@ -171,6 +127,141 @@ if uploaded_file is not None:
 
 
     st.write(fig2)
+
+
+
+    
+
+
+
+
+    ###### Fig3 #######
+    st.subheader('4D with coast line')
+    
+
+
+
+    #z軸を反転
+    # st.subheader('data source:')
+    
+    z_inversion = st.radio("z-axis inversion ", ("YES", "NO"), horizontal=True, args=[1, 0])
+    
+    if z_inversion == "YES":
+            df1['z'] = df1['z']*(-1)
+
+    else:()
+    
+    
+
+    # データの準備（サンプルデータとしてランダムな3Dデータを生成）
+    y = df1['x']
+    x = df1['y']
+    z = df1['z']
+    c = df1['index']
+
+
+
+
+    # 海岸線の座標データを手動で用意
+    coastline_excel = 'extra_data.xlsx'
+    coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
+    coastline_y = coastline_df['Latitude']  # 海岸線のx座標
+    coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
+    color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
+ 
+    
+    # 3Dプロットを作成する
+    
+    fig3=px.scatter_3d(df1, x='x', y='y', z='z',
+                    color='index', 
+                    #symbol='species'
+                    width=700,
+                    height=600,
+                    color_continuous_scale=color_continuous_scale,
+                )
+    # fig3 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
+    #         marker=dict(
+    #         size=16,
+    #         color=c,  # マーカーの色をyにする
+    #         colorscale=color_continuous_scale,  # カラースケール変更
+    #         showscale=True,  # カラーバーの表示
+    #         # カラーバーの設定
+    #         colorbar=dict(
+    #         # x=0.2, 
+    #         title="d18O",
+    #         # 枠線、目盛線の設定
+    #         outlinecolor='black', ticks='outside', tickcolor='black',
+    #         len=0.8,
+    #         thicknessmode='fraction',  # カラーバーの幅の指定方法を割合モードに設定
+    #         thickness=0.02,  # カラーバーの幅（割合モードで0〜1の範囲で指定）
+    #     ),
+    #     ))])
+    
+    # fig11.update_layout(coloraxis=dict(colorbar=dict(len=0.5)))
+    
+    
+    # マーカー、ラインの設定
+    fig3.update_traces(
+        # mode = 'markers+lines', # 'markers+lines', 'markers'
+        mode = 'markers', # 'markers+lines', 'markers'
+        marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='d18O'
+        )
+        
+
+    
+    # ###水深をスケールバーで変える設定
+    # fig_depth_max_minus = fig_depth_max*(-1)
+    # fig_depth_min_minus = fig_depth_min*(-1)
+
+
+    ##図のスケール
+
+    fig3.update_layout(
+            scene = dict(
+        # #各軸の範囲
+        xaxis = dict(range=[160,120],),
+        yaxis = dict(range=[55,20],),
+        # zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
+
+
+        #各軸のタイトル
+        yaxis_title='Latitude N',
+        xaxis_title='Longitude E',
+        zaxis_title='Water Depth',
+        ),
+        width=700,
+        height=600,
+        # margin=dict(r=20, l=10, b=10, t=10),
+
+            )
+    
+    # 海岸線を底面に追加する
+    # データの最上部の場合
+    fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='coastline', line=dict(color='blue', width=0.8)))
+    
+    #スケールの底面の場合
+    # fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+    #     # line = dict(width = 2), #color = 'Black',
+    #     name='coastline', line=dict(color='gray', width=0.5)))
+    
+    
+    
+    # グラフを表示する
+    # fig.show()
+    st.write(fig3)
+    
+    
+
+
+
+
+
+
+
 
 
 
