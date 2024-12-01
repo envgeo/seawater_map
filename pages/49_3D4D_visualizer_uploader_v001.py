@@ -63,6 +63,23 @@ if uploaded_file is not None:
     )
     
   
+    
+    
+    # #海岸線を重ね書きする場合
+    # # 海岸線の座標データを手動で用意
+    # coastline_excel = 'extra_data.xlsx'
+    # coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
+    # coastline_y = coastline_df['Latitude']  # 海岸線のx座標
+    # coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
+    # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
+ 
+    
+    # fig1.add_traces(go.Scatter(x=coastline_x, y=coastline_y, mode='lines',     marker = dict(size = 3),
+    #     # line = dict(width = 2), #color = 'Black',
+    #     name='coastline', line=dict(color='blue', width=0.8)))
+    
+    
+    
     st.write(fig1)  
     
     
@@ -136,7 +153,7 @@ if uploaded_file is not None:
 
 
     ###### Fig3 #######
-    st.subheader('4D with coast line')
+    st.subheader('4D with coastline')
     
 
 
@@ -206,7 +223,7 @@ if uploaded_file is not None:
         mode = 'markers', # 'markers+lines', 'markers'
         marker = dict(size = 3),
         # line = dict(width = 2), #color = 'Black',
-        name='d18O'
+        name='index'
         )
         
 
