@@ -20,8 +20,10 @@ import plotly.express as px
 from io import BytesIO
 # uploaded_file = st.file_uploader("ファイルを選択", type=["csv", "txt", "xlsx"])
 
-
-
+# 純粋なテキスト
+st.text('2024/12/01 test version')
+st.text('3番目の4Dプロットは日本周辺の可視化用で，描画する緯度経度を固定しています')
+st.text('アップしたファイルはメモリ上に格納されるだけでサーバーには保存されません。御安心ください')
 
 # ファイルアップロード
 uploaded_file = st.file_uploader("excelファイル(upload_data_tmp.xlsx)をアップロードしてください", type="xlsx")
