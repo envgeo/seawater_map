@@ -50,11 +50,26 @@ if uploaded_file is not None:
     # color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'blue', 'blue', 'blue', 'blue', 'blue', 'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue', 'lightgray', 'lightgreen', 'yellow', 'orange', 'red', )
     color_continuous_scale= ('darkblue', 'blue', 'lightblue',  'lightgreen', 'green', 'yellow', 'orange', 'red', )
 
-    fig1 = px.scatter(df1, x="x", y="y", color="z", trendline='ols',trendline_color_override='gray', 
-                width=700,
-                height=600,
-                color_continuous_scale=color_continuous_scale,
-                )
+
+    
+    reg_line_plot = st.radio("draw regression line", ("YES", "NO"), horizontal=True, args=[1, 0])
+
+    if reg_line_plot == "YES":
+
+        fig1 = px.scatter(df1, x="x", y="y", color="z", trendline='ols',trendline_color_override='gray', 
+                    width=700,
+                    height=600,
+                    color_continuous_scale=color_continuous_scale,
+                    )
+    
+    else:
+        fig1 = px.scatter(df1, x="x", y="y", color="z",trendline_color_override='gray', 
+                    width=700,
+                    height=600,
+                    color_continuous_scale=color_continuous_scale,
+                    )
+    
+
     
     # マーカー、ラインの設定
     fig1.update_traces(
@@ -67,18 +82,26 @@ if uploaded_file is not None:
   
     
     
-    # #海岸線を重ね書きする場合
-    # # 海岸線の座標データを手動で用意
-    # coastline_excel = 'extra_data.xlsx'
-    # coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
-    # coastline_y = coastline_df['Latitude']  # 海岸線のx座標
-    # coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
-    # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
- 
     
-    # fig1.add_traces(go.Scatter(x=coastline_x, y=coastline_y, mode='lines',     marker = dict(size = 3),
-    #     # line = dict(width = 2), #color = 'Black',
-    #     name='coastline', line=dict(color='blue', width=0.8)))
+    coastline_plot = st.radio("draw a coastline ", ("YES", "NO"), horizontal=True, args=[1, 0])
+    
+    if coastline_plot == "YES":
+
+    
+        #海岸線を重ね書きする場合
+        # 海岸線の座標データを手動で用意
+        coastline_excel = 'extra_data.xlsx'
+        coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
+        coastline_y = coastline_df['Latitude']  # 海岸線のx座標
+        coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
+        color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
+     
+        
+        fig1.add_traces(go.Scatter(x=coastline_x, y=coastline_y, mode='lines',     marker = dict(size = 3),
+            # line = dict(width = 2), #color = 'Black',
+            name='coastline', line=dict(color='blue', width=0.8)))
+    
+    else:()
     
     
     
@@ -176,7 +199,7 @@ if uploaded_file is not None:
     y = df1['x']
     x = df1['y']
     z = df1['z']
-    c = df1['index']
+    # c = df1['index']
 
 
 
@@ -225,7 +248,7 @@ if uploaded_file is not None:
         mode = 'markers', # 'markers+lines', 'markers'
         marker = dict(size = 3),
         # line = dict(width = 2), #color = 'Black',
-        name='index'
+        # name='index'
         )
         
 
