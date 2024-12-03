@@ -212,9 +212,6 @@ def main():
 
 
 
-
-
-
 ######  scalebarで制御してsubmitする場合 ################
 
     with st.sidebar.form("parameter", clear_on_submit=False):
@@ -1375,8 +1372,7 @@ def main():
                         
                         
                         
-                        #############選択データ表示　2024/10/07###################################################################################################################
-# :red[] 
+##################################選択データ表示　2024/10/07###################################################################################################################
         
                         # with表記 (推奨)
                         with st.expander("selected data", expanded=False):
@@ -1393,8 +1389,50 @@ def main():
                             st.write(':green[Selected Data (Cruise, papers)]', selected_cruise_indicate)
                         
                             st.write(':green[Selected Data (detail)]',d_select_add2)
+                            
+                            
+                            st.write(':green[Average values]')
+                                                    
+                            #平均値と標準偏差
+                            col1, col2, col3, col4 = st.columns(4)
+                        
+                            with col2:
+                                average = np.mean(df1['d18O'])
+                                average = round(average,3)
+                                st.write('d18O _ave:', average)
+                        
+                            with col3:
+                                stdev = np.std(df1['d18O'])
+                                stdev = round(stdev,3)
+                                st.write('stdev: ±', stdev)  
+                                
+                            
+                            col1, col2, col3, col4 = st.columns(4)
+                        
+                            with col2:
+                                average = np.mean(df1['Salinity'])
+                                average = round(average,2)
+                                st.write('Sal_ave:', average)
+                        
+                            with col3:
+                                stdev = np.std(df1['Salinity'])
+                                stdev = round(stdev,2)
+                                st.write('stdev ±:', stdev)  
+                                
+                            col1, col2, col3, col4 = st.columns(4)
+                        
+                            with col2:
+                                average = np.mean(df1['Temperature_degC'])
+                                average = round(average,2)
+                                st.write('Temp_ave:', average)
+                        
+                            with col3:
+                                stdev = np.std(df1['Temperature_degC'])
+                                stdev = round(stdev,2)
+                                st.write('stdev ±:', stdev)  
+                                
         
-                        #############選択データ表示　2024/10/07###################################################################################################################
+##################################選択データ表示　2024/10/07###################################################################################################################
 
                     else:()
                     
