@@ -31,12 +31,24 @@ uploaded_file = st.file_uploader("excelファイル(upload_data_tmp.xlsx)をア�
 # ファイルがアップロードされた場合
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
-    df1 = df
     st.write("アップロードされたデータフレーム:")
-    st.write(df1)
+    st.write(df)
     
 
 
+    ############################################################
+
+    # 行ラベル値を取得
+    columns = list(df.columns)
+    x_column = columns[0]
+    y_column = columns[1]
+    z_column = columns[2]
+    index_column = columns[3]
+    
+    # print(f"ｘセルの値: {columns[0]}")
+    # print(f"ｘセルの値: {columns[1]}")
+    # print(f"ｘセルの値: {columns[2]}")
+    # print(f"ｘセルの値: {columns[3]}")
 
 
     ############################################################
@@ -56,14 +68,14 @@ if uploaded_file is not None:
 
     if reg_line_plot == "YES":
 
-        fig1 = px.scatter(df1, x="x", y="y", color="z", trendline='ols',trendline_color_override='gray', 
+        fig1 = px.scatter(df, x=x_column, y=y_column, color=z_column, trendline='ols',trendline_color_override='gray', 
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
                     )
     
     else:
-        fig1 = px.scatter(df1, x="x", y="y", color="z",trendline_color_override='gray', 
+        fig1 = px.scatter(df, x=x_column, y=y_column, color=z_column,trendline_color_override='gray', 
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
@@ -114,8 +126,8 @@ if uploaded_file is not None:
     st.subheader('4D plot')
     color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
    
-    fig2=px.scatter_3d(df1, x='x', y='y', z='z',
-                    color='index', 
+    fig2=px.scatter_3d(df, x=x_column, y=y_column, z=z_column,
+                    color=index_column, 
                     #symbol='species'
                     width=700,
                     height=600,
@@ -141,9 +153,9 @@ if uploaded_file is not None:
         # yaxis = dict(range=[45,20],),
 
         #各軸のタイトル
-        xaxis_title='X',
-        yaxis_title='Y',
-        zaxis_title='Z',
+        xaxis_title= x_column,
+        yaxis_title= y_column,
+        zaxis_title= z_column,
         ),
         # width=700,
         # margin=dict(r=20, l=10, b=10, t=10),
@@ -189,16 +201,16 @@ if uploaded_file is not None:
     z_inversion = st.radio("z-axis inversion ", ("YES", "NO"), horizontal=True, args=[1, 0])
     
     if z_inversion == "YES":
-            df1['z'] = df1['z']*(-1)
+            df[z_column] = df[z_column]*(-1)
 
     else:()
     
     
 
-    # データの準備（サンプルデータとしてランダムな3Dデータを生成）
-    y = df1['x']
-    x = df1['y']
-    z = df1['z']
+    # x-z指定
+    # y = df[x_column]
+    # x = df[y_column]
+    # z = df[z_column]
     # c = df1['index']
 
 
@@ -214,8 +226,8 @@ if uploaded_file is not None:
     
     # 3Dプロットを作成する
     
-    fig3=px.scatter_3d(df1, x='x', y='y', z='z',
-                    color='index', 
+    fig3=px.scatter_3d(df, x=x_column, y=y_column, z=z_column,
+                    color=index_column, 
                     #symbol='species'
                     width=700,
                     height=600,
@@ -268,10 +280,16 @@ if uploaded_file is not None:
         # zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
 
 
+        # #各軸のタイトル
+        # yaxis_title='Latitude N',
+        # xaxis_title='Longitude E',
+        # zaxis_title='Water Depth',
+        
         #各軸のタイトル
-        yaxis_title='Latitude N',
-        xaxis_title='Longitude E',
-        zaxis_title='Water Depth',
+        yaxis_title= y_column,
+        xaxis_title= x_column,
+        zaxis_title= z_column,
+        
         ),
         width=700,
         height=600,
@@ -281,7 +299,7 @@ if uploaded_file is not None:
     
     # 海岸線を底面に追加する
     # データの最上部の場合
-    fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+    fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[0] * len(coastline_x), mode='lines',     marker = dict(size = 3),
         # line = dict(width = 2), #color = 'Black',
         name='coastline', line=dict(color='blue', width=0.8)))
     
