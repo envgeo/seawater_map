@@ -25,6 +25,15 @@ st.text('2024/12/01 test version')
 st.text('3番目の4Dプロットは日本周辺の可視化用で，描画する緯度経度を固定しています')
 st.text('アップしたファイルはメモリ上に格納されるだけでサーバーには保存されません。御安心ください')
 
+print(("--------49_3D4D_visualizer_uploader_v001--------"))
+
+# datetimeモジュールを使った現在の日付と時刻の取得
+import datetime
+dt = datetime.datetime.today()  # ローカルな現在の日付と時刻を取得
+print(dt)  # 2021-10-29 15:58:08.356501
+
+
+
 # ファイルアップロード
 uploaded_file = st.file_uploader("excelファイル(upload_data_tmp.xlsx)をアップロードしてください", type="xlsx")
 
