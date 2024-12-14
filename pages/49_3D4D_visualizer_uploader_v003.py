@@ -87,6 +87,9 @@ if uploaded_file is not None:
     st.button('Reload')
     
 
+
+
+
     
     ###### Fig1 #######
     st.subheader('3D plot')
@@ -144,11 +147,8 @@ if uploaded_file is not None:
             # line = dict(width = 2), #color = 'Black',
             name='coastline', line=dict(color='blue', width=0.8)))
     
-    else:
-    
-        fig1.add_traces(go.Scatter(x=coastline_x, y=coastline_y, mode='lines',  marker = dict(size = 3),
-        # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='blue', width=0.8)))
+    else:()
+
     
     
     st.write(fig1)  
