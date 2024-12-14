@@ -106,7 +106,7 @@ if uploaded_file is not None:
                     )
     
     else:
-        fig1 = px.scatter(df, x=x_column, y=y_column, color=z_column,trendline_color_override='gray', 
+        fig1 = px.scatter(df, x=x_column, y=y_column, color=index_column,trendline_color_override='gray', 
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
@@ -157,7 +157,7 @@ if uploaded_file is not None:
     st.subheader('4D plot')
     color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
    
-    fig2=px.scatter_3d(df, x=x_column, y=y_column, z=index_column,
+    fig2=px.scatter_3d(df, x=x_column, y=y_column, z=z_column,
                     color=index_column, 
                     #symbol='species'
                     width=700,
@@ -186,7 +186,7 @@ if uploaded_file is not None:
         #各軸のタイトル
         xaxis_title= x_column,
         yaxis_title= y_column,
-        zaxis_title= index_column,
+        zaxis_title= z_column,
         ),
         # width=700,
         # margin=dict(r=20, l=10, b=10, t=10),
