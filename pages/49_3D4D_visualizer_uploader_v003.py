@@ -146,6 +146,9 @@ if uploaded_file is not None:
     
     else:()
     
+        fig1.add_traces(go.Scatter(x=coastline_x, y=coastline_y, mode='lines',     marker = dict(size = 3),
+        # line = dict(width = 2), #color = 'Black',
+        name='coastline', line=dict(color='blue', width=0.8)))
     
     
     st.write(fig1)  
