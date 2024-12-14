@@ -22,7 +22,7 @@ from io import BytesIO
 
 # 純粋なテキスト
 st.text('2024/12/14 test version3')
-st.text('3番目の4Dプロットは日本周辺の可視化用で，描画する緯度経度を固定しています')
+# st.text('3番目の4Dプロットは日本周辺の可視化用で，描画する緯度経度を固定しています')
 st.text('アップしたファイルはメモリ上に格納されるだけでサーバーには保存されません。御安心ください')
 
 
@@ -219,9 +219,8 @@ if uploaded_file is not None:
 
 
 
-
     ###### Fig3 #######
-    st.subheader('4D with coastline')
+    st.subheader('4D with coastline (around JAPAN)')
     
 
 
@@ -294,29 +293,30 @@ if uploaded_file is not None:
         # name='index'
         )
         
+    
+    
+    
+    
+    coastline_plo_3D = st.radio("draw a coastline on 3D plot", ("YES", "NO"), horizontal=True, args=[1, 0])
+    
+    if coastline_plo_3D == "YES":
 
     
-    # ###水深をスケールバーで変える設定
-    # fig_depth_max_minus = fig_depth_max*(-1)
-    # fig_depth_min_minus = fig_depth_min*(-1)
-
-
-
-    coastline_plot_3D = st.radio("draw a coastline ", ("NO","YES"), horizontal=True, args=[1, 0])
+        # ###水深をスケールバーで変える設定
+        # fig_depth_max_minus = fig_depth_max*(-1)
+        # fig_depth_min_minus = fig_depth_min*(-1)
     
-    if coastline_plot == "YES":
-
-        
+    
         ##図のスケール
-
+    
         fig3.update_layout(
                 scene = dict(
             # #各軸の範囲
             xaxis = dict(range=[160,120],),
             yaxis = dict(range=[55,20],),
             # zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
-
-
+    
+    
             # #各軸のタイトル
             # yaxis_title='Latitude N',
             # xaxis_title='Longitude E',
@@ -331,7 +331,7 @@ if uploaded_file is not None:
             width=700,
             height=600,
             # margin=dict(r=20, l=10, b=10, t=10),
-
+    
                 )
         
         # 海岸線を底面に追加する
@@ -345,19 +345,18 @@ if uploaded_file is not None:
         #     # line = dict(width = 2), #color = 'Black',
         #     name='coastline', line=dict(color='gray', width=0.5)))
         
-        
-
     
     else:()
     
 
+    
 
-
-
+    
     
     # グラフを表示する
     # fig.show()
     st.write(fig3)
+    
     
     
 
