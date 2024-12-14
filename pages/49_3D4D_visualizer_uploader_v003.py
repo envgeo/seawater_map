@@ -102,7 +102,7 @@ if uploaded_file is not None:
 
     if reg_line_plot == "YES":
 
-        fig1 = px.scatter(df, x=x_column, y=y_column, color=z_column, trendline='ols',trendline_color_override='gray', 
+        fig1 = px.scatter(df, x=x_column, y=y_column, color=index_column, trendline='ols',trendline_color_override='gray', 
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
