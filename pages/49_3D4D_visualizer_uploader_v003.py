@@ -106,7 +106,7 @@ if uploaded_file is not None:
                     )
     
     else:
-        fig1 = px.scatter(df, x=x_column, y=y_column, color=index_column,trendline_color_override='gray', 
+        fig1 = px.scatter(df, x=x_column, y=y_column, color=index_column,trendline_color_override='gray',
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
@@ -301,45 +301,59 @@ if uploaded_file is not None:
     # fig_depth_min_minus = fig_depth_min*(-1)
 
 
-    ##図のスケール
 
-    fig3.update_layout(
-            scene = dict(
-        # #各軸の範囲
-        xaxis = dict(range=[160,120],),
-        yaxis = dict(range=[55,20],),
-        # zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
+    coastline_plot_3D = st.radio("draw a coastline ", ("NO","YES"), horizontal=True, args=[1, 0])
+    
+    if coastline_plot == "YES":
 
-
-        # #各軸のタイトル
-        # yaxis_title='Latitude N',
-        # xaxis_title='Longitude E',
-        # zaxis_title='Water Depth',
         
-        #各軸のタイトル
-        yaxis_title= y_column,
-        xaxis_title= x_column,
-        zaxis_title= z_column,
-        
-        ),
-        width=700,
-        height=600,
-        # margin=dict(r=20, l=10, b=10, t=10),
+        ##図のスケール
 
-            )
+        fig3.update_layout(
+                scene = dict(
+            # #各軸の範囲
+            xaxis = dict(range=[160,120],),
+            yaxis = dict(range=[55,20],),
+            # zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
+
+
+            # #各軸のタイトル
+            # yaxis_title='Latitude N',
+            # xaxis_title='Longitude E',
+            # zaxis_title='Water Depth',
+            
+            #各軸のタイトル
+            yaxis_title= y_column,
+            xaxis_title= x_column,
+            zaxis_title= z_column,
+            
+            ),
+            width=700,
+            height=600,
+            # margin=dict(r=20, l=10, b=10, t=10),
+
+                )
+        
+        # 海岸線を底面に追加する
+        # データの最上部の場合
+        fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[0] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+            # line = dict(width = 2), #color = 'Black',
+            name='coastline', line=dict(color='blue', width=0.8)))
+        
+        #スケールの底面の場合
+        # fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+        #     # line = dict(width = 2), #color = 'Black',
+        #     name='coastline', line=dict(color='gray', width=0.5)))
+        
+        
+
     
-    # 海岸線を底面に追加する
-    # データの最上部の場合
-    fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[0] * len(coastline_x), mode='lines',     marker = dict(size = 3),
-        # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='blue', width=0.8)))
+    else:()
     
-    #スケールの底面の場合
-    # fig3.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
-    #     # line = dict(width = 2), #color = 'Black',
-    #     name='coastline', line=dict(color='gray', width=0.5)))
-    
-    
+
+
+
+
     
     # グラフを表示する
     # fig.show()
