@@ -49,8 +49,10 @@ def main():
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
     st.title('SEAWATER DATA AROUND JAPAN')
-    st.write('Version b05-202410')
-    st.write(':red[NEW!!] 2024/10/7 added data from other references in the section of "including data from other papers"')
+    st.write(':blue[seawater isotopes (d18O, dD), temperature, salinity, seasonality, and anual variations around JAPAN]')
+    st.write('Version b20-202412')
+    st.write(':red[NEW!!] 2024/12/14 The overall page structure has been updated. Uploading and drawing from Excel files is now possible.')
+    st.write(':red[NEW!!] 2024/10/7 added data from other references')
     # st.write('<span style="color:red;background:white">NEW!!</span> NEW',unsafe_allow_html=True)
     # st.write("This is :blue[test]")
     st.warning('This site is not able to support multiple simultaneous accesses, so if the display does not work, please reload the page or try again after awhile.')
@@ -157,6 +159,8 @@ def main():
         # st.title('SEAWATER DATA JAPAN (b01)')
 
         st.header('update')
+        st.write(':red[NEW!!] 2024/12/14 The overall page structure has been updated. Uploading and drawing from Excel files is now possible.')
+        st.write('2024/10/7 added data from other references')
         st.write('2024/09/26 added data from other references in the section of "including data from other papers"')
         st.write('2024/07/26 minor update for all visualizer')
         st.write('2024/05/15 opend to the public')
