@@ -35,7 +35,7 @@ if pages:
     # ドロップダウンメニュー（keyを固定し、session_stateで管理）
     selected_page = st.selectbox(
     # selected_page = st.sidebar.selectbox(
-        "ページを選択", 
+        "Select a page", 
         list(pages.keys()), 
         index=list(pages.keys()).index(st.session_state.selected_page)  # 現在選択されているページをデフォルト選択
     )
