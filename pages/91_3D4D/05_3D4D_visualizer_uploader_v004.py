@@ -443,7 +443,7 @@ else:
         # st.write("以下のボタンをクリックして、サーバー上のExcelファイルをダウンロードしてください。")
     
         st.download_button(
-            label="Excel海岸線データサンプル(Kodama et al. 2024の一部)",
+            label="Excel海洋d18Oデータサンプル(Kodama et al. 2024の一部)",
             data=excel_data,
             file_name="seawater_data_sample.xlsx",  # ダウンロード時のファイル名
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
