@@ -22,13 +22,13 @@ from io import BytesIO
 
 
 
-st.header('3D visualizer uploader Ver.003')
+st.header('3D visualizer uploader Ver.004')
 
 # 純粋なテキスト
-st.text('2024/12/14 test version3')
+st.text('2024/12/14 test version4')
 # st.text('3番目の4Dプロットは日本周辺の可視化用で，描画する緯度経度を固定しています')
 st.text('アップしたファイルはメモリ上に格納されるだけでサーバーには保存されません。御安心ください')
-
+st.text('The uploaded files are only stored in memory and not saved on the server.')
 
 print("--------49_3D4D_visualizer_uploader_v003--------")
 
@@ -74,10 +74,10 @@ if uploaded_file is not None:
         
         # 行ラベル値を任意に設定する場合
         columns = list(df.columns)
-        x_column = st.selectbox("X軸に使用する列を選択してください", columns,index=0)
-        y_column = st.selectbox("Y軸に使用する列を選択してください", columns,index=1)
-        z_column = st.selectbox("Z軸に使用する列を選択してください", columns,index=2)
-        index_column = st.selectbox("スケールバーに使用する列を選択してください", columns,index=3)
+        x_column = st.selectbox("column to use for the X-axis", columns,index=0)
+        y_column = st.selectbox("column to use for the Y-axis", columns,index=1)
+        z_column = st.selectbox("column to use for the Z-axis", columns,index=2)
+        index_column = st.selectbox("column to use for the scale bar", columns,index=3)
         
         
         
@@ -92,7 +92,7 @@ if uploaded_file is not None:
         
         
     with st.sidebar.expander("uploaded data", expanded=False):
-        st.write("アップロードされたデータフレーム:")
+        st.write("uploaded data frame:")
         st.write(df)
         
         
