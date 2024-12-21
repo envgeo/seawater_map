@@ -211,6 +211,8 @@ def main():
         # st.title('SEAWATER DATA JAPAN (b01)')
 
         st.text('note by T.Ishimura')
+        st.write('日本近海で採取した2000以上の海水試料の地球化学データを可視化しました。塩分、水素同位体(dD)、酸素同位体(d18O)、時間、場所など、お好きなパラメーターでデータを可視化し、ウェブアプリケーション上でプロットした図をダウンロードできます。インタラクティブな3D/4D表示も可能です。  図は自由にダウンロードして利用できますが，お使いの際には引用元（data sources、および「Selected Data」に表示される検索結果を参照）と海洋化学データ可視化サイト「https://envgeo.h.kyoto-u.ac.jp/sw_jpn/ by T.Ishimura」を明記してください。')
+        
         st.markdown(
             """<a style='display: block; text-align: left;' href="https://www.h.kyoto-u.ac.jp/academic_f/faculty_f/ishimura_toyoho_4dea/#mailform">問い合わせ</a>
             """,
