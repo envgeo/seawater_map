@@ -671,9 +671,15 @@ def main():
         ).add_to(m)
     
     
+    
+
+    
+    
+    
     # call to render Folium map in Streamlit
     # folium_static(m, width=800, height=800)
     folium_static(m)
+
     # st.map(df)
 
     
@@ -693,7 +699,8 @@ def main():
     # fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(mapbox_style="carto-positron")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    st.plotly_chart(fig)
+    # st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)  # ブラウザの幅に合わせる
 
 
 

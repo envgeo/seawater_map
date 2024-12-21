@@ -709,8 +709,8 @@ def main():
 
     
     
-    st.write(fig1)  
-    
+    # st.write(fig1)  
+    st.plotly_chart(fig1, use_container_width=True)  # ブラウザの幅に合わせる
     
         
     ###### Fig11 #######
@@ -734,9 +734,9 @@ def main():
 
     
     
-    st.write(fig11)  
+    # st.write(fig11)  
     
-    
+    st.plotly_chart(fig11, use_container_width=True)  # ブラウザの幅に合わせる
     
     
     
@@ -768,10 +768,12 @@ def main():
 
     
     
-    st.write(fig31)  
-    
+    # st.write(fig31)  
+    st.plotly_chart(fig31, use_container_width=True)  # ブラウザの幅に合わせる
     
         
+    
+    
     ###### Fig32 #######
     st.subheader('3D T-S salinity-temperature-depth')
     color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'blue', 'blue', 'blue', 'blue', 'blue', 'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue', 'lightgray', 'lightgreen', 'yellow', 'orange', 'red', )
@@ -793,7 +795,8 @@ def main():
 
     
     
-    st.write(fig32)
+    # st.write(fig32)
+    st.plotly_chart(fig32, use_container_width=True)  # ブラウザの幅に合わせる
     #以下でも同じ
     #st.plotly_chart(fig32)
     
@@ -829,8 +832,8 @@ def main():
     # fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(mapbox_style="carto-positron")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    st.plotly_chart(fig)
-    
+    # st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)  # ブラウザの幅に合わせる
     
     
     

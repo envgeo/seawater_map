@@ -164,8 +164,8 @@ if uploaded_file is not None:
 
     
     
-    st.write(fig1)  
-    
+    # st.write(fig1)  
+    st.plotly_chart(fig1, use_container_width=True)  # ブラウザの幅に合わせる
     
 
     
@@ -227,8 +227,8 @@ if uploaded_file is not None:
             )
 
 
-    st.write(fig2)
-
+    # st.write(fig2)
+    st.plotly_chart(fig2, use_container_width=True)  # ブラウザの幅に合わせる
 
 
     
@@ -371,8 +371,8 @@ if uploaded_file is not None:
     
     # グラフを表示する
     # fig.show()
-    st.write(fig3)
-    
+    # st.write(fig3)
+    st.plotly_chart(fig3, use_container_width=True)  # ブラウザの幅に合わせる
     
     
 

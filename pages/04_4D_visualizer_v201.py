@@ -830,8 +830,8 @@ def main():
             )
 
 
-    st.write(fig2)
-
+    # st.write(fig2)
+    st.plotly_chart(fig2, use_container_width=True)  # ブラウザの幅に合わせる
 
 
 
@@ -916,8 +916,8 @@ def main():
             )
 
 
-    st.write(Fig22)
-
+    # st.write(Fig22)
+    st.plotly_chart(Fig22, use_container_width=True)  # ブラウザの幅に合わせる
     
 
 
@@ -1024,8 +1024,8 @@ def main():
     
     # グラフを表示する
     # fig.show()
-    st.write(fig3)
-    
+    # st.write(fig3)
+    st.plotly_chart(fig3, use_container_width=True)  # ブラウザの幅に合わせる
     
     
     
@@ -1136,8 +1136,8 @@ def main():
     
     # グラフを表示する
     # fig.show()
-    st.write(fig4)
-    
+    # st.write(fig4)
+    st.plotly_chart(fig4, use_container_width=True)  # ブラウザの幅に合わせる
     
     
     
@@ -1244,8 +1244,8 @@ def main():
     
     # グラフを表示する
     # fig.show()
-    st.write(fig5)
-    
+    # st.write(fig5)
+    st.plotly_chart(fig5, use_container_width=True)  # ブラウザの幅に合わせる
     
     
     
@@ -1360,8 +1360,8 @@ def main():
     
     # グラフを表示する
     # fig.show()
-    st.write(fig14)
-    
+    # st.write(fig14)
+    st.plotly_chart(fig14, use_container_width=True)  # ブラウザの幅に合わせる
     
     
     

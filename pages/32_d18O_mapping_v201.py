@@ -923,7 +923,17 @@ def main():
     # fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(mapbox_style="carto-positron")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    st.plotly_chart(fig)
+    # st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)  # ブラウザの幅に合わせる
+
+
+
+
+    ##選ばれたデータを表示
+    # 例：特定の列だけを選択して新しいデータフレームを作成
+    df1_table = df1[['reference','Cruise', 'Station', 'Date', 'Longitude_degE', 'Latitude_degN', 'Depth_m', 'Temperature_degC', 'Salinity', 'd18O', 'dD']]
+
+    st.dataframe(df1_table)    
 
 
 

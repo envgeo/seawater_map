@@ -1233,7 +1233,8 @@ def main():
     # fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(mapbox_style="carto-positron")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    st.plotly_chart(fig)
+    # st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)  # ブラウザの幅に合わせる
 
 
 

@@ -1644,8 +1644,8 @@ def main():
     # fig.update_layout(autosize=False, width=1200, height=600)
     fig.update_layout(autosize=True)
     
-    st.plotly_chart(fig)
-
+    # st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)  # ブラウザの幅に合わせる
 
 
 
