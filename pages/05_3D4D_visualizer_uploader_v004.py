@@ -27,8 +27,8 @@ st.header('3D visualizer uploader Ver.004')
 # 純粋なテキスト
 st.text('2024/12/14 test version4')
 # st.text('3番目の4Dプロットは日本周辺の可視化用で，描画する緯度経度を固定しています')
-st.text('アップしたファイルはメモリ上に格納されるだけでサーバーには保存されません。御安心ください')
-st.text('The uploaded files are only stored in memory and not saved on the server.')
+st.text('アップしたファイルはメモリ上に一時的に格納されるだけでサーバーには保存されません。御安心ください')
+st.text('The uploaded files are only temporarily cached in memory and are not stored on the server. Please be assured.')
 
 print("--------49_3D4D_visualizer_uploader_v003--------")
 
@@ -41,7 +41,7 @@ print(dt)  # 2021-10-29 15:58:08.356501
 
 
 # ファイルアップロード
-uploaded_file = st.file_uploader("excelファイル(upload_data_tmp.xlsxなど)をアップロードしてください", type="xlsx")
+uploaded_file = st.file_uploader("Excelファイル(upload_data_tmp.xlsxなど)をアップロードしてください", type="xlsx")
 
 # print(uploaded_file)
 
@@ -391,7 +391,7 @@ else:
 #データフレームを作ってexcelで書き出し，ダウンロード
 
 
-    st.write("サンプルファイルは以下からダウンロードできます")
+    st.write("サンプルファイルは以下からダウンロードできます. Sample files here")
         
         
     list1=[[1,11,21,"area1"], [2,12,22,'area2'], [3,13,23,'area3'],[4,14,24,'area4']]
@@ -402,7 +402,7 @@ else:
     df.to_excel(buf := BytesIO(), index=False)
     
     st.download_button(
-        "Excelブランクテンプレート",
+        "Excelブランクテンプレート(blank template)",
         buf.getvalue(),
         "upload_data_tmp.xlsx",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -430,7 +430,7 @@ else:
         # st.write("以下のボタンをクリックして、サーバー上のExcelファイルをダウンロードしてください。")
     
         st.download_button(
-            label="Excel海岸線座標データサンプル",
+            label="Excel海岸線座標データサンプル (coastline data sample )",
             data=excel_data,
             file_name="coastline_tmp.xlsx",  # ダウンロード時のファイル名
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -452,7 +452,7 @@ else:
         # st.write("以下のボタンをクリックして、サーバー上のExcelファイルをダウンロードしてください。")
     
         st.download_button(
-            label="Excel海洋d18Oデータサンプル(Kodama et al. 2024の一部)",
+            label="Excel海洋d18Oデータサンプル(part of d18O data from Kodama et al., 2024.)",
             data=excel_data,
             file_name="seawater_data_sample.xlsx",  # ダウンロード時のファイル名
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
