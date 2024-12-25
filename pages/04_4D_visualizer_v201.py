@@ -760,6 +760,25 @@ def main():
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
+                    
+                    
+                    #############################ポップアップ情報ここから##########################
+                    hover_data={
+                        "lat": True,  # 名前を表示
+                        "lon": True,  # 値を表示
+                        "d18O": True, 
+                        "dD": True, 
+                        "Salinity": True, 
+                        "Temperature_degC": True, 
+                        "Date": True, 
+                        "Cruise": True, 
+                        "Station": True,
+                        "Depth_m": True,
+                        "reference": True,  # カテゴリを表示
+                        # "x": False,  # X座標はツールチップから除外
+                        # "y": False  # Y座標はツールチップから除外
+                    }
+                    #############################ポップアップ情報ここまで##########################
                 )
                 
 
@@ -846,6 +865,25 @@ def main():
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
+                    
+                    #############################ポップアップ情報ここから##########################
+                    hover_data={
+                        "lat": True,  # 名前を表示
+                        "lon": True,  # 値を表示
+                        "d18O": True, 
+                        "dD": True, 
+                        "Salinity": True, 
+                        "Temperature_degC": True, 
+                        "Date": True, 
+                        "Cruise": True, 
+                        "Station": True,
+                        "Depth_m": True,
+                        "reference": True,  # カテゴリを表示
+                        # "x": False,  # X座標はツールチップから除外
+                        # "y": False  # Y座標はツールチップから除外
+                    }
+                    #############################ポップアップ情報ここまで##########################
+                    
                 )
                 
 
@@ -949,6 +987,25 @@ def main():
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
+                    
+                    #############################ポップアップ情報ここから##########################
+                    hover_data={
+                        "lat": True,  # 名前を表示
+                        "lon": True,  # 値を表示
+                        "d18O": True, 
+                        "dD": True, 
+                        "Salinity": True, 
+                        "Temperature_degC": True, 
+                        "Date": True, 
+                        "Cruise": True, 
+                        "Station": True,
+                        "Depth_m": True,
+                        "reference": True,  # カテゴリを表示
+                        # "x": False,  # X座標はツールチップから除外
+                        # "y": False  # Y座標はツールチップから除外
+                    }
+                    #############################ポップアップ情報ここまで##########################
+                    
                 )
     # fig3 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
     #         marker=dict(
@@ -1060,6 +1117,24 @@ def main():
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
+                    
+                    #############################ポップアップ情報ここから##########################
+                    hover_data={
+                        "lat": True,  # 名前を表示
+                        "lon": True,  # 値を表示
+                        "d18O": True, 
+                        "dD": True, 
+                        "Salinity": True, 
+                        "Temperature_degC": True, 
+                        "Date": True, 
+                        "Cruise": True, 
+                        "Station": True,
+                        "Depth_m": True,
+                        "reference": True,  # カテゴリを表示
+                        # "x": False,  # X座標はツールチップから除外
+                        # "y": False  # Y座標はツールチップから除外
+                    }
+                    #############################ポップアップ情報ここまで##########################
                 )
     
     # fig4 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
@@ -1171,6 +1246,24 @@ def main():
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
+                    
+                    #############################ポップアップ情報ここから##########################
+                    hover_data={
+                        "lat": True,  # 名前を表示
+                        "lon": True,  # 値を表示
+                        "d18O": True, 
+                        "dD": True, 
+                        "Salinity": True, 
+                        "Temperature_degC": True, 
+                        "Date": True, 
+                        "Cruise": True, 
+                        "Station": True,
+                        "Depth_m": True,
+                        "reference": True,  # カテゴリを表示
+                        # "x": False,  # X座標はツールチップから除外
+                        # "y": False  # Y座標はツールチップから除外
+                    }
+                    #############################ポップアップ情報ここまで##########################
                 )
     
     # fig5 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
@@ -1287,6 +1380,24 @@ def main():
                     width=700,
                     height=600,
                     color_continuous_scale=color_continuous_scale,
+                    
+                    #############################ポップアップ情報ここから##########################
+                    hover_data={
+                        "lat": True,  # 名前を表示
+                        "lon": True,  # 値を表示
+                        "d18O": True, 
+                        "dD": True, 
+                        "Salinity": True, 
+                        "Temperature_degC": True, 
+                        "Date": True, 
+                        "Cruise": True, 
+                        "Station": True,
+                        "Depth_m": True,
+                        "reference": True,  # カテゴリを表示
+                        # "x": False,  # X座標はツールチップから除外
+                        # "y": False  # Y座標はツールチップから除外
+                    }
+                    #############################ポップアップ情報ここまで##########################
                 )
     
     # fig14 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
