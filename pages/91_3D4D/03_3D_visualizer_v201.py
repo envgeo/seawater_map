@@ -691,12 +691,67 @@ def main():
     st.subheader('3D salinity-d18O-longitude')
     # color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'blue', 'blue', 'blue', 'blue', 'blue', 'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue', 'lightgray', 'lightgreen', 'yellow', 'orange', 'red', )
     color_continuous_scale= ('darkblue', 'blue', 'lightblue',  'lightgreen', 'green', 'yellow', 'orange', 'red', )
+    
+    
+    
 
+    
+
+
+                      
     fig1 = px.scatter(df1, x="Salinity", y="d18O", color="lon", trendline='ols',trendline_color_override='gray', 
                 width=700,
                 height=600,
                 color_continuous_scale=color_continuous_scale,
+                
+                
+
+                #############################ポップアップ情報ここから##########################
+                hover_data={
+                    "lat": True,  # 名前を表示
+                    "lon": True,  # 値を表示
+                    "d18O": True, 
+                    "dD": True, 
+                    "Salinity": True, 
+                    "Temperature_degC": True, 
+                    "Date": True, 
+                    "Cruise": True, 
+                    "Station": True,
+                    "Depth_m": True,
+                    "reference": True,  # カテゴリを表示
+                    # "x": False,  # X座標はツールチップから除外
+                    # "y": False  # Y座標はツールチップから除外
+                }
+                #############################ポップアップ情報ここまで##########################
+                
                 )
+    
+
+    
+    # # 図を枠で囲む設定
+    # fig1.update_layout(
+    #     shapes=[
+    #         dict(
+    #             type="rect",  # 矩形を指定
+    #             xref="paper",  # x軸は図全体を基準
+    #             yref="paper",  # y軸は図全体を基準
+    #             x0=0, x1=1,  # X軸の範囲（0～1は全体を表す）
+    #             y0=0, y1=1,  # Y軸の範囲（0～1は全体を表す）
+    #             line=dict(
+    #                 color="black",  # 枠線の色
+    #                 width=0.5,  # 枠線の太さ
+    #                 dash="solid",  # 枠線のスタイル（例: "solid", "dash", "dot"）
+                
+    #             ),
+    #         )
+    #     ]
+    # )
+    
+    
+    # # gridcolor：グリッドの色, gridwidth：グリッドの幅、griddash='dot'：破線
+    # fig1.update_xaxes(gridcolor='lightgrey', gridwidth=1, griddash='dot')
+    # fig1.update_yaxes(gridcolor='lightgrey', gridwidth=1, griddash='dot')
+    
     
     # マーカー、ラインの設定
     fig1.update_traces(
@@ -707,10 +762,14 @@ def main():
     )
     
 
-    
+
     
     # st.write(fig1)  
     st.plotly_chart(fig1, use_container_width=True)  # ブラウザの幅に合わせる
+    
+    
+    
+    
     
         
     ###### Fig11 #######
@@ -721,6 +780,26 @@ def main():
                 width=700,
                 height=600,
                 color_continuous_scale=color_continuous_scale,
+                
+                
+                #############################ポップアップ情報ここから##########################
+                hover_data={
+                    "lat": True,  # 名前を表示
+                    "lon": True,  # 値を表示
+                    "d18O": True, 
+                    "dD": True, 
+                    "Salinity": True, 
+                    "Temperature_degC": True, 
+                    "Date": True, 
+                    "Cruise": True, 
+                    "Station": True,
+                    "Depth_m": True,
+                    "reference": True,  # カテゴリを表示
+                    # "x": False,  # X座標はツールチップから除外
+                    # "y": False  # Y座標はツールチップから除外
+                }
+                #############################ポップアップ情報ここまで##########################
+                
                 )
     
     # マーカー、ラインの設定
@@ -755,6 +834,25 @@ def main():
                 width=700,
                 height=600,
                 color_continuous_scale=color_continuous_scale,
+                
+                #############################ポップアップ情報ここから##########################
+                hover_data={
+                    "lat": True,  # 名前を表示
+                    "lon": True,  # 値を表示
+                    "d18O": True, 
+                    "dD": True, 
+                    "Salinity": True, 
+                    "Temperature_degC": True, 
+                    "Date": True, 
+                    "Cruise": True, 
+                    "Station": True,
+                    "Depth_m": True,
+                    "reference": True,  # カテゴリを表示
+                    # "x": False,  # X座標はツールチップから除外
+                    # "y": False  # Y座標はツールチップから除外
+                }
+                #############################ポップアップ情報ここまで##########################
+                
                 )
     
     # マーカー、ラインの設定
@@ -782,6 +880,25 @@ def main():
                 width=700,
                 height=600,
                 color_continuous_scale=color_continuous_scale,
+                
+                #############################ポップアップ情報ここから##########################
+                hover_data={
+                    "lat": True,  # 名前を表示
+                    "lon": True,  # 値を表示
+                    "d18O": True, 
+                    "dD": True, 
+                    "Salinity": True, 
+                    "Temperature_degC": True, 
+                    "Date": True, 
+                    "Cruise": True, 
+                    "Station": True,
+                    "Depth_m": True,
+                    "reference": True,  # カテゴリを表示
+                    # "x": False,  # X座標はツールチップから除外
+                    # "y": False  # Y座標はツールチップから除外
+                }
+                #############################ポップアップ情報ここまで##########################
+                
                 )
     
     # マーカー、ラインの設定
