@@ -1559,7 +1559,7 @@ def main():
 
     fig = px.scatter_mapbox(df1, lat="Latitude_degN", lon="Longitude_degE", zoom=3,
                             # color='Month',
-                            hover_data=["d18O","Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m'],
+                            hover_data=["d18O","Salinity",'Temperature_degC','Date','Cruise','Station','Depth_m', 'reference'],
                             opacity=0.4,
                             )
     
