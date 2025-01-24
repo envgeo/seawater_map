@@ -251,9 +251,9 @@ def main():
         # st.sidebar.subheader('年の範囲')
         
         sld_year_min, sld_year_max = st.slider(label='Year selected',
-                                    min_value=1900,
+                                    min_value=1950,
                                     max_value=2028,
-                                    value=(1900, 2028),
+                                    value=(1950, 2028),
                                     )
         # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
         
@@ -493,7 +493,7 @@ def main():
         fig_depth_min, fig_depth_max = st.slider(label='Depth scale',
                                     min_value=0,
                                     max_value=9000,
-                                    value=(0, 3200),
+                                    value=(0, 9000),
                                     )
 
 
@@ -506,14 +506,14 @@ def main():
         
     elif ref_data == "Kodama et al. (2024) with other reports":
         # st.text('including data from previous reports')
-        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).  :blue[(see "home > about > data source")]')
+        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).')
 
         
     else:
         # st.text('including data from previous reports')
 
-        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).  :blue[(see "home > about > data source")]')
-        st.write(':blue[with:] NASA_database (20250123)]https://data.giss.nasa.gov/cgi-bin/o18data/geto18.cgi')
+        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).')
+        st.write(':blue[with:] NASA_database (Jan.23, 2025)]https://data.giss.nasa.gov/cgi-bin/o18data/geto18.cgi')
 
 
 
@@ -896,7 +896,7 @@ def main():
     
     ###### Fig2 #######
     st.subheader('4D salinity-d18O-depth-temperature')
-    color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
+    color_continuous_scale= ('darkblue', 'blue', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red','darkred','darkred')
    
     fig2=px.scatter_3d(df1, x='Salinity', y='d18O', z='Depth_m',
                     color='Temperature_degC', 
@@ -980,8 +980,8 @@ def main():
     fig2.update_layout(
             scene = dict(
         # #各軸の範囲
-        xaxis = dict(range=[36,20],),
-        yaxis = dict(range=[+1,-4],),
+        # xaxis = dict(range=[36,20],),
+        # yaxis = dict(range=[+1,-4],),
         zaxis = dict(range=[fig_depth_max_minus,fig_depth_min_minus],),
 
 
@@ -1001,7 +1001,7 @@ def main():
     
     ###### Fig22 #######
     st.subheader('4D salinity-temperature-depth-d18O')
-    color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
+    color_continuous_scale= ('darkblue', 'darkblue', 'darkblue','darkblue', 'darkblue',  'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red','darkred')
    
     Fig22=px.scatter_3d(df1, x='Salinity', y='Temperature_degC', z='Depth_m',
                     color='d18O', 
@@ -1085,8 +1085,8 @@ def main():
     Fig22.update_layout(
             scene = dict(
         # #各軸の範囲
-        xaxis = dict(range=[36,20],),
-        yaxis = dict(range=[30,0],),
+        # xaxis = dict(range=[36,20],),
+        # yaxis = dict(range=[30,0],),
         zaxis = dict(range=[fig_depth_max_minus,fig_depth_min_minus],),
 
 
@@ -1116,12 +1116,13 @@ def main():
     z = df1['Depth_m']
     c = df1['d18O']
     # 海岸線の座標データを手動で用意
-    coastline_excel = 'extra_data.xlsx'
+    coastline_excel = 'world_coastline_coordinates_50m.xlsx'
     coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
     coastline_y = coastline_df['Latitude']  # 海岸線のx座標
     coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
-    color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
- 
+    # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
+    color_continuous_scale= ('darkblue', 'darkblue', 'darkblue','darkblue', 'darkblue',  'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red','darkred')
+
     
     # 3Dプロットを作成する
     
@@ -1194,10 +1195,10 @@ def main():
     fig3.update_layout(
             scene = dict(
         # #各軸の範囲
-        xaxis = dict(range=[180,120],),
-        yaxis = dict(range=[55,20],),
+        # xaxis = dict(range=[180,120],),
+        # yaxis = dict(range=[55,20],),
         zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
-
+        aspectratio=dict(x=2, y=1, z=1),  # 各軸方向のスケールを指定
 
         #各軸のタイトル
         yaxis_title='Latitude N',
@@ -1245,12 +1246,12 @@ def main():
     z = df1['Depth_m']
     c = df1['Temperature_degC']
     # 海岸線の座標データを手動で用意
-    coastline_excel = 'extra_data.xlsx'
+    coastline_excel = 'world_coastline_coordinates_50m.xlsx'
     coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
     coastline_y = coastline_df['Latitude']  # 海岸線のx座標
     coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
     # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
-    color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
+    color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'blue','blue','lightblue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red','red','darkred','darkred','darkred','darkred')
 
     
     # 3Dプロットを作成する
@@ -1325,10 +1326,10 @@ def main():
     fig4.update_layout(
             scene = dict(
         # #各軸の範囲
-        xaxis = dict(range=[180,120],),
-        yaxis = dict(range=[55,20],),
+        # xaxis = dict(range=[180,120],),
+        # yaxis = dict(range=[55,20],),
         zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
-
+        aspectratio=dict(x=2, y=1, z=1),  # 各軸方向のスケールを指定
 
         #各軸のタイトル
         yaxis_title='Latitude N',
@@ -1374,12 +1375,12 @@ def main():
     z = df1['Depth_m']
     c = df1['Salinity']
     # 海岸線の座標データを手動で用意
-    coastline_excel = 'extra_data.xlsx'
+    coastline_excel = 'world_coastline_coordinates_50m.xlsx'
     coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
     coastline_y = coastline_df['Latitude']  # 海岸線のx座標
     coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
     # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
-    color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
+    color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray',  'gray', 'lightgreen', 'lightgreen', 'green',  'green', 'yellow', 'orange', 'red','darkred')
 
     
     # 3Dプロットを作成する
@@ -1450,9 +1451,13 @@ def main():
     fig5.update_layout(
             scene = dict(
         # #各軸の範囲
-        xaxis = dict(range=[165,120],),
-        yaxis = dict(range=[55,20],),
+        # xaxis = dict(range=[165,120],),
+        # yaxis = dict(range=[55,20],),
         zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
+        
+        
+        
+        aspectratio=dict(x=2, y=1, z=1),  # 各軸方向のスケールを指定
 
 
         #各軸のタイトル
@@ -1465,6 +1470,9 @@ def main():
         # margin=dict(r=20, l=10, b=10, t=10),
 
             )
+    
+    
+    
     
     # 海岸線を底面に追加する
     # データの最上部の場合
@@ -1491,132 +1499,132 @@ def main():
     
     
 
-    ###### Fig14 #######
-    st.subheader('4D map-depth-dexcess')
-    st.write('black indicate no-data')
+    # ###### Fig14 #######
+    # st.subheader('4D map-depth-dexcess')
+    # st.write('black indicate no-data')
     
-    import plotly.graph_objects as go
+    # import plotly.graph_objects as go
 
-    # データの準備（サンプルデータとしてランダムな3Dデータを生成）
+    # # データの準備（サンプルデータとしてランダムな3Dデータを生成）
     
-    #d-excess（＝δD－8×δ18O）
-    df1['d-excess'] =  df1['dD'] - 8* df1['d18O']
+    # #d-excess（＝δD－8×δ18O）
+    # df1['d-excess'] =  df1['dD'] - 8* df1['d18O']
     
-    y = df1['lat']
-    x = df1['lon']
-    z = df1['Depth_m']
-    c = df1['d-excess']
-    # 海岸線の座標データを手動で用意
-    coastline_excel = 'extra_data.xlsx'
-    coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
-    coastline_y = coastline_df['Latitude']  # 海岸線のx座標
-    coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
-    # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
-    # color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
-    color_continuous_scale= ('darkblue', 'blue','lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red','red','red','red')
+    # y = df1['lat']
+    # x = df1['lon']
+    # z = df1['Depth_m']
+    # c = df1['d-excess']
+    # # 海岸線の座標データを手動で用意
+    # coastline_excel = 'world_coastline_coordinates_50m.xlsx'
+    # coastline_df = pd.read_excel(coastline_excel, sheet_name=0)
+    # coastline_y = coastline_df['Latitude']  # 海岸線のx座標
+    # coastline_x = coastline_df['Longitude']  # 海岸線のy座標  
+    # # color_continuous_scale= ('gray', 'gray', 'gray', 'gray', 'lightgray', 'lightgray', 'lightgray', 'lightgreen', 'lightgreen', 'green', 'green', 'blue', 'lightblue', 'yellow', 'orange', 'red')
+    # # color_continuous_scale= ('darkblue', 'blue', 'blue', 'blue','lightgray', 'lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red')
+    # color_continuous_scale= ('darkblue', 'blue','lightgray', 'gray', 'lightgreen', 'lightgreen', 'green',  'yellow', 'orange', 'red','red','red','red')
 
     
-    # 3Dプロットを作成する
+    # # 3Dプロットを作成する
     
-    fig14=px.scatter_3d(df1, x='lon', y='lat', z='Depth_m',
-                    color='d-excess', 
-                    #symbol='species'
-                    width=700,
-                    height=600,
-                    color_continuous_scale=color_continuous_scale,
+    # fig14=px.scatter_3d(df1, x='lon', y='lat', z='Depth_m',
+    #                 color='d-excess', 
+    #                 #symbol='species'
+    #                 width=700,
+    #                 height=600,
+    #                 color_continuous_scale=color_continuous_scale,
                     
-                    #############################ポップアップ情報ここから##########################
-                    hover_data={
-                        "lat": True,  # 名前を表示
-                        "lon": True,  # 値を表示
-                        "d18O": True, 
-                        "dD": True, 
-                        "Salinity": True, 
-                        "Temperature_degC": True, 
-                        "Date": True, 
-                        "Cruise": True, 
-                        "Station": True,
-                        "Depth_m": True,
-                        "reference": True,  # カテゴリを表示
-                        # "x": False,  # X座標はツールチップから除外
-                        # "y": False  # Y座標はツールチップから除外
-                    }
-                    #############################ポップアップ情報ここまで##########################
-                )
+    #                 #############################ポップアップ情報ここから##########################
+    #                 hover_data={
+    #                     "lat": True,  # 名前を表示
+    #                     "lon": True,  # 値を表示
+    #                     "d18O": True, 
+    #                     "dD": True, 
+    #                     "Salinity": True, 
+    #                     "Temperature_degC": True, 
+    #                     "Date": True, 
+    #                     "Cruise": True, 
+    #                     "Station": True,
+    #                     "Depth_m": True,
+    #                     "reference": True,  # カテゴリを表示
+    #                     # "x": False,  # X座標はツールチップから除外
+    #                     # "y": False  # Y座標はツールチップから除外
+    #                 }
+    #                 #############################ポップアップ情報ここまで##########################
+    #             )
     
-    # fig14 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
-    #         marker=dict(
-    #         size=16,
-    #         color=c,  # マーカーの色をyにする
-    #         colorscale=color_continuous_scale,  # カラースケール変更
-    #         showscale=True,  # カラーバーの表示
-    #         # カラーバーの設定
-    #         colorbar=dict(
-    #         # x=0.2, 
-    #         title="Temperature(C)",
-    #         # 枠線、目盛線の設定
-    #         outlinecolor='black', ticks='outside', tickcolor='black',
-    #         len=0.8,
-    #         thicknessmode='fraction',  # カラーバーの幅の指定方法を割合モードに設定
-    #         thickness=0.02,  # カラーバーの幅（割合モードで0〜1の範囲で指定）
-    #     ),
-    #     ))])
+    # # fig14 = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='markers', 
+    # #         marker=dict(
+    # #         size=16,
+    # #         color=c,  # マーカーの色をyにする
+    # #         colorscale=color_continuous_scale,  # カラースケール変更
+    # #         showscale=True,  # カラーバーの表示
+    # #         # カラーバーの設定
+    # #         colorbar=dict(
+    # #         # x=0.2, 
+    # #         title="Temperature(C)",
+    # #         # 枠線、目盛線の設定
+    # #         outlinecolor='black', ticks='outside', tickcolor='black',
+    # #         len=0.8,
+    # #         thicknessmode='fraction',  # カラーバーの幅の指定方法を割合モードに設定
+    # #         thickness=0.02,  # カラーバーの幅（割合モードで0〜1の範囲で指定）
+    # #     ),
+    # #     ))])
     
-    # fig14.update_layout(coloraxis=dict(colorbar=dict(len=0.5)))
+    # # fig14.update_layout(coloraxis=dict(colorbar=dict(len=0.5)))
     
     
-    # マーカー、ラインの設定
-    fig14.update_traces(
-        # mode = 'markers+lines', # 'markers+lines', 'markers'
-        mode = 'markers', # 'markers+lines', 'markers'
-        marker = dict(size = 3),
-        # line = dict(width = 2), #color = 'Black',
-        name='d-excess'
-        )
+    # # マーカー、ラインの設定
+    # fig14.update_traces(
+    #     # mode = 'markers+lines', # 'markers+lines', 'markers'
+    #     mode = 'markers', # 'markers+lines', 'markers'
+    #     marker = dict(size = 3),
+    #     # line = dict(width = 2), #color = 'Black',
+    #     name='d-excess'
+    #     )
         
     
-    ###水深をスケールバーで変える設定
-    fig_depth_max_minus = fig_depth_max*(-1)
-    fig_depth_min_minus = fig_depth_min*(-1)
+    # ###水深をスケールバーで変える設定
+    # fig_depth_max_minus = fig_depth_max*(-1)
+    # fig_depth_min_minus = fig_depth_min*(-1)
 
 
-    ##図のスケール
+    # ##図のスケール
 
-    fig14.update_layout(
-            scene = dict(
-        # #各軸の範囲
-        xaxis = dict(range=[165,120],),
-        yaxis = dict(range=[55,20],),
-        zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
+    # fig14.update_layout(
+    #         scene = dict(
+    #     # #各軸の範囲
+    #     xaxis = dict(range=[165,120],),
+    #     yaxis = dict(range=[55,20],),
+    #     zaxis = dict(range=[fig_depth_max_minus, fig_depth_min_minus],),
 
 
-        #各軸のタイトル
-        yaxis_title='Latitude N',
-        xaxis_title='Longitude E',
-        zaxis_title='Water Depth',
-        ),
-        width=700,
-        height=600,
-        # margin=dict(r=20, l=10, b=10, t=10),
+    #     #各軸のタイトル
+    #     yaxis_title='Latitude N',
+    #     xaxis_title='Longitude E',
+    #     zaxis_title='Water Depth',
+    #     ),
+    #     width=700,
+    #     height=600,
+    #     # margin=dict(r=20, l=10, b=10, t=10),
 
-            )
+    #         )
     
-    # 海岸線を底面に追加する
-    # データの最上部の場合
-    fig14.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
-        # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='blue', width=0.8)))
+    # # 海岸線を底面に追加する
+    # # データの最上部の場合
+    # fig14.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[max(z)] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+    #     # line = dict(width = 2), #color = 'Black',
+    #     name='coastline', line=dict(color='blue', width=0.8)))
     
-    #スケールの底面の場合
-    fig14.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
-        # line = dict(width = 2), #color = 'Black',
-        name='coastline', line=dict(color='gray', width=0.5)))
+    # #スケールの底面の場合
+    # fig14.add_traces(go.Scatter3d(x=coastline_x, y=coastline_y, z=[fig_depth_max_minus] * len(coastline_x), mode='lines',     marker = dict(size = 3),
+    #     # line = dict(width = 2), #color = 'Black',
+    #     name='coastline', line=dict(color='gray', width=0.5)))
     
     
-    # グラフを表示する
-    # fig.show()
-    # st.write(fig14)
-    st.plotly_chart(fig14, use_container_width=True)  # ブラウザの幅に合わせる
+    # # グラフを表示する
+    # # fig.show()
+    # # st.write(fig14)
+    # st.plotly_chart(fig14, use_container_width=True)  # ブラウザの幅に合わせる
     
     
     
