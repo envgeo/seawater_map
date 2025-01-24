@@ -502,14 +502,14 @@ def main():
         
     elif ref_data == "Kodama et al. (2024) with other reports":
         # st.text('including data from previous reports')
-        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).  :blue[(see "home > about > data source")]')
+        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).')
 
         
     else:
         # st.text('including data from previous reports')
 
-        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).  :blue[(see "home > about > data source")]')
-        st.write(':blue[with:] NASA_database (20250123)]https://data.giss.nasa.gov/cgi-bin/o18data/geto18.cgi')
+        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).')
+        st.write(':blue[with:] NASA_database (Jan.23, 2025)]https://data.giss.nasa.gov/cgi-bin/o18data/geto18.cgi')
 
 
 
@@ -922,6 +922,83 @@ def main():
     
     
         
+    ###### Fig2 #######
+    st.subheader('3D salinity-d18O-latitude')
+    # color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'blue', 'blue', 'blue', 'blue', 'blue', 'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue', 'lightgray', 'lightgreen', 'yellow', 'orange', 'red', )
+    color_continuous_scale= ('darkblue', 'blue', 'lightblue',  'lightgreen', 'green', 'yellow', 'orange', 'red', )
+    
+                      
+    fig2 = px.scatter(df1, x="Salinity", y="d18O", color="lat", trendline='ols',trendline_color_override='gray', 
+                width=700,
+                height=600,
+                color_continuous_scale=color_continuous_scale,
+                
+                
+
+                #############################ポップアップ情報ここから##########################
+                hover_data={
+                    "lat": True,  # 名前を表示
+                    "lon": True,  # 値を表示
+                    "d18O": True, 
+                    "dD": True, 
+                    "Salinity": True, 
+                    "Temperature_degC": True, 
+                    "Date": True, 
+                    "Cruise": True, 
+                    "Station": True,
+                    "Depth_m": True,
+                    "reference": True,  # カテゴリを表示
+                    # "x": False,  # X座標はツールチップから除外
+                    # "y": False  # Y座標はツールチップから除外
+                }
+                #############################ポップアップ情報ここまで##########################
+                
+                )
+    
+
+    
+    # # 図を枠で囲む設定
+    # fig1.update_layout(
+    #     shapes=[
+    #         dict(
+    #             type="rect",  # 矩形を指定
+    #             xref="paper",  # x軸は図全体を基準
+    #             yref="paper",  # y軸は図全体を基準
+    #             x0=0, x1=1,  # X軸の範囲（0～1は全体を表す）
+    #             y0=0, y1=1,  # Y軸の範囲（0～1は全体を表す）
+    #             line=dict(
+    #                 color="black",  # 枠線の色
+    #                 width=0.5,  # 枠線の太さ
+    #                 dash="solid",  # 枠線のスタイル（例: "solid", "dash", "dot"）
+                
+    #             ),
+    #         )
+    #     ]
+    # )
+    
+    
+    # # gridcolor：グリッドの色, gridwidth：グリッドの幅、griddash='dot'：破線
+    # fig1.update_xaxes(gridcolor='lightgrey', gridwidth=1, griddash='dot')
+    # fig1.update_yaxes(gridcolor='lightgrey', gridwidth=1, griddash='dot')
+    
+    
+    # マーカー、ラインの設定
+    fig2.update_traces(
+    #     # mode = 'markers+lines', # 'markers+lines', 'markers'
+    #     mode = 'markers', # 'markers+lines', 'markers'
+        marker = dict(size = 5),
+    #     # line = dict(width = 2), #color = 'Black',
+    )
+    
+
+
+    
+    # st.write(fig1)  
+    st.plotly_chart(fig2, use_container_width=True)  # ブラウザの幅に合わせる
+    
+    
+    
+        
     ###### Fig11 #######
     st.subheader('3D salinity-d18O-depth')
     color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'blue', 'blue', 'blue', 'blue', 'blue', 'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue', 'lightgray', 'lightgreen', 'yellow', 'orange', 'red', )
@@ -1020,6 +1097,57 @@ def main():
     st.plotly_chart(fig31, use_container_width=True)  # ブラウザの幅に合わせる
     
         
+    
+    
+    
+    ###### Fig30 #######
+    st.subheader('3D T-S salinity-temperature-latitude')
+    # color_continuous_scale= ('darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'darkblue', 'blue', 'blue', 'blue', 'blue', 'blue', 'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue',  'lightblue', 'lightgray', 'lightgreen', 'yellow', 'orange', 'red', )
+    color_continuous_scale= ('darkblue', 'blue', 'lightblue',  'lightgreen', 'green', 'yellow', 'orange', 'red', )
+
+    fig30 = px.scatter(df1, x="Salinity", y="Temperature_degC", color="lat",
+                width=700,
+                height=600,
+                color_continuous_scale=color_continuous_scale,
+                
+                #############################ポップアップ情報ここから##########################
+                hover_data={
+                    "lat": True,  # 名前を表示
+                    "lon": True,  # 値を表示
+                    "d18O": True, 
+                    "dD": True, 
+                    "Salinity": True, 
+                    "Temperature_degC": True, 
+                    "Date": True, 
+                    "Cruise": True, 
+                    "Station": True,
+                    "Depth_m": True,
+                    "reference": True,  # カテゴリを表示
+                    # "x": False,  # X座標はツールチップから除外
+                    # "y": False  # Y座標はツールチップから除外
+                }
+                #############################ポップアップ情報ここまで##########################
+                
+                )
+    
+    # マーカー、ラインの設定
+    fig30.update_traces(
+    #     # mode = 'markers+lines', # 'markers+lines', 'markers'
+    #     mode = 'markers', # 'markers+lines', 'markers'
+        marker = dict(size = 5),
+    #     # line = dict(width = 2), #color = 'Black',
+    )
+    
+
+    
+    
+    # st.write(fig31)  
+    st.plotly_chart(fig30, use_container_width=True)  # ブラウザの幅に合わせる
+    
+    
+    
+    
+    
     
     
     ###### Fig32 #######
