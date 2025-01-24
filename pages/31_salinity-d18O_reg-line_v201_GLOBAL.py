@@ -698,17 +698,16 @@ def main():
         
     elif ref_data == "Kodama et al. (2024) with other reports":
         # st.text('including data from previous reports')
-        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).  :blue[(see "home > about > data source")]')
+        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).')
 
         
     else:
         # st.text('including data from previous reports')
 
-        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).  :blue[(see "home > about > data source")]')
-        st.write(':blue[with:] NASA_database (20250123)]https://data.giss.nasa.gov/cgi-bin/o18data/geto18.cgi')
+        st.write(':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).')
+        st.write(':blue[with:] NASA_database (Jan.23, 2025)]https://data.giss.nasa.gov/cgi-bin/o18data/geto18.cgi')
 
 
-    
     
     # """      Spyderのメニューボタンの実行ボタンを使わないと作業ディレクトリが反映されないので注意！     """
     # """      Spyderのメニューボタンの実行ボタンを使わないと作業ディレクトリが反映されないので注意！     """
