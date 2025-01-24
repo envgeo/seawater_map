@@ -414,9 +414,9 @@ def main():
         # st.sidebar.subheader('年の範囲')
         
         sld_year_min, sld_year_max = st.slider(label='Year selected',
-                                    min_value=1900,
+                                    min_value=1960,
                                     max_value=2028,
-                                    value=(1900, 2028),
+                                    value=(1960, 2028),
                                     )
         # st.sidebar.write(f'Selected: {sld_year_min} ~ {sld_year_max}')
         
