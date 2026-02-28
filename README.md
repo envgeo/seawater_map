@@ -1,7 +1,8 @@
 # Under construction / 作成中です
 
-# Seawater Japan: Interactive 3D-4D Seawater Isotope & Geochemical Database
 
+# Seawater Japan: Interactive 3D-4D Seawater Isotope & Geochemical Database
+# as Exploratory Data Analysis Platform　(探索的研究基盤)
 [English](#english-section) | [日本語](#japanese-section)
 
 ---
@@ -17,7 +18,6 @@
 * **Multi-Dimensional Visualization**: Explore spatial and temporal variations using 3D scatter plots and 4D time-series animations.
 * **Advanced Geochemical Analysis**: Real-time generation of T-S diagrams, Salinity-$\delta^{18}$O regression lines, and vertical depth profiles.
 * **Comprehensive Database**: Integrated data from Kodama et al. (2024), NASA GISS, and multiple historical maritime surveys.
-* **User Data Integration**: A dedicated uploader allows researchers to visualize their own Excel datasets within the platform's analytical framework.
 * **Cross-Platform Performance**: Built with Streamlit and Plotly for seamless operation directly in the web browser.
 
 ### Project Structure
@@ -44,13 +44,12 @@ If you use this tool or its integrated datasets for your research, please cite t
 ## 日本語
 
 ### 概要
-**Seawater Japan** は、海水の同位体地球化学データの可視化と解析に特化した高性能なWebベースプラットフォームです。日本周辺海域および世界海洋の安定同位体比（$\delta^{18}$O, $\delta$D）、塩分、水温のデータを統合し、インタラクティブな3D/4D環境で探索することを可能にします。
+**Seawater Japan** は、海水の同位体地球化学データの可視化と解析に特化した高性能なWebベースプラットフォームです。日本周辺海域および世界海洋の安定同位体比δ<sup>18</sup>O, δD、塩分、水温のデータを統合し、インタラクティブな3D/4D環境で探索することを可能にします。
 
 ### 主な機能
 * **多次元可視化**: 3D散布図および4D時系列アニメーションを用いた、時空間的なバリエーションの把握。
-* **高度な地球化学解析**: T-S図、塩分-$\delta^{18}$O回帰直線、鉛直プロファイルなどのリアルタイム生成。
+* **高度な地球化学解析**: T-S図、塩分-δ<sup>18</sup>O回帰直線、鉛直プロファイルなどのリアルタイム生成。
 * **統合データベース**: Kodama et al. (2024)、NASA GISS、および複数の既往研究のデータを一括管理。
-* **ユーザーデータ統合**: アップローダー機能により、研究者自身が持つExcelデータを本プラットフォームの解析機能で可視化可能。
 * **ブラウザ完結型**: StreamlitとPlotlyを採用し、インストール不要で高速に動作します。
 
 ### プロジェクト構成
@@ -68,6 +67,6 @@ If you use this tool or its integrated datasets for your research, please cite t
 ### 引用について
 本ツールおよび統合データを使用される場合は、以下の引用をお願いいたします。
 * **ソフトウェア**: 石村豊穂 (2026). Seawater Japan: Interactive 3D-4D Seawater Isotope & Geochemical Database. DOI: [ここにDOIを記載]
-* **主要データソース**: Kodama, T., et al. (2024). Spatiotemporal variations of seawater $\delta^{18}$O and $\delta$D in the Western North Pacific. *Geochemical Journal*.
+* **主要データソース**: Kodama, T., et al. (2024). Spatiotemporal variations of seawater δ<sup>18</sup>O and δD in the Western North Pacific. *Geochemical Journal*.
 
 Developed by **Toyoho Ishimura** (Associate Professor, Kyoto University)
