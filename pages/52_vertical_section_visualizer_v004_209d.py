@@ -7,12 +7,14 @@ from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
 import envgeo_utils
 
+
+
 # --- 断面図作成用関数 ---
 def create_section_plot(Z, xi, yi, df_points, x_col, target_col, z_min, z_max, plot_type="color"):
     fig = go.Figure()
     if plot_type == "color":
         fig.add_trace(go.Contour(
-            z=Z, x=xi, y=yi, colorscale='Portland',
+            z=Z, x=xi, y=yi, colorscale='Blues',
             zmin=z_min, zmax=z_max,
             colorbar=dict(title=target_col, orientation='h', y=-0.25, tickformat=".2f"),
             contours=dict(showlabels=True, coloring='heatmap', start=z_min, end=z_max),
