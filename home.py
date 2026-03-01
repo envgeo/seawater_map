@@ -179,7 +179,7 @@ def main():
             
             st.write('_____')
             
-            st.subheader(':red[sub data set included from other papers]')
+            st.subheader(':red[sub data set included from other papers around JAPAN]')
             st.subheader('#02 Yamamoto et al., 2001.')
             st.write('Yamamoto, M., Tanaka, N., Tsunogai, S. (2001). Okhotsk Sea intermediate water formation deduced from oxygen isotope systematics. Journal of Geophysical Research: Oceans, 106(C12), 31075-31084.')
             st.write(':green[DOI:] https://doi.org/10.1029/2000JC000754')
@@ -218,7 +218,17 @@ def main():
             st.subheader(':red[Global Database Integration]')
             st.write('NASA GISS Global Seawater Oxygen Isotope Database (Jan.23, 2025)]https://data.giss.nasa.gov/o18data/')
 
-            
+            # --- 外部ファイル(テキスト/Markdown)からの読み込み ---
+            try:
+                with open('dataset/nasa_references.md', 'r', encoding='utf-8') as f:
+                    nasa_refs = f.read()
+                st.markdown(nasa_refs, unsafe_allow_html=True)
+            except FileNotFoundError:
+                st.error("The reference list file cannot be found. Please visit https://data.giss.nasa.gov/o18data/ref.html")
+
+
+
+
             
             st.write('_____')
             st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
