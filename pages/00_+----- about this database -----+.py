@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import streamlit as st
+import os
 
 def main():
     #タブページ
@@ -17,337 +18,237 @@ def main():
         
     tab1, tab2= st.tabs(["English", "日本語"])
     
+    
+    
+    
+
+
+    ##############################################################
     with tab1:
+        # st.title('SEAWATER DATA JAPAN (b03)')
 
-            st.header("about")
-            # st.header('by TOYOHO ISHIMURA')
-            
-            st.write("The geochemical data of more than 2000 seawater samples analyzed around Japan have been visualized. You can visualize any data you like, including salinity, hydrogen isotopes, oxygen isotopes, time period and location, and download a plotted figure from this web application. Interactive 3D/4D display is also available.")
-            st.write("As of 2025, the database has been expanded to include over 22,000 global ocean isotope datasets sourced from NASA’s database.")
-            st.write("Figures can be freely downloaded and used. Please cite the original articles (see data sources, and search results shown in -Selected Data-) and the URL “https://envgeo.h.kyoto-u.ac.jp/sw_jpn/ by T.Ishimura“. (Dec.,2024).")
-                     
-            # 純粋なテキスト
+        st.header("about")
+        # st.header('by TOYOHO ISHIMURA')
         
-            
-            st.link_button("For more information and permissions for use, click here", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
-            
-            st.text('visualization by TOYOHO ISHIMURA @ Kyoto Univ. (Built with Python and Streamlit)')
-            
-            # 純粋なテキスト
-            st.write('_____')
-            st.header('data sources')
-            
-        
-            st.subheader('#01 Kodama et al., 2024. :red[(main data set)]')
-            #st.write('Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024) Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal. DOI: 10.2343/geochemj.GJ24009')
-            # st.markdown(
-            #     """<a style='display: block; text-align: left;' href="https://doi.org/10.2343/geochemj.GJ24009">Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024) Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal. DOI: 10.2343/geochemj.GJ24009</a>
-            #     """,
-            #     unsafe_allow_html=True,
-            # )
-            
-            st.write('Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024). Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal.')
-        
-            
-            st.write(':green[DOI:] https://doi.org/10.2343/geochemj.GJ24009')
-            st.write(':green[analytical method:] Picarro L2130i-I (at Ibaraki-KOSEN and Kyoto Univ.)')
-            st.write(':green[analytical precision:] ±0.03 and ±0.2‰ for δ18O and δD')
-            st.write(':green[analytical PI:] Toyoho Ishimura')
-            
-            st.header("")
-            #gifアニメを読み込む
-            st.subheader('🚢 Cruise Area (2015-2021)')
-            st.image("data/sites_20230515.gif")
-            
-                    #gifアニメを読み込む
-            st.subheader('🚢 Sampling sites by Year')
-            st.image("data/year_20230517.gif")
-            
-            
-            st.write('_____')
-            
-            st.subheader(':red[sub data set included from other papers around JAPAN]')
-            st.subheader('#02 Yamamoto et al., 2001.')
-            st.write('Yamamoto, M., Tanaka, N., Tsunogai, S. (2001). Okhotsk Sea intermediate water formation deduced from oxygen isotope systematics. Journal of Geophysical Research: Oceans, 106(C12), 31075-31084.')
-            st.write(':green[DOI:] https://doi.org/10.1029/2000JC000754')
-            st.write(':green[analytical method:] FinniganMAT delta-S with a CO2- H20 equilibration unit')
-            st.write(':green[analytical precision:] ±0.02% for δ18O')
-            st.write(':green[analytical PI:] ')
-            
-            
-            st.subheader('#03 Sakamoto et al., 2019.')
-            st.write('Sakamoto, T., Komatsu, K., Shirai, K., Higuchi, T., Ishimura, T., Setou, T., Kamimura, Y., Watanaebe, C., Kawabata, A. (2019). Combining microvolume isotope analysis and numerical simulation to reproduce fish migration history. Methods in Ecology and Evolution, 10(1), 59-69.')
-            st.write(':green[DOI:] https://doi.org/10.1111/2041-210X.13098')
-            st.write(':green[analytical method:] Picarro L2120-I (at AORI, Univ. of Tokyo)')
-            st.write(':green[analytical precision:] ±0.07‰ for δ18O')
-            st.write(':green[analytical PI:] ')
-            
-            
-            st.subheader('#04 Horikawa et al., 2023.')
-            st.write('Horikawa, K., Kodaira, T., Zhang, J., Obata, H. (2023). Salinity–oxygen isotope relationship during an El Niño (2014–2015) in the southwestern Pacific and comparisons with GEOSECS data (La Niña, 1973–1974). Marine Chemistry, 249, 104222.')
-            st.write(':green[DOI:] https://doi.org/10.1016/j.marchem.2023.104222')
-            st.write(':green[analytical method:] Micromass PRISM or Thermo Delta V advantage (at Toyama Univ.)')
-            st.write(':green[analytical precision:] ± 0.05‰  for δ18O')
-            st.write(':green[analytical PI:] ')
-            
-            
-            st.subheader('#05 Kodaira et al., 2016.')
-            st.write('Kodaira, T., Horikawa, K., Zhang, J., Senjyu, T. (2016) Relationship between seawater oxygen isotope ratio and salinity in the Tsushima Current, the Sea of Japan. Chikyukagaku (Geochemistry). 50, 263–277. (in Japanese with English abstract)')
-            st.write(':green[DOI:] https://doi.org/10.14934/chikyukagaku.50.263')
-            st.write(':green[analytical method:] Micromass PRISM  (at Toyama Univ.)')
-            st.write(':green[analytical precision:] ±0.02‰    for δ18O')
-            st.write(':green[analytical PI:] ')
-            
-            st.write('')
-            
-            st.write('_____')
-            
-            st.subheader(':red[Global Database Integration]')
-            st.write('NASA GISS Global Seawater Oxygen Isotope Database (Jan.23, 2025)]https://data.giss.nasa.gov/o18data/')
-        
-            # --- 外部ファイル(テキスト/Markdown)からの読み込み ---
+        ###############
+        # --- 冒頭のabout　外部ファイル (about.md) の読み込みと実行 ---
+        about_file = 'data_text/about.md'
+
+        if os.path.exists(about_file):
             try:
-                with open('dataset/nasa_references.md', 'r', encoding='utf-8') as f:
-                    nasa_refs = f.read()
-                st.markdown(nasa_refs, unsafe_allow_html=True)
-            except FileNotFoundError:
-                st.error("The reference list file cannot be found. Please visit https://data.giss.nasa.gov/o18data/ref.html")
+                # ファイルを UTF-8 で読み込みます
+                with open(about_file, 'r', encoding='utf-8') as f:
+                    ref_content = f.read()
+                
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                exec(ref_content)
+                
+            except Exception as e:
+                st.error(f"Error loading {about_file}: {e}")
+        else:
+            # ファイルがない場合の予備表示（必要なければ消して構いません）
+            # st.info(f"情報: {about_file} が見つかりません。")
+            st.info(f"情報: {about_file} が見つかりません。")
+        ###############
 
-
+        # 純粋なテキスト
+        st.write('_____')
+        st.header('data sources')
 
         
-            
-            
-            st.write('_____')
-            st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+        ###############
+        # --- メイン引用文献　外部ファイル (main_references.md) の読み込みと実行 ---
+        ref_file_main = 'data_text/main_references.md'
 
+        if os.path.exists(ref_file_main):
+            try:
+                # ファイルを UTF-8 で読み込みます
+                with open(ref_file_main, 'r', encoding='utf-8') as f:
+                    ref_content = f.read()
+                
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                exec(ref_content)
+                
+            except Exception as e:
+                st.error(f"Error loading {ref_file_main}: {e}")
+        else:
+            # ファイルがない場合の予備表示（必要なければ消して構いません）
+            # st.info(f"情報: {ref_file_main} が見つかりません。")
+            st.info(f"情報: {ref_file_main} が見つかりません。")
+        ###############
 
+        
+        ###############
+        # --- その他の引用文献　外部ファイル (other_references.md) の読み込みと実行 ---
+        ref_file_others = 'data_text/other_references.md'
 
+        if os.path.exists(ref_file_others):
+            try:
+                # ファイルを UTF-8 で読み込みます
+                with open(ref_file_others, 'r', encoding='utf-8') as f:
+                    ref_content = f.read()
+                
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                exec(ref_content)
+                
+            except Exception as e:
+                st.error(f"Error loading {ref_file_others}: {e}")
+        else:
+            # ファイルがない場合の予備表示（必要なければ消して構いません）
+            # st.info(f"情報: {ref_file} が見つかりません。")
+            st.info(f"情報: {ref_file_others} が見つかりません。")
+        ###############
 
-            
+        
+        st.write('  ')
 
-            
+        st.subheader(':red[Global Database Integration]')
+        st.subheader('NASA GISS Global Seawater Oxygen Isotope Database')
+        st.write('https://data.giss.nasa.gov/o18data/')
+        
+        
+        ###############
+        # --- NASAデータベースの引用文献　外部ファイル(テキスト/Markdown)からの読み込み ---
+        try:
+            with open('data_text/nasa_references.md', 'r', encoding='utf-8') as f:
+                nasa_refs = f.read()
+            st.markdown(nasa_refs, unsafe_allow_html=True)
+        except FileNotFoundError:
+            st.error("The reference list file cannot be found. Please visit https://data.giss.nasa.gov/o18data/ref.html")
+        ###############
 
-        # ヘッダ
+        st.write('_____')
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+    
+   
+   
+   
+
+    ##############################################################
     with tab2:
         # st.title('SEAWATER DATA JAPAN (b01)')
 
-        st.text('note by T.Ishimura')
-        st.write('日本近海で採取した2000以上の海水試料の地球化学データに加えて，NASAのデータベースから全世界20000点以上のデータを統合しデータベース化した上で，インタラクティブな可視化アプリとして公開しました。')
-        st.write('塩分、水素同位体(dD)、酸素同位体(d18O)、時間、場所など、お好きなパラメーターでデータを可視化し、ウェブアプリケーション上でプロットした図をダウンロードできます。インタラクティブな3D/4D表示も可能です。  図は自由にダウンロードして利用できますが，お使いの際には引用元（data sources、および「Selected Data」に表示される検索結果を参照）と海洋化学データ可視化サイト「https://envgeo.h.kyoto-u.ac.jp/sw_jpn/ by Toyoho Ishimura」を明記してください。')
 
-        st.markdown(
-            """<a style='display: block; text-align: left;' href="https://www.h.kyoto-u.ac.jp/academic_f/faculty_f/ishimura_toyoho_4dea/#mailform">問い合わせ</a>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+
+        ###############
+        # --- 日本語簡易説明　外部ファイル (japanese.md) の読み込みと実行 ---
+        japanese_file = 'data_text/japanese.md'
+
+        if os.path.exists(japanese_file):
+            try:
+                # ファイルを UTF-8 で読み込みます
+                with open(japanese_file, 'r', encoding='utf-8') as f:
+                    ref_content = f.read()
+                
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                exec(ref_content)
+                
+            except Exception as e:
+                st.error(f"Error loading {japanese_file}: {e}")
+        else:
+            # ファイルがない場合の予備表示（必要なければ消して構いません）
+            # st.info(f"情報: {ref_file} が見つかりません。")
+            st.info(f"情報: {japanese_file} が見つかりません。")
+        ###############
+
+    ##############################################################
+
+    
+    
+        st.header("about")
+        # st.header('by TOYOHO ISHIMURA')
         
-        st.write('2024/05/11')
-        st.write('MacのSafariの古いバージョン(16.3以前)では表示されないようです。その他不具合・ご要望など，ご連絡いただければ幸いです。')
-        st.write('複数アクセスには対応できておりませんので，表示が上手く行かないときには時間をおいてからおためしください。')
-        st.write('今後，公表されている各種データを追加してデータの拡充をしたいと考えています。')
+        ###############
+        # --- 冒頭のabout　外部ファイル (about.md) の読み込みと実行 ---
+        about_file = 'data_text/about.md'
 
+        if os.path.exists(about_file):
+            try:
+                # ファイルを UTF-8 で読み込みます
+                with open(about_file, 'r', encoding='utf-8') as f:
+                    ref_content = f.read()
+                
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                exec(ref_content)
+                
+            except Exception as e:
+                st.error(f"Error loading {about_file}: {e}")
+        else:
+            # ファイルがない場合の予備表示（必要なければ消して構いません）
+            # st.info(f"情報: {about_file} が見つかりません。")
+            st.info(f"情報: {about_file} が見つかりません。")
+        ###############
 
+        # 純粋なテキスト
+        st.write('_____')
+        st.header('data sources')
 
-    # サブレベルヘッダ
-    
-    #色を変えるとき
-    #st.write('<span style="color:red;background:pink">該当するデータがありません・・・・</span>',unsafe_allow_html=True)
+        
+        ###############
+        # --- メイン引用文献　外部ファイル (main_references.md) の読み込みと実行 ---
+        ref_file_main = 'data_text/main_references.md'
 
+        if os.path.exists(ref_file_main):
+            try:
+                # ファイルを UTF-8 で読み込みます
+                with open(ref_file_main, 'r', encoding='utf-8') as f:
+                    ref_content = f.read()
+                
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                exec(ref_content)
+                
+            except Exception as e:
+                st.error(f"Error loading {ref_file_main}: {e}")
+        else:
+            # ファイルがない場合の予備表示（必要なければ消して構いません）
+            # st.info(f"情報: {ref_file_main} が見つかりません。")
+            st.info(f"情報: {ref_file_main} が見つかりません。")
+        ###############
 
-    # st.header('by TOYOHO ISHIMURA')
-    # 純粋なテキスト
-    # st.text('original data: xxx in prep.')
-    # 純粋なテキスト
-    # st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
+        
+        ###############
+        # --- その他の引用文献　外部ファイル (other_references.md) の読み込みと実行 ---
+        ref_file_others = 'data_text/other_references.md'
 
-    # # マークダウンテキスト
-    # st.markdown('**Markdown is available **')
-    # # LaTeX テキスト
-    # st.latex(r'\bar{X} = \frac{1}{N} \sum_{n=1}^{N} x_i')
-    # # コードスニペット
-    # st.code('print(\'Hello, World!\')')
-    # # エラーメッセージ
-    # st.error('in case of error: push reload button or reload this site')
-    # # 警告メッセージ
-    # st.warning('Warning message')
-    # # 情報メッセージ
-    # st.info('Information message')
-    # # 成功メッセージ
-    # st.success('Success message')
-    # # 例外の出力
-    # st.exception(Exception('Oops!'))
-    # # 辞書の出力
-    # d = {
-    #     'foo': 'bar',
-    #     'users': [
-    #         'alice',
-    #         'bob',
-    #     ],
-    # }
-    # st.json(d)
+        if os.path.exists(ref_file_others):
+            try:
+                # ファイルを UTF-8 で読み込みます
+                with open(ref_file_others, 'r', encoding='utf-8') as f:
+                    ref_content = f.read()
+                
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                exec(ref_content)
+                
+            except Exception as e:
+                st.error(f"Error loading {ref_file_others}: {e}")
+        else:
+            # ファイルがない場合の予備表示（必要なければ消して構いません）
+            # st.info(f"情報: {ref_file} が見つかりません。")
+            st.info(f"情報: {ref_file_others} が見つかりません。")
+        ###############
 
-    # st.write('in case of error: push reload button or reload this site')
-    
+        
+        st.write('  ')
 
-    
+        st.subheader(':red[Global Database Integration]')
+        st.subheader('NASA GISS Global Seawater Oxygen Isotope Database')
+        st.write('https://data.giss.nasa.gov/o18data/')
+        
+        
+        ###############
+        # --- NASAデータベースの引用文献　外部ファイル(テキスト/Markdown)からの読み込み ---
+        try:
+            with open('data_text/nasa_references.md', 'r', encoding='utf-8') as f:
+                nasa_refs = f.read()
+            st.markdown(nasa_refs, unsafe_allow_html=True)
+        except FileNotFoundError:
+            st.error("The reference list file cannot be found. Please visit https://data.giss.nasa.gov/o18data/ref.html")
+        ###############
 
-    
-
-
-
-
-
-
-
-
-
-    # # タイトル
-    # st.title('SEAWATER DATA on WEB ')
-    # # ヘッダ
-    # st.header('powered by streamlit')
-    # # 純粋なテキスト
-    # st.text('Toyoho Isihimura')
-    # サブレベルヘッダ
-    # st.subheader('Please select a sub-menu')
-    # マークダウンテキスト
-    # st.markdown('**Markdown is available **')
-    # # LaTeX テキスト
-    # st.latex(r'\bar{X} = \frac{1}{N} \sum_{n=1}^{N} x_i')
-    # # コードスニペット
-    # st.code('print(\'Hello, World!\')')
-    # # エラーメッセージ
-    # st.error('Error message')
-    # # 警告メッセージ
-    # st.warning('Warning message')
-    # # 情報メッセージ
-    # st.info('Information message')
-    # # 成功メッセージ
-    # st.success('Success message')
-    # # 例外の出力
-    # st.exception(Exception('Oops!'))
-    # # 辞書の出力
-    # d = {
-    #     'foo': 'bar',
-    #     'users': [
-    #         'alice',
-    #         'bob',
-    #     ],
-    # }
-    # st.json(d)
-
-    # st.title('SEAWATER DATA JAPAN (b03)')
+        st.write('_____')
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
     
     
-    ############################################
-    
-    # st.write(':green[DOI:] ')
-    # st.write(':green[analytical method:] ')
-    # st.write(':green[analytical precision:] ')
-    # st.write(':green[analytical PI:] ')
-    ############################################
-
-    
-    
-
-    st.header("about")
-    # st.header('by TOYOHO ISHIMURA')
-    
-    st.write("The geochemical data of more than 2000 seawater samples analyzed around Japan have been visualized. You can visualize any data you like, including salinity, hydrogen isotopes, oxygen isotopes, time period and location, and download a plotted figure from this web application. Interactive 3D/4D display is also available.")
-    st.write("As of 2025, the database has been expanded to include over 22,000 global ocean isotope datasets sourced from NASA’s database.")
-    st.write("Figures can be freely downloaded and used. Please cite the original articles (see data sources, and search results shown in -Selected Data-) and the URL “https://envgeo.h.kyoto-u.ac.jp/sw_jpn/ by T.Ishimura“. (Dec.,2024).")
-             
-    # 純粋なテキスト
-
-    
-    st.link_button("For more information and permissions for use, click here", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
-    
-    st.text('visualization by TOYOHO ISHIMURA @ Kyoto Univ. (Built with Python and Streamlit)')
-    
-    # 純粋なテキスト
-    st.write('_____')
-    st.header('data sources')
-    
-
-    st.subheader('#01 Kodama et al., 2024. :red[(main data set)]')
-    #st.write('Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024) Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal. DOI: 10.2343/geochemj.GJ24009')
-    # st.markdown(
-    #     """<a style='display: block; text-align: left;' href="https://doi.org/10.2343/geochemj.GJ24009">Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024) Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal. DOI: 10.2343/geochemj.GJ24009</a>
-    #     """,
-    #     unsafe_allow_html=True,
-    # )
-    
-    st.write('Kodama, T., Kitajima, S., Takahashi, M., and Ishimura T. (2024). Spatiotemporal variations of seawater δ18O and δD in the Western North Pacific marginal seas near Japan. Geochemical Journal.')
-
-    
-    st.write(':green[DOI:] https://doi.org/10.2343/geochemj.GJ24009')
-    st.write(':green[analytical method:] Picarro L2130i-I (at Ibaraki-KOSEN and Kyoto Univ.)')
-    st.write(':green[analytical precision:] ±0.03 and ±0.2‰ for δ18O and δD')
-    st.write(':green[analytical PI:] Toyoho Ishimura')
-    
-    st.header("")
-    #gifアニメを読み込む
-    st.subheader('🚢 Cruise Area (2015-2021)')
-    st.image("data/sites_20230515.gif")
-    
-            #gifアニメを読み込む
-    st.subheader('🚢 Sampling sites by Year')
-    st.image("data/year_20230517.gif")
-    
-    
-    st.write('_____')
-    
-    st.subheader(':red[sub data set included from other papers around JAPAN]')
-    st.subheader('#02 Yamamoto et al., 2001.')
-    st.write('Yamamoto, M., Tanaka, N., Tsunogai, S. (2001). Okhotsk Sea intermediate water formation deduced from oxygen isotope systematics. Journal of Geophysical Research: Oceans, 106(C12), 31075-31084.')
-    st.write(':green[DOI:] https://doi.org/10.1029/2000JC000754')
-    st.write(':green[analytical method:] FinniganMAT delta-S with a CO2- H20 equilibration unit')
-    st.write(':green[analytical precision:] ±0.02% for δ18O')
-    st.write(':green[analytical PI:] ')
-    
-    
-    st.subheader('#03 Sakamoto et al., 2019.')
-    st.write('Sakamoto, T., Komatsu, K., Shirai, K., Higuchi, T., Ishimura, T., Setou, T., Kamimura, Y., Watanaebe, C., Kawabata, A. (2019). Combining microvolume isotope analysis and numerical simulation to reproduce fish migration history. Methods in Ecology and Evolution, 10(1), 59-69.')
-    st.write(':green[DOI:] https://doi.org/10.1111/2041-210X.13098')
-    st.write(':green[analytical method:] Picarro L2120-I (at AORI, Univ. of Tokyo)')
-    st.write(':green[analytical precision:] ±0.07‰ for δ18O')
-    st.write(':green[analytical PI:] ')
-    
-    
-    st.subheader('#04 Horikawa et al., 2023.')
-    st.write('Horikawa, K., Kodaira, T., Zhang, J., Obata, H. (2023). Salinity–oxygen isotope relationship during an El Niño (2014–2015) in the southwestern Pacific and comparisons with GEOSECS data (La Niña, 1973–1974). Marine Chemistry, 249, 104222.')
-    st.write(':green[DOI:] https://doi.org/10.1016/j.marchem.2023.104222')
-    st.write(':green[analytical method:] Micromass PRISM or Thermo Delta V advantage (at Toyama Univ.)')
-    st.write(':green[analytical precision:] ± 0.05‰  for δ18O')
-    st.write(':green[analytical PI:] ')
-    
-    
-    st.subheader('#05 Kodaira et al., 2016.')
-    st.write('Kodaira, T., Horikawa, K., Zhang, J., Senjyu, T. (2016) Relationship between seawater oxygen isotope ratio and salinity in the Tsushima Current, the Sea of Japan. Chikyukagaku (Geochemistry). 50, 263–277. (in Japanese with English abstract)')
-    st.write(':green[DOI:] https://doi.org/10.14934/chikyukagaku.50.263')
-    st.write(':green[analytical method:] Micromass PRISM  (at Toyama Univ.)')
-    st.write(':green[analytical precision:] ±0.02‰    for δ18O')
-    st.write(':green[analytical PI:] ')
-    
-    st.write('')
-    
-    st.write('_____')
-    
-    st.subheader(':red[Global Database Integration]')
-    st.write('NASA GISS Global Seawater Oxygen Isotope Database (Jan.23, 2025)]https://data.giss.nasa.gov/o18data/')
-
-    
-    # --- 外部ファイル(テキスト/Markdown)からの読み込み ---
-    try:
-        with open('dataset/nasa_references.md', 'r', encoding='utf-8') as f:
-            nasa_refs = f.read()
-        st.markdown(nasa_refs, unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.error("The reference list file cannot be found. Please visit https://data.giss.nasa.gov/o18data/ref.html")
-
-
-
     
     
     st.write('_____')
