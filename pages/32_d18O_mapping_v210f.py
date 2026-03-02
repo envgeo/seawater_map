@@ -10,7 +10,7 @@ Created on Sat Apr 22 17:15:03 2023
 
 
 # --- バージョン管理の設定 ---
-version = "2.10" #2026/02/23
+version = "2.10f" #2026/02/23
 fig_title = "envgeo-seawater-database"  # 2026/02/12
 # fig_title = r"SEAWATER $\delta^{18}$O MAP WEB (b02)"  # 2026/02/12
 
