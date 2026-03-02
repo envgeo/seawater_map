@@ -50,7 +50,8 @@ def main():
 
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
-    st.title('SEAWATER DATA AROUND JAPAN')
+    st.title('SEAWATER GEOCHEM. DATABASE')
+    st.subheader("Around Japan & Global Oceans / 2D-3D-4D visualizer")
     st.write(':blue[seawater isotopes (d18O, dD), temperature, salinity, seasonality, and annual variations around JAPAN]')
     st.write('Current Version: v2.10-20260301 (Latest) / b20-202412 (Legacy)')
     st.write(':red[NEW!! Feb 18, 2026: MAJOR UPDATE]')
