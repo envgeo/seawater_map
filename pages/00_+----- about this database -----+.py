@@ -6,7 +6,9 @@ import os
 def main():
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
-    st.title('SEAWATER DATA AROUND JAPAN')
+    #st.title('SEAWATER DATA AROUND JAPAN')
+    st.title('SEAWATER GEOCHEM. DATABASE')
+    st.subheader("Around Japan & Global Oceans / 2D-3D-4D visualizer")
     st.write(':blue[seawater isotopes (d18O, dD), temperature, salinity, seasonality, and annual variations around JAPAN]')
     st.write('Current Version: v2.0-202602 (Latest) / b20-202412 (Legacy)')
     st.write(':red[NEW!! Feb 18, 2026: MAJOR UPDATE]')
@@ -251,8 +253,7 @@ def main():
     
     
     
-    st.write('_____')
-    st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+   
 
 
 if __name__ == '__main__':
