@@ -10,7 +10,7 @@ import streamlit as st
 # ラジオボタン用の選択肢
 data_source_JAPAN_SEA    = "Kodama et al. (2024) [Japan Sea]"
 data_source_AROUND_JAPAN = "with others [Around Japan]"
-data_source_GLOBAL       = "with NASA [Global]"
+data_source_GLOBAL       = "with NASA+ [Global]"
 
 
 DATA_SOURCES = [
@@ -25,9 +25,10 @@ DATA_SOURCES = [
 
 refs_JAPAN_SEA= ':blue[data source:]  Kodama et al. (2024)'
 
-refs_AROUND_JAPAN = ':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).'
+refs_AROUND_JAPAN = ':blue[data source:]Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).'
 
 refs_GLOBAL = ':blue[data source:] Kodama et al. (2024), Yamamoto et al. (2001), Sakamoto et al. (2019), Kodaira et al. (2016), Horikawa et al. (2023).\
+                Sakamoto et al. (2022).\
                 :blue[with:] NASA_database (Jan.23, 2025)]https://data.giss.nasa.gov/cgi-bin/o18data/geto18.cgi'
 
 
