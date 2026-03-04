@@ -50,6 +50,7 @@ def main():
 
     #タブページ
     #https://welovepython.net/streamlit-layout-container/
+    st.write('Interactive 3D-4D Seawater Isotope & Geochemical Database – Japan Marginal Seas & Global Ocean –')
     st.title('SEAWATER GEOCHEM. DATABASE')
     st.subheader("Around Japan & Global Oceans / 2D-3D-4D visualizer")
     st.write(':blue[seawater isotopes (d18O, dD), temperature, salinity, seasonality, and annual variations around JAPAN]')
@@ -58,9 +59,11 @@ def main():
     # st.write('<span style="color:red;background:white">NEW!!</span> NEW',unsafe_allow_html=True)
     # st.write("This is :blue[test]")
     # st.warning('This site is not able to support multiple simultaneous accesses, so if the display does not work, please reload the page or try again after awhile.')
+
     st.warning('Note: This application may have limited performance under heavy traffic. If the page fails to load or respond, please refresh your browser or try again after a short while.')
 
-        
+
+
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["main", "about", "manual", "update", "Japanese"])
     
     
@@ -372,6 +375,9 @@ def main():
     
     #logo_file = Image.open('data/logo.gif')
     #st.image(logo_file,caption='SEAWATER ISOTOPE JAPAN')
+    
+    
+    
     
 if __name__ == '__main__':
     main()
