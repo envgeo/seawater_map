@@ -15,8 +15,6 @@ version = "0.06" #2026/02/12
 
 
 import streamlit as st
-from streamlit_folium import folium_static
-import folium
 import pandas as pd
 import plotly.graph_objects as go
 
