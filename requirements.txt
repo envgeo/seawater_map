@@ -1,25 +1,11 @@
-matplotlib
-cartopy
-#pandas
-#datetime
-seaborn
-#folium
-scikit-metrics
-streamlit_folium
-##sklearn
-##io #だめ
-openpyxl
-numpy
-#plotly.express
-#plotly==5.22
+streamlit==1.42.0 
 plotly==5.24.1
-gsw
-altair==4
-#streamlit==1.34.0
-#streamlit==1.37.0
-streamlit==1.42.0
-#streamlit
-streamlit_plotly_events
-statsmodels
-scipy==1.11.4  # バージョンを少し戻して安定させる
-scikit-learn
+gsw==3.6.20
+pandas==2.3.3
+cartopy==0.25.0
+scikit-learn==1.8.0 # sklearn
+scipy==1.11.4 
+numpy==1.26.4
+matplotlib==3.10.8
+streamlit-plotly-events==0.0.6 
+openpyxl==3.1.5

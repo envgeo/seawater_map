@@ -1,72 +1,147 @@
-# Under construction / 作成中です
+# EnvGeo-Seawater 🌊
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://envgeo.h.kyoto-u.ac.jp/sw_jpn/)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-# Seawater Japan: Interactive 3D-4D Seawater Isotope & Geochemical Database
-# as Exploratory Data Analysis Platform　(探索的研究基盤)
-[English](#english-section) | [日本語](#japanese-section)
-
----
-
-<a name="english-section"></a>
-
-## English
-
-### Overview
-**Seawater Japan** is a high-performance, web-based analytical platform designed for the visualization and exploration of seawater isotope geochemistry. Focusing on the marginal seas around Japan and global oceans, this tool integrates high-resolution datasets of stable isotopes ($\delta^{18}$O and $\delta$D), salinity, and temperature into an interactive 3D/4D environment.
-
-### Key Features
-* **Multi-Dimensional Visualization**: Explore spatial and temporal variations using 3D scatter plots and 4D time-series animations.
-* **Advanced Geochemical Analysis**: Real-time generation of T-S diagrams, Salinity-$\delta^{18}$O regression lines, and vertical depth profiles.
-* **Comprehensive Database**: Integrated data from Kodama et al. (2024), NASA GISS, and multiple historical maritime surveys.
-* **Cross-Platform Performance**: Built with Streamlit and Plotly for seamless operation directly in the web browser.
-
-### Project Structure
-* `home.py`: The main entry point of the application.
-* `envgeo_utils.py`: Core utility module for data caching, filtering, and configuration.
-* `pages/`: Contains specialized analytical modules (3D/4D visualizers, mapping, etc.).
-* `data/`: Directory for database files and sample datasets.
-
-### How to Use
-1. **Access**: Visit the Web App at: [https://envgeo-seawater-map.streamlit.app](https://envgeo-seawater-map.streamlit.app)
-2. **Navigation**: Use the sidebar to switch between specialized modules (3D Visualizer, Mapping, T-S Diagram, etc.).
-3. **Data Selection**: Choose data sources (Japan Sea / Around Japan / Global) and filter by specific transects or cruises.
-4. **Export**: Download generated figures and filtered datasets directly from the interface.
-
-### Citation
-If you use this tool or its integrated datasets for your research, please cite the following:
-* **Software**: Ishimura, T. (2026). Seawater Japan: Interactive 3D-4D Seawater Isotope & Geochemical Database. DOI: [Insert DOI here]
-* **Primary Data Source**: Kodama, T., et al. (2024). Spatiotemporal variations of seawater $\delta^{18}$O and $\delta$D in the Western North Pacific. *Geochemical Journal*.
+**An interactive platform for exploring seawater isotope and hydrographic data.**
 
 ---
 
-<a name="japanese-section"></a>
+## Overview
 
-## 日本語
+EnvGeo-Seawater is a web-based interactive visualization platform for marine geochemical and hydrographic datasets, including stable water isotopes (δ¹⁸O, δD), salinity, temperature, and depth.
 
-### 概要
-**Seawater Japan** は、海水の同位体地球化学データの可視化と解析に特化した高性能なWebベースプラットフォームです。日本周辺海域および世界海洋の安定同位体比δ<sup>18</sup>O, δD、塩分、水温のデータを統合し、インタラクティブな3D/4D環境で探索することを可能にします。
+It integrates curated regional datasets (e.g., around Japan) and major global datasets, enabling consistent cross-comparison under unified analytical conditions.
 
-### 主な機能
-* **多次元可視化**: 3D散布図および4D時系列アニメーションを用いた、時空間的なバリエーションの把握。
-* **高度な地球化学解析**: T-S図、塩分-δ<sup>18</sup>O回帰直線、鉛直プロファイルなどのリアルタイム生成。
-* **統合データベース**: Kodama et al. (2024)、NASA GISS、および複数の既往研究のデータを一括管理。
-* **ブラウザ完結型**: StreamlitとPlotlyを採用し、インストール不要で高速に動作します。
+The platform is designed to support both **exploratory data analysis** and **reproducible research workflows** in marine geochemistry and oceanography.
 
-### プロジェクト構成
-* `home.py`: アプリケーションのメインエントリポイント。
-* `envgeo_utils.py`: データキャッシュ、フィルタリング、設定を管理するコアモジュール。
-* `pages/`: 3D/4Dビジュアライザー、マッピング等の専門解析モジュール群。
-* `data/`: データベースファイルおよびサンプルデータ。
+---
 
-### 使用方法
-1. **アクセス**: Webアプリ URL: [https://envgeo-seawater-map.streamlit.app](https://envgeo-seawater-map.streamlit.app)
-2. **ナビゲーション**: サイドバーから各機能（3D Visualizer, Mapping, T-S Diagram 等）を選択します。
-3. **データ選択**: データソース（日本海 / 日本周辺 / 全球）を選択し、特定の海域や観測航海でフィルタリングします。
-4. **出力**: 生成された図表やフィルタリング後のデータセットを直接ダウンロードできます。
+## Key Features
 
-### 引用について
-本ツールおよび統合データを使用される場合は、以下の引用をお願いいたします。
-* **ソフトウェア**: 石村豊穂 (2026). Seawater Japan: Interactive 3D-4D Seawater Isotope & Geochemical Database. DOI: [ここにDOIを記載]
-* **主要データソース**: Kodama, T., et al. (2024). Spatiotemporal variations of seawater δ<sup>18</sup>O and δD in the Western North Pacific. *Geochemical Journal*.
+- 🌍 Interactive map visualization with adaptive zoom  
+- 📊 Depth profiles with gap-aware plotting  
+- 📈 Temperature–Salinity (T–S) diagrams with density contours (σθ)  
+- 📉 Regression analysis (e.g., salinity–δ¹⁸O relationships)  
+- 🧭 3D / 4D visualization of spatial–temporal structures  
+- 📂 User data upload for comparison with reference datasets (limited functionality)  
+- 🧾 Transparent data handling (filtered / excluded samples clearly reported)  
+- 🖼️ Export of publication-quality figures  
 
-Developed by **Toyoho Ishimura** (Associate Professor, Kyoto University)
+---
+
+## User Data Integration
+
+`91_USER_UPLOAD_UNPUB.xlsx` is provided as a template for user-defined comparison data.
+
+- Replace the sample rows with your own measurements  
+- Keep the same column structure  
+- Run the app locally to integrate your dataset  
+
+This allows direct comparison between user datasets and curated reference datasets across all supported visualizations.
+
+---
+
+## Why this tool?
+
+EnvGeo-Seawater enables integrated exploration of isotope and hydrographic data, which are typically analyzed separately.
+
+Unlike conventional tools, it provides:
+
+- Integrated multi-parameter visualization  
+- Consistent filtering across datasets  
+- Direct comparison between user data and curated datasets  
+- A unified analytical framework across regional and global datasets  
+
+---
+
+## Data Characteristics
+
+The platform includes internally consistent datasets (e.g., around Japan) analyzed under unified criteria, enabling rigorous cross-comparison.
+
+In particular, regional datasets curated by the author provide:
+
+- Consistent analytical methods  
+- Harmonized data structure  
+- High comparability across sampling campaigns  
+
+This ensures that observed patterns reflect environmental signals rather than methodological differences.
+
+---
+
+## Data Availability
+
+All datasets included in this repository are:
+
+- Publicly available or permitted for redistribution  
+- Provided in a standardized format for immediate use  
+
+Unpublished or restricted datasets are **not included**.
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/your-username/envgeo-seawater-map.git
+cd envgeo-seawater-map
+pip install -r requirements.txt
+streamlit run home.py
+```
+
+---
+
+## Usage
+
+1. Select a dataset (Japan Sea / Around Japan / Global)  
+2. Apply filters (location, depth, time, parameters)  
+3. Explore:  
+   - Maps  
+   - T–S diagrams  
+   - Depth profiles  
+   - Regression plots  
+4. Upload your own data for comparison (optional)  
+5. Export figures  
+
+---
+
+## Reproducibility
+
+This repository contains:
+
+- The full source code of the visualization platform  
+- All required public datasets (lightweight, <30 MB total)  
+- A template for user-defined data integration  
+
+Therefore, all figures and analyses generated by this platform are **fully reproducible** in a local environment.
+
+---
+
+## Data Sources
+
+The platform integrates major seawater isotope datasets:
+
+- CoralHydro2k: a global seawater oxygen isotope database (Atwood et al., 2026, ESSD)  
+- NASA GISS Global Seawater Oxygen-18 Database (Schmidt et al., 1999)  
+- Kodama et al. (2024), *Geochemical Journal*  
+- Additional regional datasets  
+
+---
+
+## Citation
+
+Ishimura, T. (2026).  
+*EnvGeo-Seawater: An Interactive Platform for Exploring Seawater Isotope and Hydrographic Data.*
+
+---
+
+## Example
+
+![T-S diagram](docs/ts_diagram.png)
+
+---
+
+## License
+
+MIT License

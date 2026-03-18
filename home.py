@@ -1,17 +1,20 @@
+
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Created on Sun May 21 16:00:21 2023
+
+@author: Toyoho Ishimura @Kyoto-U
+
+2026/03/18 update
+"""
 
 import streamlit as st
-from PIL import Image
-import base64
 import os
-# import streamlit.components.v1 as stc
 
 
 
-#ワイド表示
-# st.set_page_config(page_title="Seawater Japan",layout="wide")
-
-
+# page info
 st.set_page_config(
     page_title="Ocean Geochemical Database", 
     # page_icon=image, 
@@ -29,38 +32,22 @@ st.set_page_config(
 
 
 
-# #セレクトボックスのリストを作成
-# pagelist = ["page1","page2"]
-# #サイドバーのセレクトボックスを配置
-# selector=st.sidebar.selectbox( "ページ選択",pagelist)
-# if selector=="page1":
-#     if st.button('ページ1ボタン'):
-#         st.title("ページ1のタイトル")
-# elif selector=="page2":
-#     if st.button('ページ2ボタン'):
-#         st.title("ページ2のタイトル")
-
-
-
 
 @st.cache_resource
 def main():
 
-    # タイトル
-
-    #タブページ
-    #https://welovepython.net/streamlit-layout-container/
     st.write('Interactive 3D-4D Seawater Isotope & Geochemical Database – Japan Marginal Seas & Global Ocean –')
     st.title('SEAWATER GEOCHEM. DATABASE')
     st.subheader("Around Japan & Global Oceans / 2D-3D-4D visualizer")
+    
+    st.title(':red[Unpublished version]')
+    st.title(':red[for internal use only]')
+    
     st.write(':blue[seawater isotopes (d18O, dD), temperature, salinity, seasonality, and annual variations around JAPAN]')
-    st.write('Current Version: v2.10-20260301 (Latest) / b20-202412 (Legacy)')
-    st.write(':red[NEW!! Feb 18, 2026: MAJOR UPDATE]')
-    # st.write('<span style="color:red;background:white">NEW!!</span> NEW',unsafe_allow_html=True)
-    # st.write("This is :blue[test]")
-    # st.warning('This site is not able to support multiple simultaneous accesses, so if the display does not work, please reload the page or try again after awhile.')
+    
+    st.write('Current Version: Version 1.0 _(v220-20260316)_')
+    st.write(':red[NEW!! Mar 18, 2026: MAJOR UPDATE]')
 
-    st.warning('Note: This application may have limited performance under heavy traffic. If the page fails to load or respond, please refresh your browser or try again after a short while.')
 
 
 
@@ -69,21 +56,6 @@ def main():
     
     ##############################################################
     with tab1:
-        # st.header("SEAWATER DATA JAPAN (b02)")
-        # st.title('SEAWATER DATA JAPAN (b02)')
-
-    
-        #video_file = open('data/d18O_all.mp4', 'rb')
-        #video_bytes = video_file.read()
-        #st.video(video_bytes)
-        
-        # 動画の配置
-        # st.video('data/d18O_all.mp4',format="video/mp4", start_time=0, subtitles=None, end_time=None, loop=True)
-        # st.markdown("<h6 style='text-align: center; color: grey;'>movie outputted by GMT (The Generic Mapping Tools)</h6>", unsafe_allow_html=True)
-
-
-        # 動画の自動再生
-        # 1. まず動画を表示する「道具（関数）」を定義する
         def display_autoplay_video(video_path_or_url):
             import base64
             import os
@@ -110,63 +82,48 @@ def main():
             '''
             st.markdown(video_html, unsafe_allow_html=True)
 
-        # 2. 【ここが重要！】定義した関数を「外側」から呼び出す
-        # 動画ファイルのパスを正しく指定してください
+
         target_video = 'data/d18O_all.mp4' 
         display_autoplay_video(target_video)
 
-        # --- 以下、既存のQRコード表示などのコード ---
         st.markdown("<h6 style='text-align: center; color: grey;'>Animation created with GMT (The Generic Mapping Tools)</h6>", unsafe_allow_html=True)
-        
-        # image = Image.open('data/qr.jpg')
-        # col1, col2, col3 = st.columns(3)
-        # with col1:
-        #     st.write('    ')
-        # with col2:
-        #     st.image(image, caption='QR code')
-        # with col3:
-        #     st.write(' ')
-        
-        # 使い方例:
-        # display_autoplay_video("movie.mp4") 
-        # または
-        # display_autoplay_video("https://www.example.com/sample.mp4")
 
+        st.warning('Note: This application may have limited performance under heavy traffic. If the page fails to load or respond, please refresh your browser or try again after a short while.')
 
+    
 
 
     ##############################################################
     with tab2:
-        # st.title('SEAWATER DATA JAPAN (b03)')
+
 
         st.header("about")
-        # st.header('by TOYOHO ISHIMURA')
+
         
         ###############
-        # --- 冒頭のabout　外部ファイル (about.md) の読み込みと実行 ---
+        # 外部ファイル (about.md) の読み込みと実行 
         about_file = 'data_text/about.md'
 
         if os.path.exists(about_file):
             try:
-                # ファイルを UTF-8 で読み込みます
+                # ファイルを UTF-8 で読み込み
                 with open(about_file, 'r', encoding='utf-8') as f:
                     ref_content = f.read()
                 
-                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示
                 exec(ref_content)
                 
             except Exception as e:
                 st.error(f"Error loading {about_file}: {e}")
         else:
-            # ファイルがない場合の予備表示（必要なければ消して構いません）
-            # st.info(f"情報: {about_file} が見つかりません。")
-            st.info(f"情報: {about_file} が見つかりません。")
+            st.info(f"Error: {about_file} not found.")
         ###############
-
-        # 純粋なテキスト
+            
+        ###############
+        # データソース読み込み
         st.write('_____')
         st.header('data sources')
-
+        ###############
         
         ###############
         # --- メイン引用文献　外部ファイル (main_references.md) の読み込みと実行 ---
@@ -174,19 +131,17 @@ def main():
 
         if os.path.exists(ref_file_main):
             try:
-                # ファイルを UTF-8 で読み込みます
+                # ファイルを UTF-8 で読み込み
                 with open(ref_file_main, 'r', encoding='utf-8') as f:
                     ref_content = f.read()
                 
-                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示します
+                # 読み込んだテキスト（st.writeなど）を Python コードとして実行して表示
                 exec(ref_content)
                 
             except Exception as e:
                 st.error(f"Error loading {ref_file_main}: {e}")
         else:
-            # ファイルがない場合の予備表示（必要なければ消して構いません）
-            # st.info(f"情報: {ref_file_main} が見つかりません。")
-            st.info(f"情報: {ref_file_main} が見つかりません。")
+           st.info(f"Error: {about_file} not found.")
         ###############
 
         
@@ -206,28 +161,48 @@ def main():
             except Exception as e:
                 st.error(f"Error loading {ref_file_others}: {e}")
         else:
-            # ファイルがない場合の予備表示（必要なければ消して構いません）
-            # st.info(f"情報: {ref_file} が見つかりません。")
-            st.info(f"情報: {ref_file_others} が見つかりません。")
+           st.info(f"Error: {about_file} not found.")
+           
+           
+        ###############
+        st.write('  ')
+
+        st.subheader(':red[Global Database Integration]')
+        
+        ###############
+
+        st.subheader('CoralHydro2 Seawater Oxygen Isotope Database')
+        
+        # --- CoralHydro2データベースの引用文献　外部ファイル(テキスト/Markdown)からの読み込み ---
+        try:
+            with open('data_text/CoralHydro2_references.md', 'r', encoding='utf-8') as f:
+                nasa_refs = f.read()
+            st.markdown(nasa_refs, unsafe_allow_html=True)
+        except FileNotFoundError:
+            st.error("The reference list file cannot be found. Please visit https://doi.org/10.25921/ap7d-2k16")
+
+
         ###############
 
         
         st.write('  ')
 
-        st.subheader(':red[Global Database Integration]')
         st.subheader('NASA GISS Global Seawater Oxygen Isotope Database')
-        st.write('https://data.giss.nasa.gov/o18data/')
         
-        
-        ###############
         # --- NASAデータベースの引用文献　外部ファイル(テキスト/Markdown)からの読み込み ---
         try:
-            with open('data_text/nasa_references.md', 'r', encoding='utf-8') as f:
+            with open('data_text/NASA_references.md', 'r', encoding='utf-8') as f:
                 nasa_refs = f.read()
             st.markdown(nasa_refs, unsafe_allow_html=True)
         except FileNotFoundError:
             st.error("The reference list file cannot be found. Please visit https://data.giss.nasa.gov/o18data/ref.html")
         ###############
+        
+        
+
+
+
+
 
         st.write('_____')
         st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
@@ -329,55 +304,8 @@ def main():
     
 
 
-
-    ##############################################################
-    # サブレベルヘッダ
-    
-    #色を変えるとき
-    #st.write('<span style="color:red;background:pink">該当するデータがありません・・・・</span>',unsafe_allow_html=True)
-
-
-    # st.header('by TOYOHO ISHIMURA')
-    # 純粋なテキスト
-    # st.text('original data: xxx in prep.')
-    # 純粋なテキスト
-    # st.text('visualized by TOYOHO ISHIMURA (Python with Streamlit)')
-
-    # # マークダウンテキスト
-    # st.markdown('**Markdown is available **')
-    # # LaTeX テキスト
-    # st.latex(r'\bar{X} = \frac{1}{N} \sum_{n=1}^{N} x_i')
-    # # コードスニペット
-    # st.code('print(\'Hello, World!\')')
-    # # エラーメッセージ
-    # st.error('in case of error: push reload button or reload this site')
-    # # 警告メッセージ
-    # st.warning('Warning message')
-    # # 情報メッセージ
-    # st.info('Information message')
-    # # 成功メッセージ
-    # st.success('Success message')
-    # # 例外の出力
-    # st.exception(Exception('Oops!'))
-    # # 辞書の出力
-    # d = {
-    #     'foo': 'bar',
-    #     'users': [
-    #         'alice',
-    #         'bob',
-    #     ],
-    # }
-    # st.json(d)
-
-    # st.write('in case of error: push reload button or reload this site')
     
 
-    
-    #logo_file = Image.open('data/logo.gif')
-    #st.image(logo_file,caption='SEAWATER ISOTOPE JAPAN')
-    
-    
-    
     
 if __name__ == '__main__':
     main()
