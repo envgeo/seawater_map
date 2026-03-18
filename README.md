@@ -137,9 +137,48 @@ DOI: (to be assigned)
 
 ---
 
-## Example
+## Examples
 
-![T-S diagram](docs/ts_diagram.png)
+EnvGeo-Seawater enables multi-scale exploration of seawater isotope and hydrographic data, from global distributions to detailed interactive analysis.
+
+---
+
+### Global Isotope Distribution (Contour Map)
+
+Spatial distribution of seawater δ18O at the global scale, based on integrated datasets (~50,000 records).  
+Contour interpolation highlights large-scale oceanographic patterns and basin-scale variability.
+
+![Global map](images/contour_map.png)
+
+---
+
+### Temperature–Salinity Diagram
+
+Temperature–salinity (T–S) relationships with overlaid density contours (σθ).  
+This visualization supports identification of water masses and examination of isotope–hydrography relationships.
+
+![TS diagram](images/ts_diagram.png)
+
+---
+
+### 4D Visualization (Longitude–Latitude–Depth–δ18O)
+
+Multi-dimensional visualization of seawater isotope data, incorporating spatial coordinates and depth.  
+This allows exploration of vertical structure and spatial gradients simultaneously.
+
+![4D](images/4d_d18O.png)
+
+---
+
+### Interactive Selection (Map–T–S Linkage)
+
+Linked visualization between T–S space and geographic location.  
+Selected subsets in the T–S diagram are dynamically highlighted on the map, enabling intuitive interpretation of water mass origins.
+
+<p align="center">
+  <img src="images/selection_map.png" width="45%">
+  <img src="images/selection_ts.png" width="45%">
+</p>
 
 ---
 
