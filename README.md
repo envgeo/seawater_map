@@ -131,8 +131,9 @@ The platform integrates major seawater isotope datasets:
 
 ## Citation
 
-Ishimura, T. (2026).  
-*EnvGeo-Seawater: An Interactive Platform for Exploring Seawater Isotope and Hydrographic Data.*
+Ishimura, T. (2026).
+EnvGeo-Seawater: An Interactive Platform for Exploring Seawater Isotope and Hydrographic Data.
+DOI: (to be assigned)
 
 ---
 

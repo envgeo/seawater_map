@@ -33,16 +33,11 @@ st.set_page_config(
 
 
 
-@st.cache_resource
 def main():
 
     st.write('Interactive 3D-4D Seawater Isotope & Geochemical Database – Japan Marginal Seas & Global Ocean –')
     st.title('SEAWATER GEOCHEM. DATABASE')
     st.subheader("Around Japan & Global Oceans / 2D-3D-4D visualizer")
-    
-    st.title(':red[Unpublished version]')
-    st.title(':red[for internal use only]')
-    
     st.write(':blue[seawater isotopes (d18O, dD), temperature, salinity, seasonality, and annual variations around JAPAN]')
     
     st.write('Current Version: Version 1.0 _(v220-20260316)_')
@@ -51,7 +46,7 @@ def main():
 
 
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["main", "about", "manual", "update", "Japanese"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["MAIN", "ABOUT", "DATA SOURCES", "MANUAL", "UPDATE LOG", "JAPANESE"])
     
     
     ##############################################################
@@ -97,7 +92,7 @@ def main():
     with tab2:
 
 
-        st.header("about")
+        st.header("About")
 
         
         ###############
@@ -121,8 +116,41 @@ def main():
             
         ###############
         # データソース読み込み
+        st.header('Read me')
+        ###############
+        
+        ###############
+        readme_file = 'README.md'   # ← ファイル名も統一推奨
+
+        if os.path.exists(readme_file):
+            try:
+                with open(readme_file, 'r', encoding='utf-8') as f:
+                    readme_content = f.read()
+                with st.expander("Show README"):
+                    st.markdown(readme_content)
+
+            except Exception as e:
+                st.error(f"Error loading {readme_file}: {e}")
+        else:
+            st.info(f"Error: {readme_file} not found.")
+        ###############
+
+    
+
+
+
         st.write('_____')
-        st.header('data sources')
+        st.link_button("Go to Lab.", "https://envgeo.h.kyoto-u.ac.jp/sw_jpn/")
+    
+    
+
+    ##############################################################
+    with tab3:
+
+            
+        ###############
+        # データソース読み込み
+        st.header('Data Sources')
         ###############
         
         ###############
@@ -210,9 +238,9 @@ def main():
     
         
     ##############################################################
-    with tab3:
+    with tab4:
 
-        st.header('manual')
+        st.header('User Manual')
         
         ###############
         # --- その他の引用文献　外部ファイル (other_references.md) の読み込みと実行 ---
@@ -240,10 +268,9 @@ def main():
 
         
     ##############################################################
-    with tab4:
-        # st.title('SEAWATER DATA JAPAN (b01)')
+    with tab5:
 
-        st.header('update')
+        st.header('Update Log')
         
         ###############
         # --- アップデートログ　外部ファイル (update_log.md) の読み込みと実行 ---
@@ -274,7 +301,7 @@ def main():
 
 
     ##############################################################
-    with tab5:
+    with tab6:
 
 
         st.header('このデータベースとwebアプリについて')
@@ -311,5 +338,4 @@ if __name__ == '__main__':
     main()
     
     
-st.cache_data.clear()
-st.cache_resource.clear()
+

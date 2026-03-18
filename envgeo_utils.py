@@ -102,9 +102,9 @@ def load_isotope_data(ref_data, sheet_num=0):
     file_05 = 'dataset/72_GLOBAL_RECENT_REPORTS_20260302.xlsx'
     
     # Reserved for unpublished user data / 未公表ユーザーデータ用
-    # file_unpub_91 = 'dataset/91_USER_UPLOAD_UNPUB.xlsx'
+    file_unpub_91 = 'dataset/91_USER_UPLOAD_UNPUB.xlsx'
     # file_unpub_91 = 'dataset/91_AROUND_JAPAN_UNPUB_20260228.xlsx'
-    file_unpub_91 = 'dataset/91_AROUND_JAPAN_UNPUB_20260314_SGW.xlsx'
+    # file_unpub_91 = 'dataset/91_AROUND_JAPAN_UNPUB_20260314_SGW.xlsx'
     
     
     #########################################################################
@@ -141,36 +141,36 @@ def load_isotope_data(ref_data, sheet_num=0):
 
     """ public """
 
-    # if ref_data == data_source_JAPAN_SEA:  
-    #     df =  pd.concat([df1], ignore_index=True)
+    if ref_data == data_source_JAPAN_SEA:  
+        df =  pd.concat([df1], ignore_index=True)
         
-    # elif ref_data == data_source_AROUND_JAPAN:  
-    #     df = pd.concat([df1, df2], ignore_index=True)
+    elif ref_data == data_source_AROUND_JAPAN:  
+        df = pd.concat([df1, df2], ignore_index=True)
         
         
-    # elif ref_data == data_source_GLOBAL:  
-    #     df = pd.concat([df1, df2,df3,df4, df5], ignore_index=True)
+    elif ref_data == data_source_GLOBAL:  
+        df = pd.concat([df1, df2,df3,df4, df5], ignore_index=True)
         
-    # else:
-    #     return pd.DataFrame() # Return empty DF as fallback
+    else:
+        return pd.DataFrame() # Return empty DF as fallback
   
 
 
     
     """  including user dataset """
     
-    if ref_data == data_source_JAPAN_SEA:  
-        df =  pd.concat([df1,df_unpub_91], ignore_index=True)
+    # if ref_data == data_source_JAPAN_SEA:  
+    #     df =  pd.concat([df1,df_unpub_91], ignore_index=True)
         
-    elif ref_data == data_source_AROUND_JAPAN:  
-        df = pd.concat([df1, df2, df_unpub_91], ignore_index=True)
+    # elif ref_data == data_source_AROUND_JAPAN:  
+    #     df = pd.concat([df1, df2, df_unpub_91], ignore_index=True)
 
         
-    elif ref_data == data_source_GLOBAL: 
-        df = pd.concat([df1, df2,df3,df4, df5, df_unpub_91], ignore_index=True)
+    # elif ref_data == data_source_GLOBAL: 
+    #     df = pd.concat([df1, df2,df3,df4, df5, df_unpub_91], ignore_index=True)
         
-    else:
-        return pd.DataFrame()  # Return empty DF as fallback
+    # else:
+    #     return pd.DataFrame()  # Return empty DF as fallback
 
 
 
