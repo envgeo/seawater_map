@@ -1,5 +1,7 @@
 # EnvGeo-Seawater 🌊
 
+EnvGeo-Seawater is an interactive platform for exploring seawater isotope and hydrographic data.
+
 This software has been actively developed since April 2023.
 
 In the previous submission, a newly organized repository was used, which did not reflect the full development history. We now provide the original repository with complete development history, demonstrating continuous and iterative development.
@@ -121,6 +123,7 @@ cd seawater_map
 pip install -r requirements.txt
 streamlit run home.py
 ```
+Then open the local URL shown in the terminal (typically http://localhost:8501).
 
 ---
 
@@ -183,7 +186,8 @@ The platform integrates major seawater isotope datasets:
 
 ## Live Demo
 
-https://envgeo-seawater-map.streamlit.app
+https://envgeo-seawater-map.streamlit.app  
+(Stable version for JOSS submission)
 
 ---
 
