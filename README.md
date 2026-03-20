@@ -1,5 +1,12 @@
 # EnvGeo-Seawater 🌊
 
+This software has been actively developed since April 2023.
+
+In the previous submission, a newly organized repository was used, which did not reflect the full development history. We now provide the original repository with complete development history, demonstrating continuous and iterative development.
+
+We have also improved repository structure, documentation, and open-source practices accordingly.
+
+
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://envgeo.h.kyoto-u.ac.jp/sw_jpn/)
 [![Python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -109,8 +116,8 @@ pip install -r requirements.txt
 ## Quick Start
 
 ```bash
-git clone https://github.com/envgeo/envgeo-seawater
-cd envgeo-seawater
+git clone https://github.com/envgeo/seawater_map
+cd seawater_map
 pip install -r requirements.txt
 streamlit run home.py
 ```
@@ -171,6 +178,12 @@ The platform integrates major seawater isotope datasets:
 - NASA GISS Global Seawater Oxygen-18 Database (Schmidt et al., 1999)  
 - Kodama et al. (2024), *Geochemical Journal*  
 - Additional regional datasets  
+
+---
+
+## Live Demo
+
+https://envgeo-seawater-map.streamlit.app
 
 ---
 
