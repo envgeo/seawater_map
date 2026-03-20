@@ -21,6 +21,8 @@ This repository accompanies the JOSS submission.
 
 ## Overview
 
+EnvGeo-Seawater is actively used for exploratory analysis of seawater isotope datasets in marine geochemistry research.
+
 EnvGeo-Seawater is a web-based interactive visualization platform for marine geochemical and hydrographic datasets, including stable water isotopes (δ¹⁸O, δD), salinity, temperature, and depth.
 
 It integrates curated regional datasets (e.g., around Japan) and major global datasets (~50,000 records), enabling consistent cross-comparison under unified analytical conditions.
@@ -118,7 +120,7 @@ pip install -r requirements.txt
 ## Quick Start
 
 ```bash
-git clone https://github.com/envgeo/seawater_map
+git clone https://github.com/envgeo/seawater_map.git
 cd seawater_map
 pip install -r requirements.txt
 streamlit run home.py
@@ -186,8 +188,11 @@ The platform integrates major seawater isotope datasets:
 
 ## Live Demo
 
-https://envgeo-seawater-map.streamlit.app  
-(Stable version for JOSS submission)
+Primary demo:
+https://envgeo-seawater-map.streamlit.app
+
+JOSS-stable demo:
+https://envgeo-seawater-pre.streamlit.app
 
 ---
 
