@@ -1,4 +1,4 @@
-## :red[Main data set]
+## :red[Core Dataset]
 
 ### #01 Kodama et al., 2024
 

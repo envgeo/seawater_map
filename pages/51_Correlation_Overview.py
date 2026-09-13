@@ -7,7 +7,7 @@ Created on Sat Apr 22 17:15:03 2023
 """
 
 # --- バージョン管理の設定 ---
-version = "0.2.12" #2026/02/23
+version = "1.3.0" #2026/02/23
 fig_title = "envgeo-seawater-database"  # 2026/02/12
     
 
@@ -26,15 +26,264 @@ import cartopy.crs as ccrs
 import envgeo_utils  # 作った設定ファイルを読み込む
 
 
-print((f"--------13_compiled_figs(saliniry-d18O-dD-depth_etc)_({version})--------"))
-# datetimeモジュールを使った現在の日付と時刻の取得
-import datetime
-dt = datetime.datetime.today()  # ローカルな現在の日付と時刻を取得
-print(dt)  # 2021-10-29 15:58:08.356501
+@st.cache_data(show_spinner=False)
+def load_isotope_data_cached(ref_data, sheet_num=None):
+    if sheet_num is None:
+        return envgeo_utils.load_isotope_data(ref_data)
+    return envgeo_utils.load_isotope_data(ref_data, sheet_num=sheet_num)
 
 
-st.header(f'Compiled figs ({version})')
-# st.subheader('(saliniry-d18O-dD-depth_etc)')
+def build_month_display(selected_months):
+    if len(selected_months) == 12:
+        return "All"
+    if len(selected_months) == 0:
+        return "None"
+
+    sorted_months = sorted(set(selected_months))
+    ranges = []
+    start = sorted_months[0]
+
+    for i, month in enumerate(sorted_months):
+        is_last = i + 1 == len(sorted_months)
+        next_is_consecutive = (not is_last) and sorted_months[i + 1] == month + 1
+        if next_is_consecutive:
+            continue
+
+        end = month
+        ranges.append(f"{start}-{end}" if start != end else str(start))
+        if not is_last:
+            start = sorted_months[i + 1]
+
+    return ", ".join(ranges)
+
+
+def filter_observation_data(
+    df,
+    *,
+    selected_cruise,
+    selected_months,
+    year_range,
+    lon_range,
+    lat_range,
+    depth_range,
+    salinity_range,
+):
+    year_min, year_max = year_range
+    lon_min, lon_max = lon_range
+    lat_min, lat_max = lat_range
+    depth_min, depth_max = depth_range
+    sal_min, sal_max = salinity_range
+
+    keep_blank = df.isnull().all(axis=1)
+
+    filtered = df[
+        (df["Depth_m"] == "xxx")
+        | ((df["Depth_m"] <= depth_max) & (df["Depth_m"] >= depth_min))
+        | keep_blank
+    ]
+
+    filtered = filtered[
+        filtered["Transect"].isin(selected_cruise) | filtered["Transect"].isna()
+    ].copy()
+
+    filtered = filtered[
+        (filtered["Longitude_degE"] == "xxx")
+        | ((filtered["Longitude_degE"] <= lon_max) & (filtered["Longitude_degE"] >= lon_min))
+        | filtered.isnull().all(axis=1)
+    ]
+
+    filtered = filtered[
+        (filtered["Latitude_degN"] == "xxx")
+        | ((filtered["Latitude_degN"] <= lat_max) & (filtered["Latitude_degN"] >= lat_min))
+        | filtered.isnull().all(axis=1)
+    ]
+
+    if selected_months:
+        filtered = filtered[
+            filtered["Month"].isin(selected_months) | filtered.isnull().all(axis=1)
+        ]
+    else:
+        filtered = filtered[filtered.isnull().all(axis=1)]
+
+    filtered = filtered[
+        (filtered["Salinity"] == "xxx")
+        | ((filtered["Salinity"] >= sal_min) & (filtered["Salinity"] <= sal_max))
+        | filtered.isnull().all(axis=1)
+    ]
+
+    filtered = filtered[
+        ((filtered["Year"] <= year_max) & (filtered["Year"] >= year_min))
+        | filtered.isnull().all(axis=1)
+    ]
+
+    return filtered
+
+
+def prepare_xy_frame(df, x_col, y_col):
+    return df.dropna(subset=[x_col, y_col]).copy()
+
+
+def count_valid_rows(df, required_columns):
+    return len(df.dropna(subset=required_columns))
+
+
+def plot_xy_with_regression(
+    *,
+    ax,
+    base_df,
+    selected_df,
+    x_col,
+    y_col,
+    x_label,
+    y_label,
+    x_scale,
+    y_scale,
+    x_limits,
+    y_limits,
+    x_formatter,
+    y_formatter,
+    tick_length,
+    main_style,
+    selected_style,
+    figure_title,
+    selected_label,
+    selected_row,
+    write_main_regression,
+    write_selected_regression,
+    metric_colors=("red", "blue"),
+):
+    base_xy = prepare_xy_frame(base_df, x_col, y_col)
+    selected_xy = prepare_xy_frame(selected_df, x_col, y_col)
+
+    ax.set_xlabel(x_label + x_scale)
+    ax.set_ylabel(y_label + y_scale)
+    ax.scatter(
+        -1000,
+        -1000,
+        s=main_style["size"],
+        c=main_style["color"],
+        marker=main_style["marker"],
+        alpha=main_style["alpha"],
+        label="ALL",
+    )
+
+    ax.scatter(
+        base_xy[x_col],
+        base_xy[y_col],
+        s=main_style["size"],
+        c=main_style["color"],
+        marker=main_style["marker"],
+        lw=0.5,
+        ec="black",
+        alpha=main_style["alpha"],
+    )
+
+    ax.set_xlim(*x_limits)
+    ax.set_ylim(*y_limits)
+    plt.tick_params(labelsize=15)
+    ax.xaxis.set_major_formatter(x_formatter)
+    ax.yaxis.set_major_formatter(y_formatter)
+    ax.tick_params(length=tick_length)
+    plt.title(figure_title, fontsize=20)
+    plt.legend(fontsize=20)
+
+    base_count = base_df[selected_row].count().sum()
+    selected_count = selected_df[selected_row].count().sum()
+    main_coef = None
+    selected_coef = None
+
+    if write_main_regression and len(base_xy) >= 2:
+        main_coef = np.polyfit(base_xy[x_col], base_xy[y_col], 1)
+        main_fit = np.poly1d(main_coef)(base_xy[x_col])
+        plt.plot(base_xy[x_col], main_fit, label="regression line (ALL)", c=main_style["color"])
+        main_r = np.corrcoef(base_xy[x_col], base_xy[y_col])
+        reg_line = f"ALL:  y = {main_coef[0]:.2f}x + ({main_coef[1]:.2f}"
+        ax.text(
+            0.99,
+            0.05,
+            reg_line + f")    (R={main_r[0,1]:.2f}, N={base_count})",
+            horizontalalignment="right",
+            transform=ax.transAxes,
+        )
+        print("回帰直線　ALL:", f"{y_col}={main_coef[0]:.2f} * {x_col}+{main_coef[1]:.2f}")
+        print("相関係数（ｒ）:", np.corrcoef(base_xy[x_col], base_xy[y_col]))
+        print("----------------")
+
+    if len(selected_xy) >= 1:
+        ax.scatter(
+            selected_xy[x_col],
+            selected_xy[y_col],
+            s=selected_style["size"],
+            c=selected_style["color"],
+            marker=selected_style["marker"],
+            alpha=selected_style["alpha"],
+            lw=0.5,
+            ec="black",
+            label=selected_label,
+        )
+
+    if write_selected_regression and len(selected_xy) >= 2:
+        selected_coef = np.polyfit(selected_xy[x_col], selected_xy[y_col], 1)
+        selected_fit = np.poly1d(selected_coef)(selected_xy[x_col])
+        plt.plot(
+            selected_xy[x_col],
+            selected_fit,
+            label=f"regression line ({selected_label})",
+            c=selected_style["color"],
+        )
+        selected_r = np.corrcoef(selected_xy[x_col], selected_xy[y_col])
+        reg_line = f"{selected_label}:  y = {selected_coef[0]:.2f}x + ({selected_coef[1]:.2f}"
+        ax.text(
+            0.99,
+            0.16,
+            reg_line + f")    (R={selected_r[0,1]:.2f}, N={selected_count})",
+            horizontalalignment="right",
+            transform=ax.transAxes,
+        )
+        plt.legend(fontsize=10)
+        print("回帰直線　add:", f"{y_col}={selected_coef[0]:.2f} * {x_col}+{selected_coef[1]:.2f}")
+        print("相関係数（ｒ）:", np.corrcoef(selected_xy[x_col], selected_xy[y_col]))
+        print("----------------")
+
+    if main_coef is not None:
+        y_pred = main_coef[0] * base_xy[x_col] + main_coef[1]
+        mse_all = mean_squared_error(base_xy[y_col], y_pred)
+        rmse_all = np.sqrt(mse_all)
+        r2_all = r2_score(base_xy[y_col], y_pred)
+        print("--------MES RMSE R2 (all)--------")
+        print("MSE_all:", f"{mse_all:.3f}")
+        print("RMSE_all:", f"{rmse_all:.3f}")
+        print("R2_all:", f"{r2_all:.3f}")
+        ax.text(
+            0.99,
+            0.01,
+            f"RMSE_all: {rmse_all:.3f}, R$^{{2}}$_all: {r2_all:.2f}",
+            horizontalalignment="right",
+            transform=ax.transAxes,
+            fontsize=12,
+            c=metric_colors[0],
+        )
+
+    if selected_coef is not None:
+        y_pred = selected_coef[0] * selected_xy[x_col] + selected_coef[1]
+        mse_add = mean_squared_error(selected_xy[y_col], y_pred)
+        rmse_add = np.sqrt(mse_add)
+        r2_add = r2_score(selected_xy[y_col], y_pred)
+        print("--------MES RMSE R2 (add)--------")
+        print("MSE_add:", f"{mse_add:.3f}")
+        print("RMSE_add:", f"{rmse_add:.3f}")
+        print("R2_add:", f"{r2_add:.3f}")
+        ax.text(
+            0.99,
+            0.11,
+            f"RMSE_add: {rmse_add:.3f}, R$^{{2}}$_add: {r2_add:.2f}",
+            horizontalalignment="right",
+            transform=ax.transAxes,
+            fontsize=12,
+            c=metric_colors[1],
+        )
+
+    return base_xy, selected_xy
 
 
 
@@ -56,6 +305,9 @@ st.header(f'Compiled figs ({version})')
 
 
 def main():
+    st.header(f'Correlation Overview ({version})')
+    # Preserve this page as a research-prototype view of the original exploratory workflow.
+    st.caption("This page preserves the original exploratory workflow used during development.")
     
     
     # リロードボタン
@@ -101,37 +353,28 @@ def main():
 
 
     # メインのDF,これは改変しない
-    df_original = envgeo_utils.load_isotope_data(ref_data)
+    df_original = load_isotope_data_cached(ref_data)
     
     
     
     
 ######  scalebarで制御してsubmitする場合 ################
 
+    st.sidebar.header("Correlation controls")
+    st.sidebar.caption(f"Correlation Overview ({version})")
+
     with st.sidebar.form("parameter", clear_on_submit=False):
-        
-        st.header('select parameters ➡ submit')
-        
 
 ##############################################################################
 # サイドバーここから
 ##############################################################################
 
-        
-        
-        st.form_submit_button(":red[submit]")
-
-        ###このセットでsubmitボタン二つに出来る
-        # st.form_submit_button(":red[submit (TOP)]")
-        # submitted = st.form_submit_button(":red[submit (BOTTOM)]")
-        
-        
-        #　一つだけの時は以下
-        # submitted = st.form_submit_button(":red[submit]")
-        
-        
-        
-        st.subheader(':blue[--- for data range ---]') 
+        st.subheader(getattr(envgeo_utils, "DATA_FILTERING_LABEL", "Data filtering"))
+        st.caption("Set the shared filters used for the compiled correlation figures.")
+        submit_top = st.form_submit_button(
+            "Apply settings",
+            use_container_width=True,
+        )
         
         
         
@@ -227,7 +470,7 @@ def main():
         
         
         
-        st.write('Cruise Area (2015-2021)')
+        st.caption('Cruise area reference (2015-2021)')
         st.image("data/sites_20230515.gif") 
     
           
@@ -236,7 +479,7 @@ def main():
         #スペース入れる
         # st.subheader(':blue[  ]')
         # st.subheader(':blue[  ]')
-        st.subheader(':blue[--- for fig scale only ---]')
+        st.subheader(getattr(envgeo_utils, "FIGURE_CONTROLS_LABEL", "Figure controls"))
         
         
         #地図の描画範囲（拡大）
@@ -268,7 +511,11 @@ def main():
         # st.sidebar.write(f'Selected: {fig_depth_min} ~ {fig_depth_max}')
     
                             
-        submitted = st.form_submit_button(":red[submit!]")
+        submit_bottom = st.form_submit_button(
+            "Apply settings!",
+            use_container_width=True,
+        )
+        submitted = submit_top or submit_bottom
 
 ##############################################################################
 # サイドバーここまで
@@ -318,108 +565,16 @@ def main():
     
     # """選択描画範囲の設定用"""
     def data_limit(sheet_num = 0):
-    
-            # sheet_num = 1
-            # df1 = pd.read_excel(excel_file, sheet_name=sheet_num)
-            df1 = envgeo_utils.load_isotope_data(ref_data)
-            
-            # df1 = df_fig_ALL
-        
-            #緯度経度と水深とTransectで制限
-            # df1 = df_fig_add
-            
-            df1 = df1[(df1['Depth_m'] == 'xxx') 
-                        
-                        |(df1['Depth_m'] <= sld_depth_max) & (df1['Depth_m'] >= sld_depth_min )#調整用
-                        | df1.isnull().all(axis=1)]      
-            
-            df1 = df1[(df1['Transect'].isin(selected_cruise))
-                        | df1.isnull().all(axis=1)]
-                
-
-
-
-
-            # Transectのデータ制限せず，サイドバーで制限されたまま出力する場合
-            df1 = df1[df1['Transect'].isin(selected_cruise) | df1['Transect'].isna()].copy()
-                # なぜこれで青色の線のスキマが復活するのか
-                # 元のデータ (df):
-                # 　　「データA」→「データA」→「空白行」→「データA」
-                # これまでの抽出 (df1):
-                #　　 reference が「データA」のものだけを抽出した結果、「空白行」が条件に合わず消されてしまい、「データA」同士が隣り合って線が繋がってしまった
-                # 新しい抽出:
-                #　　| df['reference'].isna() （または reference が空であること）という条件を加えることで、「データA」の間にあった「空白行」も一緒に df1 にコピーされるようになる
-
-            
-            # # Transectの手動でデータ制限する場合
-            # df1 = df1[ (df1['Transect'] == 0) 
-            #             | (df1['Transect'] == Transect001) 
-            #             | (df1['Transect'] == Transect002)
-            #             | (df1['Transect'] == Transect003)
-            #             | (df1['Transect'] == Transect004)
-            #             | (df1['Transect'] == Transect005)
-            #             | (df1['Transect'] == Transect006)
-            #             | (df1['Transect'] == Transect007)
-            #             | (df1['Transect'] == Transect008)
-            #             | (df1['Transect'] == Transect009)
-            #             | (df1['Transect'] == Transect010)
-            #             | (df1['Transect'] == Transect011)
-            #             | (df1['Transect'] == Transect012)
-            #             | (df1['Transect'] == Transect013)
-            #             | (df1['Transect'] == Transect014)
-            #             # | (df1['Transect'] == Transect015)
-            #             # | (df1['Transect'] == Transect016)
-            #             # | (df1['Transect'] == Transect017)
-            #             # | (df1['Transect'] == Transect018)
-            #             # | (df1['Transect'] == Transect019)
-            #             # | (df1['Transect'] == Transect020)
-            #             # | (df1['Transect'] == Transect021)
-            #             # | (df1['Transect'] == Transect022)
-            #             # | (df1['Transect'] == Transect023)
-            #             # | (df1['Transect'] == Transect024)
-            #             # | (df1['Transect'] == Transect025)
-            #             # | (df1['Transect'] == Transect026)
-            #             # | (df1['Transect'] == Transect027)
-            #             # | (df1['Transect'] == Transect028)
-            #             # | (df1['Transect'] == Transect029)
-            #             # | (df1['Transect'] == Transect030)
-            #             | df1.isnull().all(axis=1)]      
-              
-
-            df1 = df1[(df1['Longitude_degE'] == 'xxx') 
-                        |(df1['Longitude_degE'] <= sld_lon_max) & (df1['Longitude_degE'] >= sld_lon_min) #調整用
-                        | df1.isnull().all(axis=1)]      
-              
-            df1 = df1[(df1['Latitude_degN'] == 'xxx')
-                        |(df1['Latitude_degN'] <= sld_lat_max) & (df1['Latitude_degN'] >= sld_lat_min) #調整用
-                        | df1.isnull().all(axis=1)]      
-        
-            # --- 月 (スライダー用) ---
-            # df1 = df1[(df1['Month'] == 'xxx')
-                        
-            #             |(df1['Month'] <= sld_month_max) & (df1['Month'] >= sld_month_min)
-            #             | df1.isnull().all(axis=1)]
-              
-            # --- 月 (multiselect用) ---
-            if selected_months:
-                # isin で選ばれた月を抽出
-                # | (または)
-                # df1.isnull().all(axis=1) で全ての列が空の行（挿入した空白行）を抽出
-                df1 = df1[df1['Month'].isin(selected_months) | df1.isnull().all(axis=1)]
-            else:
-                # 月が一つも選ばれていない場合でも、空白行だけは残す
-                df1 = df1[df1.isnull().all(axis=1)]        
-              
-            df1 = df1[(df1['Salinity'] == 'xxx')        
-                        |(df1['Salinity'] >= sld_sal_min) & (df1['Salinity'] <= sld_sal_max)
-                        | df1.isnull().all(axis=1)]      
-            
-            #描画する年範囲を指定
-            df1 = df1[(df1['Year'] <= sld_year_max) & (df1['Year'] >= sld_year_min) 
-                        | df1.isnull().all(axis=1)] 
-
-     
-            return df1
+            return filter_observation_data(
+                df_original,
+                selected_cruise=selected_cruise,
+                selected_months=selected_months,
+                year_range=(sld_year_min, sld_year_max),
+                lon_range=(sld_lon_min, sld_lon_max),
+                lat_range=(sld_lat_min, sld_lat_max),
+                depth_range=(sld_depth_min, sld_depth_max),
+                salinity_range=(sld_sal_min, sld_sal_max),
+            )
     
     
     
@@ -434,28 +589,7 @@ def main():
     # --- 月 (multiselect用) ---
     # 月の表示用テキストを作成（選択されたリストをカンマ区切りにする）
     month_text = ", ".join(map(str, sorted(selected_months))) if selected_months else "None"
-    
-    
-    ### もし「月が多すぎてサブタイトルが長くなる」のが嫌な場合
-  # 月の表示ロジック
-    if len(selected_months) == 12:
-        month_display = "All"
-    elif len(selected_months) == 0:
-        month_display = "None"
-    else:
-        # 標準機能だけで「1-3」のように短縮するロジック
-        sorted_m = sorted(list(set(selected_months)))
-        ranges = []
-        if sorted_m:
-            start = sorted_m[0]
-            for i in range(len(sorted_m)):
-                # 次の要素が連続していない、または最後の要素の場合に書き出し
-                if i + 1 == len(sorted_m) or sorted_m[i+1] != sorted_m[i] + 1:
-                    end = sorted_m[i]
-                    ranges.append(f"{start}-{end}" if start != end else str(start))
-                    if i + 1 < len(sorted_m):
-                        start = sorted_m[i+1]
-        month_display = ", ".join(ranges)
+    month_display = build_month_display(selected_months)
         
         
 
@@ -1204,8 +1338,8 @@ def main():
     df_empty = df1.empty
 
     # st.write(df_empty)
-    data_found = len(df1["d18O"])
-    data_found_num = str(len(df1["d18O"]))
+    data_found = count_valid_rows(df1, ["d18O"])
+    data_found_num = str(data_found)
 
     
     # バリデーション処理
@@ -1637,410 +1771,47 @@ def main():
     
     # """salinity-d18Oのプロットをする場合，回帰直線付き　変更しない"""
     if X_Y == 1:
-        # sheet_num_XY = [3,4,5,6,7,8]
-        
         print('-------------SUB_FIG   salinity vs d18O-------------')
-        # fig = plt.figure(figsize = (fig_size),dpi=fig_dpi)
         ax = plt.subplot(324)
-        # ax1 = fig.add_subplot(3, 2, 2)
-    
-        ax.set_xlabel(X_label + iso_scale_X)
-        ax.set_ylabel(Y_label + iso_scale_Y)  #LateX形式で特殊文字
-        ax.scatter(-1000, -1000, s=X_Y_S,c=X_Y_C,marker=X_Y_M, alpha=alpha_all, label='ALL') #凡例等のダミー
-        # #軸のラベル
-    
-        
-        # input_sheet_name = pd.ExcelFile(excel_file).sheet_names
-        # for sheet_num in sheet_num:    
-        #     print("読み込まれたSheet:", [sheet_num], input_sheet_name[sheet_num])
-        
-        for sheet_num_XY in sheet_num_XY:
-            # df_fig_ALL = pd.read_excel(excel_file, sheet_name=input_sheet_name[sheet_num_XY])
-            df_fig_ALL = envgeo_utils.load_isotope_data(ref_data, sheet_num=sheet_num_XY) 
-      
-            
-    
-            
-            
-            # # print(d18Oa)
-            # Ya = Ya.dropna()
-            # Xa = Xa.dropna()
-            # # print(d18Oa)
-            
-            
-            # これだとOK
-            # 1. 描画したいXとYの両方にデータが入っている行だけを残す
-            df_fig_ALL2 = df_fig_ALL.dropna(subset=[X_data, Y_data])
+        base_frames = [
+            load_isotope_data_cached(ref_data, sheet_num=sheet_num_XY)
+            for sheet_num_XY in sheet_num_XY
+        ]
+        df_fig_all = pd.concat(base_frames, ignore_index=True)
+        df_fig_add = df_fig_add_salinity_d18O
+        df_fig_add_for_d18O_dD = df_fig_add.copy()
 
-            Ya = df_fig_ALL2[Y_data]
-            Xa = df_fig_ALL2[X_data]
-    
-    
-    
-    
-    
-            #列の要素を表示
-            d_select_main = df_fig_ALL[selected_row].value_counts().to_dict()
-            d_select_main_sum = df_fig_ALL[selected_row].count().sum()
-            print('要素と出現数:', d_select_main)
-            print('要素と出現数:', d_select_main_sum)
-            print('---------------')
-    
-            
-    
-            ax.set_xlim(lim_min_X, lim_max_X) 
-            ax.set_ylim(lim_min_Y, lim_max_Y) 
-            plt.tick_params(labelsize=15)
-    
-            
-            ax.xaxis.set_major_formatter(FormatStrFormatter("%.f"))      
-            ax.yaxis.set_major_formatter(FormatStrFormatter("%+.1f"))
-            ax.tick_params(length=ax_length)
-            # ax.annotate("point A", xy = (-7, 0), size = 15,
-            #             color = "red", arrowprops = dict())
-            
-            
-            ax.scatter(Xa, Ya, s=X_Y_S,c=X_Y_C,marker=X_Y_M,lw=0.5, ec="black", alpha=alpha_all)
-            
-        plt.title(fig_title_X_Y, fontsize=20) #
-        plt.legend(fontsize = 20) # 凡例の数字のフォントサイズを設定
-        
-        
-    
-        # 回帰直線を追-------------------------------------
-        if reg_line_write ==1: 
-    
-        
-        
-        # 一次関数で多項式近似を行う
-        #近似式の係数
-            coef = np.polyfit(Xa, Ya, 1)
-        #近似式の計算
-            y1 = np.poly1d(coef)(Xa) #1次
-        #グラフ表示
-            plt.plot(Xa, y1, label='regression line (ALL)', c=X_Y_C)
-        
-            reg_line = 'ALL:  y' + ' = ' + '{:.2f}'.format(coef[0]) + 'x ' +' + (' + '{:.2f}'.format(coef[1]) 
-            line_r = np.corrcoef(Xa, Ya)
-        
-            ax.text(0.99, 0.05, reg_line + ")    (R=" + '{:.2f}'.format(line_r[0,1])+', N=' + str(d_select_main_sum)+')', horizontalalignment='right', transform=ax.transAxes)
-        # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
-    
-    
-    
-        # 作成した多項式近似を表示
-            print("回帰直線　ALL:", Y_data + '=' + '{:.2f}'.format(coef[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef[1]))
-            print("相関係数（ｒ）:", np.corrcoef(Xa, Ya))
-            print("----------------")
-    
-        else:()    
-        
-        
-    
-        # 回帰直線を追-------------------------------------
-    
-        
-        # #全体のプロットをする場合
-        # if X_Y_add1 == 1:
-        #     # sheet_num_add = [1]
-        #     # sheet_num_add = [2,3]
-        #     for sheet_num_add in sheet_num_add:    
-        
-        #         if X_Y_C_add_each == 1:
-                    
-        #             plt.title(fig_title_X_Y+'_with_selected', fontsize=20) #
-                    
-        #             X_Y_C_add  =  color[sheet_num_add] #メインFigと同じくシート毎に分けたい場合
-    
-        #             df_fig_add = pd.read_excel(excel_file, sheet_name=sheet_num_add)
-                    
-                    
-      
-    
-        #             if fig_add_sort == 1:
-        #                 df_fig_add = df_fig_add[df_fig_add[selected_row] == selected_area]
-        #                 plt.title(fig_title_X_Y+'_with_'+ selected_area, fontsize=20) #
-        #             else:()
-                        
-        #             #列の要素を表示
-        #             d_select_add = df_fig_add[selected_row].value_counts().to_dict()
-        #             d_select_add_sum = df_fig_add[selected_row].count().sum()
-        #             print('要素と出現数:', d_select_add)
-        #             print('要素と出現数:', d_select_add_sum)
-        #             print('---------------')
-                    
-                    
-                    
-        #             Y_add = df_fig_add[Y_data]
-        #             X_add = df_fig_add[X_data]
-        #             Y_add = Y_add.dropna()
-        #             X_add = X_add.dropna()
-                    
-        #             ax.scatter(X_add, Y_add, s=X_Y_S,c=X_Y_C_add,marker=X_Y_M, alpha=alpha_selected,lw=0.5, ec="black", label= pd.ExcelFile(excel_file).sheet_names[sheet_num_add])
-        #             # plt.legend(fontsize = 15) # 凡例の数字のフォントサイズを設定
-    
-                    
-        #             #読み込んだシート名の表示用
-        #             input_file = pd.ExcelFile(excel_file)
-        #             sheet_names = input_file.sheet_names
-        #             print("d13C_d18O強調用に読み込まれたSheet:", [sheet_num_add], sheet_names[sheet_num_add])
-        #             print("　　　　サンプルID:",df_fiｇ_add.iloc[1,0])
-                    
-        #             if reg_line_add_write ==1: 
-        #             # 一次関数で多項式近似を行う
-        #             #近似式の係数
-        #                 coef_add = np.polyfit(X_add, Y_add, 1)
-        #             #近似式の計算
-        #                 y1_add = np.poly1d(coef_add)(X_add) #1次
-        #             #グラフ表示
-        #                 plt.plot(X_add, y1_add, label='regression line (' + sheet_names[sheet_num_add]+')', c=X_Y_C_add,)
-                    
-        #                 reg_line_add = sheet_names[sheet_num_add] + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + (' + '{:.2f}'.format(coef_add[1]) 
-        #                 line_r_add = np.corrcoef(X_add, Y_add)
-                    
-        #                 ax.text(0.99, 0.05*sheet_num_add, reg_line_add + ")    (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add_sum)+')', horizontalalignment='right', transform=ax.transAxes)
-        #             # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
-                    
-                    
-        #                 plt.legend(fontsize = 10) # 凡例の数字のフォントサイズを設定
-        #             # 作成した多項式近似を表示
-        #                 print("回帰直線　add:", Y_data + '=' + '{:.2f}'.format(coef_add[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef_add[1]))
-        #                 print("相関係数（ｒ）:", np.corrcoef(X_add, Y_add))
-        #                 print("----------------")
-        #             else:()
-                    
-        #         else:()
-                
-        # else:()
-    
-        
-    
-    
-    
-        #追加で緯度経度とTransevtごとの強調プロットをする場合
-        if X_Y_add2 == 1:
-            # sheet_num_add = [1]
-            # sheet_num_add = [2,3]
-            for sheet_num_add in sheet_num_add:    
-        
-                if X_Y_C_add_each == 1:
-                    
-                    # plt.title(fig_title_X_Y+'_with_selected', fontsize=20) #
-                    
-                    X_Y_C_add  =  color[sheet_num_add] #メインFigと同じくシート毎に分けたい場合
-    
-                    # df_fig_add = pd.read_excel(excel_file, sheet_name=sheet_num_add)
-                    df_fig_add =  envgeo_utils.load_isotope_data(ref_data, sheet_num=sheet_num_add)
-                    
-                    
-                    
-                    ####################################################################################################################################################
-    
-                    #緯度経度と水深とTransectで制限
-                    # df1 = df_fig_add
-                    
-                    # df1 = df1[(df1['Depth_m'] == 'xxx') 
-                    #             |(df1['Depth_m'] <= 10) & (df1['Depth_m'] >= 0)
-                    #             |(df1['Depth_m'] <= 200) & (df1['Depth_m'] > 10)
-                    #             |(df1['Depth_m'] <= 500) & (df1['Depth_m'] > 200)
-                    #             |(df1['Depth_m'] <= 1000) & (df1['Depth_m'] > 500)
-                    #          ] 
-                    
-                    # df1 = df1[ (df1['Transect'] == 0) 
-                    #             # | (df1['Transect'] == 'CK') 
-                    #             # | (df1['Transect'] == 'Nansei') 
-                    #             # | (df1['Transect'] == 'nECS') 
-                    #             # | (df1['Transect'] == 'Noto') 
-                    #             | (df1['Transect'] == 'Pacific') 
-                    #             | (df1['Transect'] == 'Pacific_west') 
-                    #             # | (df1['Transect'] == 'sECS')          
-                    #             # | (df1['Transect'] == 'Shimane&Tottori')          
-                    #             # | (df1['Transect'] == 'SI')
-                    #             # | (df1['Transect'] == 'Toyama')
-                    #             # | (df1['Transect'] == 'Tsushima')
-                    #             # | (df1['Transect'] == 'Yamato')
-                    #             # | (df1['Transect'] == 'NA2') 
-                    #             # | (df1['Transect'] == 'ECS2021') 
-                    #             ] 
-    
-    
-                    # # #描画する緯度経度を指定 
-                    # df1 = df1[(df1['Longitude_degE'] == 'xxx') 
-                    #             |(df1['Longitude_degE'] <= 145) & (df1['Longitude_degE'] >= 140)    
-                    #             |(df1['Longitude_degE'] <= 140) & (df1['Longitude_degE'] >= 135)         
-                    #             |(df1['Longitude_degE'] <= 135) & (df1['Longitude_degE'] >= 130)
-                    #             |(df1['Longitude_degE'] <= 130) & (df1['Longitude_degE'] >= 125)
-                    #             |(df1['Longitude_degE'] <= 125) & (df1['Longitude_degE'] >= 120)
-                    #             |(df1['Longitude_degE'] <= 120) & (df1['Longitude_degE'] >= 115)
-                    #             # |(df1['Longitude_degE'] <= 130) & (df1['Longitude_degE'] >= 128) #調整用
-                    #            ] 
-    
-                    # df1 = df1[(df1['Latitude_degN'] == 'xxx')
-                    #             |(df1['Latitude_degN'] <= 45) & (df1['Latitude_degN'] >= 40)          
-                    #             |(df1['Latitude_degN'] <= 40) & (df1['Latitude_degN'] >= 35)
-                    #             |(df1['Latitude_degN'] <= 35) & (df1['Latitude_degN'] >= 30)
-                    #             |(df1['Latitude_degN'] <= 30) & (df1['Latitude_degN'] >= 25)
-                    #             |(df1['Latitude_degN'] <= 25) & (df1['Latitude_degN'] >= 20)
-                    #            # |(df1['Latitude_degN'] <= 33) & (df1['Latitude_degN'] >= 31) #調整用
-                    #           ]
-                              
-                    # df1 = df1[(df1['Month'] == 'xxx')
-                    #             |(df1['Month'] <= 12) & (df1['Month'] >= 10)          
-                    #             |(df1['Month'] <= 9) & (df1['Month'] >= 7)
-                    #             |(df1['Month'] <= 6) & (df1['Month'] >= 4)
-                    #             |(df1['Month'] <= 3) & (df1['Month'] >= 1)      
-                    #           ] 
-                    
-                    # df_fig_add = df1
-                    
-                    df_fig_add = df_fig_add_salinity_d18O 
-                    df_fig_add_for_d18O_dD = df_fig_add
-                    
-                    #上記の制限要素用の名前
-                    # sheet_names_add2 = 'Area B (N:25-130,E:135-140,D:>10m)'
-                    # sheet_names_add2 = 'N:25-30, E:135-140, WD:0-10m'
-                    sheet_names_add2 = sheet_names_add2
-                    
-                    
-                    ####################################################################################################################################################
-                    
-                    
-                    
-                    
-          
-                    # if fig_add_sort == 1:
-                    #     df_fig_add = df_fig_add[df_fig_add[selected_row] == selected_area]
-                    #     plt.title(fig_title_X_Y+'_with_'+ selected_area, fontsize=20) #
-                    # else:()
-                        
+        print('要素と出現数:', df_fig_all[selected_row].value_counts().to_dict())
+        print('要素と出現数:', df_fig_all[selected_row].count().sum())
+        print('---------------')
+        print('要素と出現数:', df_fig_add[selected_row].value_counts().to_dict())
+        print('要素と出現数:', df_fig_add[selected_row].count().sum())
+        print('---------------')
 
-                    
-                    # これだと欠損値でエラーになる。
-                    # Y_add = df_fig_add[Y_data]
-                    # X_add = df_fig_add[X_data]
-                    # Y_add = Y_add.dropna()
-                    # X_add = X_add.dropna()
-                    
-                    
-                    # これだとOK
-                    # 1. 描画したいXとYの両方にデータが入っている行だけを残す
-                    df_fig_add2 = df_fig_add.dropna(subset=[X_data, Y_data])
-
-                    Y_add = df_fig_add2[Y_data]
-                    X_add = df_fig_add2[X_data]
-                    
-                    
-                    
-                    
-                    #列の要素を表示
-                    d_select_add2 = df_fig_add[selected_row].value_counts().to_dict()
-                    d_select_add2_sum = df1[selected_row].count().sum()
-                    print('要素と出現数:', d_select_add2)
-                    print('要素と出現数:', d_select_add2_sum)
-                    print('---------------')
-    
-                    
-                    ax.scatter(X_add, Y_add, s=X_Y_S,c=X_Y_C_add,marker=X_Y_M, alpha=alpha_selected,lw=0.5, ec="black", label= sheet_names_add2)
-                    # plt.legend(fontsize = 15) # 凡例の数字のフォントサイズを設定
-    
-                    
-                    # #読み込んだシート名の表示用
-                    # input_file = pd.ExcelFile(excel_file)
-                    # sheet_names = input_file.sheet_names
-                    # print("d13C_d18O強調用に読み込まれたSheet:", [sheet_num_add], sheet_names[sheet_num_add])
-                    # print("　　　　サンプルID:",df_fiｇ_add.iloc[1,0])
-                    
-                    if reg_line_add_write ==1: 
-                    # 一次関数で多項式近似を行う
-                    #近似式の係数
-                        coef_add = np.polyfit(X_add, Y_add, 1)
-                    #近似式の計算
-                        y1_add = np.poly1d(coef_add)(X_add) #1次
-                    #グラフ表示
-                        plt.plot(X_add, y1_add, label='regression line (' + sheet_names_add2 +')', c=X_Y_C_add,)
-                    
-                        reg_line_add = sheet_names_add2 + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + (' + '{:.2f}'.format(coef_add[1]) 
-                        line_r_add = np.corrcoef(X_add, Y_add)
-                    
-                        ax.text(0.99, 0.05*3+0.01, reg_line_add + ")    (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add2_sum)+')', horizontalalignment='right', transform=ax.transAxes)
-                        # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
-                    
-                    
-                        plt.legend(fontsize = 10) # 凡例の数字のフォントサイズを設定
-                    # 作成した多項式近似を表示
-                        print("回帰直線　add:", Y_data + '=' + '{:.2f}'.format(coef_add[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef_add[1]))
-                        print("相関係数（ｒ）:", np.corrcoef(X_add, Y_add))
-                        print("----------------")
-                    else:()
-                    
-                else:()
-                
-        else:()
-    
-    
-    
-    
-    
-        #==========  以下，検証　============
-        
-        print(("--------MES RMSE R2 (all)--------"))
-        
-        Y_all_pred = coef[0]*Xa + coef[1]
-        print("回帰直線　ALL:", Y_data + '=' + '{:.2f}'.format(coef[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef[1]))
-        print('a=',coef[0])
-        print('b=',coef[1])
-        
-        # print(Ya)
-        # print(Y_all_pred)
-        print()
-        ###############　MSE，RMSEの計算
-        #https://pythondatascience.plavox.info/scikit-learn/回帰モデルの評価
-        
-        # from sklearn.metrics import mean_squared_error
-        # import numpy as np
-        MSE_all = mean_squared_error(Ya, Y_all_pred)
-        RMES_all = np.sqrt(mean_squared_error(Ya, Y_all_pred))
-            
-        print('MSE_all:', '{:.3f}'.format(MSE_all))
-        print('RMSE_all:', '{:.3f}'.format(RMES_all))
-        
-        ###############　R2の計算
-        # from sklearn.metrics import r2_score
-        R2_all =  r2_score(Ya, Y_all_pred)  
-        print('R2_all:', '{:.3f}'.format(R2_all))
-        
-    
-        ax.text(0.99, 0+0.01, 'RMSE_all: ' + '{:.3f}'.format(RMES_all)+', R$^{2}$_all: ' + '{:.2f}'.format(R2_all), horizontalalignment='right', transform=ax.transAxes, fontsize=12, c='red')
-        
-        
-        
-        print(("--------MES RMSE R2 (add)--------"))
-        
-        Y_add_pred = coef_add[0]*X_add + coef_add[1]
-        print("回帰直線　add:", Y_data + '=' + '{:.2f}'.format(coef_add[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef_add[1]))
-        print('a=',coef_add[0])
-        print('b=',coef_add[1])
-        
-        # print(Y_add)
-        # print(Y_add_pred)
-        print()
-        ###############　MSE，RMSEの計算
-        #https://pythondatascience.plavox.info/scikit-learn/回帰モデルの評価
-        
-        # from sklearn.metrics import mean_squared_error
-        # import numpy as np
-        MSE_add = mean_squared_error(Y_add, Y_add_pred)
-        RMES_add = np.sqrt(mean_squared_error(Y_add, Y_add_pred))
-            
-        print('MSE_add:', '{:.3f}'.format(MSE_add))
-        print('RMSE_add:', '{:.3f}'.format(RMES_add))
-        
-        ###############　R2の計算
-        # from sklearn.metrics import r2_score
-        R2_add =  r2_score(Y_add, Y_add_pred)  
-        print('R2_add:', '{:.3f}'.format(R2_add))
-        
-        ax.text(0.99, 0.05*2+0.01, 'RMSE_add: ' + '{:.3f}'.format(RMES_add)+', R$^{2}$_add: ' + '{:.2f}'.format(R2_add), horizontalalignment='right', transform=ax.transAxes, fontsize=12, c='blue')
+        selected_color = color[sheet_num_add[0]] if X_Y_add2 == 1 and X_Y_C_add_each == 1 else X_Y_C_add
+        plot_xy_with_regression(
+            ax=ax,
+            base_df=df_fig_all,
+            selected_df=df_fig_add,
+            x_col=X_data,
+            y_col=Y_data,
+            x_label=X_label,
+            y_label=Y_label,
+            x_scale=iso_scale_X,
+            y_scale=iso_scale_Y,
+            x_limits=(lim_min_X, lim_max_X),
+            y_limits=(lim_min_Y, lim_max_Y),
+            x_formatter=FormatStrFormatter("%.f"),
+            y_formatter=FormatStrFormatter("%+.1f"),
+            tick_length=ax_length,
+            main_style={"size": X_Y_S, "color": X_Y_C, "marker": X_Y_M, "alpha": alpha_all},
+            selected_style={"size": X_Y_S, "color": selected_color, "marker": X_Y_M, "alpha": alpha_selected},
+            figure_title=fig_title_X_Y,
+            selected_label=sheet_names_add2,
+            selected_row=selected_row,
+            write_main_regression=(reg_line_write == 1),
+            write_selected_regression=(X_Y_add2 == 1 and reg_line_add_write == 1),
+        )
     
     
     
@@ -2289,342 +2060,47 @@ def main():
     
     # """dD-d18Oのプロットをする場合，回帰直線付き　変更しない"""
     if X_Y == 1:
-        # sheet_num_XY = [3,4,5,6,7,8]
-        
         print('-------------SUB_FIG   d13C vs d18O-------------')
-        # fig = plt.figure(figsize = (sfig_size),dpi=fig_dpi)
         ax = plt.subplot(326)
-        
-    
-        ax.set_xlabel(X_label + iso_scale_X)
-        ax.set_ylabel(Y_label + iso_scale_Y)  #LateX形式で特殊文字
-        ax.scatter(-1000, -1000, s=X_Y_S,c=X_Y_C,marker=X_Y_M, alpha=alpha_all, label='ALL') #凡例等のダミー
-        # #軸のラベル
-        # ax.set_xlabel(r"$\delta^{13}$C (VPDB)")
-        # ax.set_ylabel(r"$\delta^{18}$O (VPDB)")  #LateX形式で特殊文字
-        
-        # input_sheet_name = pd.ExcelFile(excel_file).sheet_names
-        # for sheet_num in sheet_num:    
-        #     print("読み込まれたSheet:", [sheet_num], input_sheet_name[sheet_num])
-        
-        for sheet_num_XY in sheet_num_XY:
-            # df_fig_ALL = pd.read_excel(excel_file, sheet_name=input_sheet_name[sheet_num_XY])
-            
-            # df_fig_ALL =   envgeo_utils.load_isotope_data(ref_data, sheet_num=sheet_num_XY)
+        base_frames = [
+            load_isotope_data_cached(ref_data, sheet_num=sheet_num_XY)
+            for sheet_num_XY in sheet_num_XY
+        ]
+        df_fig_all = pd.concat(base_frames, ignore_index=True)
+        df_fig_add = df_fig_add_for_d18O_dD.copy()
 
-            df_fig_ALL =   envgeo_utils.load_isotope_data(ref_data)
+        print('要素と出現数:', df_fig_all[selected_row].value_counts().to_dict())
+        print('要素と出現数:', df_fig_all[selected_row].count().sum())
+        print('---------------')
+        print('要素と出現数:', df_fig_add[selected_row].value_counts().to_dict())
+        print('要素と出現数:', df_fig_add[selected_row].count().sum())
+        print('---------------')
 
-            
-    
-            # print(df_fig_ALL)
-            Ya = df_fig_ALL[Y_data]
-            Xa = df_fig_ALL[X_data]
-            # print(d18Oa)
-            Ya = Ya.dropna()
-            Xa = Xa.dropna()
-            # print(d18Oa)
-            
-    
-            #列の要素を表示
-            d_select_main = df_fig_ALL[selected_row].value_counts().to_dict()
-            d_select_main_sum = df_fig_ALL[selected_row].count().sum()
-            print('要素と出現数:', d_select_main)
-            print('要素と出現数:', d_select_main_sum)
-            print('---------------')
-    
-            
-        
-            # for sheet_num_add in sheet_num_add:    
-            #     df_fig = pd.read_excel(excel_file, sheet_name=sheet_num)
-            #     d18O = df_fig["d18O"]
-            #     d13C = df_fig["d13C"]
-            ax.set_xlim(lim_min_X, lim_max_X) 
-            # ax.set_xticks(np.linspace(-11, -3, 9))
-            ax.set_ylim(lim_min_Y, lim_max_Y) 
-            plt.tick_params(labelsize=15)
-            # ax.set_xticks(np.linspace(-1.4, 0.6,11))
-            # ax.set_yticks(np.linspace(1000, 0, 11))
-            
-            if X_data == 'Salinity':
-                ax.xaxis.set_major_formatter(FormatStrFormatter("%.f"))
-            else:
-                ax.xaxis.set_major_formatter(FormatStrFormatter("%+.1f"))
-            
-            
-            ax.yaxis.set_major_formatter(FormatStrFormatter("%+.1f"))
-            ax.tick_params(length=ax_length)
-            # ax.annotate("point A", xy = (-7, 0), size = 15,
-            #             color = "red", arrowprops = dict())
-            
-            
-            ax.scatter(Xa, Ya, s=X_Y_S,c=X_Y_C,marker=X_Y_M,lw=0.5, ec="black", alpha=alpha_all)
-        plt.title(fig_title_X_Y, fontsize=20) #
-        plt.legend(fontsize = 20) # 凡例の数字のフォントサイズを設定
-        
-        
-    
-        # 回帰直線を追-------------------------------------
-        if reg_line_write ==1: 
-    
-        
-        # 一次関数で多項式近似を行う
-        #近似式の係数
-            coef = np.polyfit(Xa, Ya, 1)
-        #近似式の計算
-            y1 = np.poly1d(coef)(Xa) #1次
-        #グラフ表示
-            plt.plot(Xa, y1, label='regression line (ALL)', c=X_Y_C)
-        
-            reg_line = 'ALL:  y' + ' = ' + '{:.2f}'.format(coef[0]) + 'x ' +' + (' + '{:.2f}'.format(coef[1]) 
-            line_r = np.corrcoef(Xa, Ya)
-        
-            ax.text(0.99, 0.05, reg_line + ")    (R=" + '{:.2f}'.format(line_r[0,1])+', N=' + str(d_select_main_sum)+')', horizontalalignment='right', transform=ax.transAxes)
-        # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
-    
-    
-    
-        # 作成した多項式近似を表示
-            print("回帰直線　ALL:", Y_data + '=' + '{:.2f}'.format(coef[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef[1]))
-            print("相関係数（ｒ）:", np.corrcoef(Xa, Ya))
-            print("----------------")
-    
-        else:()    
-        
-        
-    
-        # 回帰直線を追-------------------------------------
-    
-        # 条件抽出する場合
-        # fig_add_sort = 1
-        # selected_row = "Transect"
-        # selected_area = 'Noto'
-    
-        
-        # #追加でTransectごとの強調プロットをする場合
-        # if X_Y_add1 == 1:
-        #     # sheet_num_add = [1]
-        #     # sheet_num_add = [2,3]
-        #     for sheet_num_add in sheet_num_add:    
-        
-        #         if X_Y_C_add_each == 1:
-                    
-        #             plt.title(fig_title_X_Y+'_with_selected', fontsize=20) #
-                    
-        #             X_Y_C_add  =  color[sheet_num_add] #メインFigと同じくシート毎に分けたい場合
-    
-        #             df_fig_add = pd.read_excel(excel_file, sheet_name=sheet_num_add)
-                    
-                    
-      
-    
-        #             if fig_add_sort == 1:
-        #                 df_fig_add = df_fig_add[df_fig_add[selected_row] == selected_area]
-        #                 plt.title(fig_title_X_Y+'_with_'+ selected_area, fontsize=20) #
-        #             else:()
-                        
-        #             #列の要素を表示
-        #             d_select_add = df_fig_add[selected_row].value_counts().to_dict()
-        #             d_select_add_sum = df_fig_add[selected_row].count().sum()
-        #             print('要素と出現数:', d_select_add)
-        #             print('要素と出現数:', d_select_add_sum)
-        #             print('---------------')
-                    
-                    
-                    
-        #             Y_add = df_fig_add[Y_data]
-        #             X_add = df_fig_add[X_data]
-        #             Y_add = Y_add.dropna()
-        #             X_add = X_add.dropna()
-                    
-        #             ax.scatter(X_add, Y_add, s=X_Y_S,c=X_Y_C_add,marker=X_Y_M, alpha=alpha_selected,lw=0.5, ec="black", label= pd.ExcelFile(excel_file).sheet_names[sheet_num_add])
-        #             # plt.legend(fontsize = 15) # 凡例の数字のフォントサイズを設定
-    
-                    
-        #             #読み込んだシート名の表示用
-        #             input_file = pd.ExcelFile(excel_file)
-        #             sheet_names = input_file.sheet_names
-        #             print("d13C_d18O強調用に読み込まれたSheet:", [sheet_num_add], sheet_names[sheet_num_add])
-        #             print("　　　　サンプルID:",df_fiｇ_add.iloc[1,0])
-                    
-        #             if reg_line_add_write ==1: 
-        #             # 一次関数で多項式近似を行う
-        #             #近似式の係数
-        #                 coef_add = np.polyfit(X_add, Y_add, 1)
-        #             #近似式の計算
-        #                 y1_add = np.poly1d(coef_add)(X_add) #1次
-        #             #グラフ表示
-        #                 plt.plot(X_add, y1_add, label='regression line (' + sheet_names[sheet_num_add]+')', c=X_Y_C_add,)
-                    
-        #                 reg_line_add = sheet_names[sheet_num_add] + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + ' + '{:.2f}'.format(coef_add[1]) 
-        #                 line_r_add = np.corrcoef(X_add, Y_add)
-                    
-        #                 ax.text(0.99, 0.05*sheet_num_add, reg_line_add + "    (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add_sum)+')', horizontalalignment='right', transform=ax.transAxes)
-        #             # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
-                    
-                    
-        #                 plt.legend(fontsize = 10) # 凡例の数字のフォントサイズを設定
-        #             # 作成した多項式近似を表示
-        #                 print("回帰直線　add:", Y_data + '=' + '{:.2f}'.format(coef_add[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef_add[1]))
-        #                 print("相関係数（ｒ）:", np.corrcoef(X_add, Y_add))
-        #                 print("----------------")
-        #             else:()
-                    
-        #         else:()
-                
-        # else:()
-    
-        
-    
-    
-    
-        #追加で緯度経度とTransevtごとの強調プロットをする場合
-        if X_Y_add2 == 1:
-            # sheet_num_add = [1]
-            # sheet_num_add = [2,3]
-            for sheet_num_add in sheet_num_add:    
-        
-                if X_Y_C_add_each == 1:
-                    
-                    # plt.title(fig_title_X_Y+'_with_selected', fontsize=20) #
-                    
-                    X_Y_C_add  =  color[sheet_num_add] #メインFigと同じくシート毎に分けたい場合
-    
-                    # df_fig_add = pd.read_excel(excel_file, sheet_name=sheet_num_add)
-                    df_fig_add = df_fig_add_for_d18O_dD
-                    
-    
-                    # sheet_names_add2 = 'N:25-30, E:135-140, WD:0-10m'
-                    sheet_names_add2 = sheet_names_add2
-                    
-                    
-                    
-                    ####################################################################################################################################################
-                    
-                    
-                    
-                    
-          
-                    # if fig_add_sort == 1:
-                    #     df_fig_add = df_fig_add[df_fig_add[selected_row] == selected_area]
-                    #     plt.title(fig_title_X_Y+'_with_'+ selected_area, fontsize=20) #
-                    # else:()
-                        
-                    Y_add = df_fig_add[Y_data]
-                    X_add = df_fig_add[X_data]
-                    Y_add = Y_add.dropna()
-                    X_add = X_add.dropna()
-                    
-                    
-                    #列の要素を表示
-                    d_select_add2 = df_fig_add[selected_row].value_counts().to_dict()
-                    d_select_add2_sum = df1[selected_row].count().sum()
-                    print('要素と出現数:', d_select_add2)
-                    print('要素と出現数:', d_select_add2_sum)
-                    print('---------------')
-    
-                    
-                    ax.scatter(X_add, Y_add, s=X_Y_S,c=X_Y_C_add,marker=X_Y_M, alpha=alpha_selected,lw=0.5, ec="black", label= sheet_names_add2)
-                    # plt.legend(fontsize = 15) # 凡例の数字のフォントサイズを設定
-    
-                    
-                    #読み込んだシート名の表示用
-                    # input_file = pd.ExcelFile(excel_file)
-                    # sheet_names = input_file.sheet_names
-                    # print("d13C_d18O強調用に読み込まれたSheet:", [sheet_num_add], sheet_names[sheet_num_add])
-                    # print("　　　　サンプルID:",df_fiｇ_add.iloc[1,0])
-                    
-                    if reg_line_add_write ==1: 
-                    # 一次関数で多項式近似を行う
-                    #近似式の係数
-                        coef_add = np.polyfit(X_add, Y_add, 1)
-                    #近似式の計算
-                        y1_add = np.poly1d(coef_add)(X_add) #1次
-                    #グラフ表示
-                        plt.plot(X_add, y1_add, label='regression line (' + sheet_names_add2 +')', c=X_Y_C_add,)
-                    
-                        reg_line_add = sheet_names_add2 + ':  y' + ' = ' + '{:.2f}'.format(coef_add[0]) + 'x ' +' + (' + '{:.2f}'.format(coef_add[1]) 
-                        line_r_add = np.corrcoef(X_add, Y_add)
-                    
-                        ax.text(0.99, 0.05*3+0.01, reg_line_add + ")    (R=" + '{:.2f}'.format(line_r_add[0,1])+', N=' + str(d_select_add2_sum)+')', horizontalalignment='right', transform=ax.transAxes)
-                        # ax.text(0.99, 0.01, line_r, horizontalalignment='right', transform=ax.transAxes)
-                    
-                    
-                        plt.legend(fontsize = 10) # 凡例の数字のフォントサイズを設定
-                    # 作成した多項式近似を表示
-                        print("回帰直線　add:", Y_data + '=' + '{:.2f}'.format(coef_add[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef_add[1]))
-                        print("相関係数（ｒ）:", np.corrcoef(X_add, Y_add))
-                        print("----------------")
-                    else:()
-                    
-                else:()
-                
-        else:()
-    
-    
-    
-    
-    
-        #==========  以下，検証　============
-        
-        print(("--------MES RMSE R2 (all)--------"))
-        
-        Y_all_pred = coef[0]*Xa + coef[1]
-        print("回帰直線　ALL:", Y_data + '=' + '{:.2f}'.format(coef[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef[1]))
-        print('a=',coef[0])
-        print('b=',coef[1])
-        
-        # print(Ya)
-        # print(Y_all_pred)
-        print()
-        ###############　MSE，RMSEの計算
-        #https://pythondatascience.plavox.info/scikit-learn/回帰モデルの評価
-        
-        # from sklearn.metrics import mean_squared_error
-        # import numpy as np
-        MSE_all = mean_squared_error(Ya, Y_all_pred)
-        RMES_all = np.sqrt(mean_squared_error(Ya, Y_all_pred))
-            
-        print('MSE_all:', '{:.3f}'.format(MSE_all))
-        print('RMSE_all:', '{:.3f}'.format(RMES_all))
-        
-        ###############　R2の計算
-        # from sklearn.metrics import r2_score
-        R2_all =  r2_score(Ya, Y_all_pred)  
-        print('R2_all:', '{:.3f}'.format(R2_all))
-        
-    
-        ax.text(0.99, 0+0.01, 'RMSE_all: ' + '{:.3f}'.format(RMES_all)+', R$^{2}$_all: ' + '{:.2f}'.format(R2_all), horizontalalignment='right', transform=ax.transAxes, fontsize=12, c='red')
-        
-        
-        
-        print(("--------MES RMSE R2 (add)--------"))
-        
-        Y_add_pred = coef_add[0]*X_add + coef_add[1]
-        print("回帰直線　add:", Y_data + '=' + '{:.2f}'.format(coef_add[0]) + ' * ' + Y_data + '+' + '{:.2f}'.format(coef_add[1]))
-        print('a=',coef_add[0])
-        print('b=',coef_add[1])
-        
-        # print(Y_add)
-        # print(Y_add_pred)
-        print()
-        ###############　MSE，RMSEの計算
-        #https://pythondatascience.plavox.info/scikit-learn/回帰モデルの評価
-        
-        # from sklearn.metrics import mean_squared_error
-        # import numpy as np
-        MSE_add = mean_squared_error(Y_add, Y_add_pred)
-        RMES_add = np.sqrt(mean_squared_error(Y_add, Y_add_pred))
-            
-        print('MSE_add:', '{:.3f}'.format(MSE_add))
-        print('RMSE_add:', '{:.3f}'.format(RMES_add))
-        
-        ###############　R2の計算
-        # from sklearn.metrics import r2_score
-        R2_add =  r2_score(Y_add, Y_add_pred)  
-        print('R2_add:', '{:.3f}'.format(R2_add))
-        
-        ax.text(0.99, 0.05*2+0.01, 'RMSE_add: ' + '{:.3f}'.format(RMES_add)+', R$^{2}$_add: ' + '{:.2f}'.format(R2_add), horizontalalignment='right', transform=ax.transAxes, fontsize=12, c='blue')
-    
+        selected_color = color[sheet_num_add[0]] if X_Y_add2 == 1 and X_Y_C_add_each == 1 else X_Y_C_add
+        plot_xy_with_regression(
+            ax=ax,
+            base_df=df_fig_all,
+            selected_df=df_fig_add,
+            x_col=X_data,
+            y_col=Y_data,
+            x_label=X_label,
+            y_label=Y_label,
+            x_scale=iso_scale_X,
+            y_scale=iso_scale_Y,
+            x_limits=(lim_min_X, lim_max_X),
+            y_limits=(lim_min_Y, lim_max_Y),
+            x_formatter=FormatStrFormatter("%+.1f"),
+            y_formatter=FormatStrFormatter("%+.1f"),
+            tick_length=ax_length,
+            main_style={"size": X_Y_S, "color": X_Y_C, "marker": X_Y_M, "alpha": alpha_all},
+            selected_style={"size": X_Y_S, "color": selected_color, "marker": X_Y_M, "alpha": alpha_selected},
+            figure_title=fig_title_X_Y,
+            selected_label=sheet_names_add2,
+            selected_row=selected_row,
+            write_main_regression=(reg_line_write == 1),
+            write_selected_regression=(X_Y_add2 == 1 and reg_line_add_write == 1),
+        )
+
     
     
     else:()
@@ -2640,19 +2116,8 @@ def main():
     
     
     
-    #######################画像を保存するためのボタン作成########################
-    sub_title2 = sub_title
-    sub_title2 = sub_title2.replace(':', '') #pdf書き出し用
-    # sub_title2 = sub_title2.replace('>', '') #pdf書き出し用
-    # sub_title2 = sub_title2.replace('<', '') #pdf書き出し用
-    sub_title2 = sub_title2.replace(',', '_') #pdf書き出し用
-    sub_title2 = sub_title2.replace(' ', '') #pdf書き出し用
-    sub_tite = str('Fig_compiled_SW'+'_'+sub_title2+".png")
-
-
-    
     #画像を保存，以下の方法だとローカルにも保存されてしまう
-    # fn = sub_tite
+    # fn = envgeo_utils.build_figure_filename("Fig_compiled_SW", sub_title)
     # # plt.savefig(fn)
 
     # with open(fn, "rb") as img:
@@ -2665,7 +2130,7 @@ def main():
 
     #Save to memory first. の場合は，ローカルに保存されないので安心
     import io
-    fn = sub_tite
+    fn = envgeo_utils.build_figure_filename("Fig_compiled_SW", sub_title)
     img = io.BytesIO()
     plt.savefig(img, format='png')
      
@@ -2746,4 +2211,3 @@ def main():
 if __name__ == '__main__':
     main()
     
-

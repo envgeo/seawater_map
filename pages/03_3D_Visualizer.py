@@ -11,9 +11,57 @@ Created on Sun May 21 16:00:21 2023
 
 
 # --- Version info ---
-version = "1.0.0" #v220_20260317
+version = "1.3.0" #v220_20260317
 
 # ToDo
+
+
+COLOR_FILTERED_OPTIONS = {
+    "d18O": "d18O",
+    "dD": "dD",
+    "d-excess": "d-excess",
+    "Temperature": "Temperature_degC",
+    "Salinity": "Salinity",
+    "Water Depth": "Depth_m",
+    "Latitude": "Latitude_degN",
+    "Longitude": "Longitude_degE",
+}
+
+
+def available_color_filtered_options(df):
+    """Return color options available in the current dataframe.
+
+    現在のデータに存在する列だけを、色分け候補として表示します。
+    """
+    return {
+        label: column
+        for label, column in COLOR_FILTERED_OPTIONS.items()
+        if column in df.columns
+    }
+
+
+def show_selection_tip():
+    """Show a compact guide below Plotly selection figures.
+
+    Box/Lasso 選択の説明を、図の直下に見やすく表示します。
+    """
+    st.markdown(
+        """
+        <div style="
+            margin: 0.25rem 0 0.8rem 0;
+            padding: 0.55rem 0.75rem;
+            border-left: 4px solid #3b82f6;
+            background: #eef6ff;
+            color: #1f2937;
+            font-size: 0.92rem;
+            line-height: 1.45;
+        ">
+            <strong>Tip:</strong> Use <strong>Box Select</strong> or <strong>Lasso Select</strong>
+            to highlight matching sampling locations on the map.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 
@@ -127,7 +175,7 @@ def main():
     ##############################################################################
    
     # #スペース入れる
-    # st.sidebar.subheader(':blue[--- for fig scale only ---]')
+    # st.sidebar.subheader("Figure controls")
     
 
     ##############################################################################
@@ -246,11 +294,10 @@ def main():
         if 'ts_selected_indices' not in st.session_state:
             st.session_state.ts_selected_indices = []
         
-        st.subheader('Temperature - Salinity Relationship & Auto-Zoom Map')
+        st.subheader('Temperature-Salinity Relationship')
         
-        # (ラジオボタンやスケール設定)
-        col_map = {"d18O": "d18O", "Latitude": "Latitude_degN", "Longitude": "Longitude_degE", "Water Depth": "Depth_m"}
-        sel_col = st.radio("Select color element:", list(col_map.keys()), horizontal=True, key="fig_TS_zoom")
+        col_map = available_color_filtered_options(df1)
+        sel_col = st.selectbox("Color filtered", list(col_map.keys()), key="fig_TS_zoom")
         target_item = col_map[sel_col]
         
         # カラースケール，depthの時は反転
@@ -268,12 +315,6 @@ def main():
         excluded_count = len(df1) - len(df_plot_ts)
         if excluded_count > 0:
             st.caption(f":red[Note: {excluded_count:,} samples were excluded due to missing ({sel_col}, temperature, salinity) data.]")
-    
-        # 案内を出す
-        # st.info("T-S図で範囲を選択すると、その範囲にズームします。")
-        st.info("Use the Box or Lasso selection tools on the Salinity–Temperature plot to highlight the corresponding sampling locations on the map.")
-        
-        
     
         fig_fixed_TS = px.scatter(
             df_plot_ts, # リセット済みのデータを使用
@@ -335,6 +376,7 @@ def main():
             override_height=600, 
             override_width=850
         )
+        show_selection_tip()
         
         # --- 【選択個数の処理】 ---
         if selected_points:
@@ -387,7 +429,7 @@ def main():
             df_ts_map_display, 
             lat="Latitude_degN", lon="Longitude_degE", 
             color=target_item, color_continuous_scale=c_scale_final,
-            mapbox_style="carto-positron",
+            mapbox_style="open-street-map",
             hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Year','Month','Day','Cruise','Station','Depth_m','reference'],
         )
         
@@ -402,19 +444,30 @@ def main():
                 
             ),
             margin=dict(l=0, r=0, t=0, b=0),
-            width=750,
-            height=500
+            autosize=True,
+            height=500,
+            coloraxis_colorbar=dict(
+                title=sel_col,
+                x=0.98,
+                xanchor="right",
+                y=0.5,
+                yanchor="middle",
+                len=0.8,
+                thickness=15,
+            ),
         )
         
 
         
-        # 地図背景の選択　envgeo_utilsｋara
-        #  モード選択（keyをユニークにする）
-        map_mode_ts = st.radio(
-            "Map Style:", 
-            ["Standard", "Satellite", "Bathymetry (Sea)", "Contour (GSI)"], 
-            horizontal=True, key="ms_ts"
-        )
+        # Keep map controls compact so the map remains visible after Streamlit reruns.
+        # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
+        with st.popover("Map controls", use_container_width=True):
+            map_mode_ts = st.radio(
+                "Map Style:", 
+                envgeo_utils.MAP_MODE_OPTIONS, 
+                horizontal=True, key="ms_ts"
+            )
+        st.caption(f"Map Style: {map_mode_ts}")
     
         
         #  設定ファイルからスタイルを適用
@@ -428,6 +481,7 @@ def main():
         st.plotly_chart(
             fig_ts_map, 
             # width="stretch", # Streamlitあげた復活させる
+            use_container_width=True,
             key="3d_visualizer_map_TS",
             config={'scrollZoom': True, 'displayModeBar': True} # ズームを有効化
         )
@@ -463,11 +517,10 @@ def main():
         if 'd18o_selected_indices' not in st.session_state:
             st.session_state.d18o_selected_indices = []
     
-        st.subheader('δ18O - Salinity Relationship & Auto-Zoom Map')
+        st.subheader('Salinity-δ18O Relationship')
     
-        # カラー設定
-        col_map = {"d18O": "d18O", "Latitude": "Latitude_degN", "Longitude": "Longitude_degE", "Water Depth": "Depth_m"}
-        sel_col_d18o = st.radio("Select color element (δ18O plot):", list(col_map.keys()), horizontal=True, key="fig_d18O_zoom")
+        col_map = available_color_filtered_options(df1)
+        sel_col_d18o = st.selectbox("Color filtered", list(col_map.keys()), key="fig_d18O_zoom")
         target_item = col_map[sel_col_d18o]
         # カラースケール，depthの時は反転
         c_scale_final = envgeo_utils.get_custom_colorscale(target_item)
@@ -485,12 +538,6 @@ def main():
         excluded_count2 = len(df1) - len(df_plot_d18o)
         if excluded_count2 > 0:
             st.caption(f":red[Note: {excluded_count2:,} samples were excluded due to missing ({sel_col_d18o}, Salinity, d18O) data.]")
-    
-    
-        # 案内を出す
-        # st.info("T-S図で範囲を選択すると、その範囲にズーム")
-        st.info("Use the Box or Lasso selection tools on the Salinity–δ18O plot to highlight the corresponding sampling locations on the map.")
-    
     
     
         fig_d18O = px.scatter(
@@ -542,6 +589,7 @@ def main():
             fig_d18O, select_event=True, key="d18o_zoom_event",
             override_height=600, override_width=850
         )
+        show_selection_tip()
     
             
             # --- 【個数表示とセッション更新の処理】 ---
@@ -581,24 +629,37 @@ def main():
         fig_map_d18o = px.scatter_mapbox(
             df_map_d18o, lat="Latitude_degN", lon="Longitude_degE", 
             color=target_item, color_continuous_scale=c_scale_final,
-            mapbox_style="carto-positron",
+            mapbox_style="open-street-map",
             hover_data=["d18O",'dD',"Salinity",'Temperature_degC','Year','Month','Day','Cruise','Station','Depth_m','reference'],
         )
         fig_map_d18o = unify_plot_layout(fig_map_d18o, "Lon", "Lat", sel_col_d18o)
         fig_map_d18o.update_layout(
             mapbox=dict(center=dict(lat=center_lat, lon=center_lon), zoom=auto_zoom),
-            margin=dict(l=0, r=0, t=0, b=0), width=750, height=500
+            margin=dict(l=0, r=0, t=0, b=0),
+            autosize=True,
+            height=500,
+            coloraxis_colorbar=dict(
+                title=sel_col_d18o,
+                x=0.98,
+                xanchor="right",
+                y=0.5,
+                yanchor="middle",
+                len=0.8,
+                thickness=15,
+            ),
         )
         
         
         
-        # 地図背景の選択　envgeo_utilsｋara
-        #  モード選択（keyをユニークにする）
-        map_mode_d18o = st.radio(
-            "Map Style:", 
-            ["Standard", "Satellite", "Bathymetry (Sea)", "Contour (GSI)"], 
-            horizontal=True, key="ms_d18o"
-        )
+        # Keep map controls compact so the map remains visible after Streamlit reruns.
+        # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
+        with st.popover("Map controls", use_container_width=True):
+            map_mode_d18o = st.radio(
+                "Map Style:", 
+                envgeo_utils.MAP_MODE_OPTIONS, 
+                horizontal=True, key="ms_d18o"
+            )
+        st.caption(f"Map Style: {map_mode_d18o}")
     
         
         #  設定ファイルからスタイルを適用
@@ -611,6 +672,7 @@ def main():
         st.plotly_chart(
             fig_map_d18o, 
             # width="stretch", # Streamlitあげた復活させる
+            use_container_width=True,
             key="3d_visualizer_map_d18O",
             config={'scrollZoom': True, 'displayModeBar': True} # ズームを有効化
         )
@@ -636,11 +698,3 @@ def main():
 if __name__ == '__main__':
     main()
     
-
-
-
-
-
-
-
-

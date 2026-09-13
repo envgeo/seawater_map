@@ -1,4 +1,4 @@
-## :red[Additional datasets from other studies (Around Japan/Global)]
+## :red[Regional Reference Datasets]
 
 ### #02 Yamamoto et al., 2001
 
@@ -36,7 +36,7 @@ Kodaira, T., Horikawa, K., Zhang, J., and Senjyu, T. (2016). Relationship betwee
 - :green[Analytical precision:] +/-0.02 permil for d18O
 - :green[Analytical PI:]
 
-## :red[Additional datasets from other studies (Global)]
+## :red[Global Reference Datasets]
 
 ### #06 Sakamoto et al., 2022
 

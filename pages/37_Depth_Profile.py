@@ -8,7 +8,7 @@ Created on Sat Apr 22 17:15:03 2023
 
 
 # --- Version info ---
-version = "1.0.0" #v220_20260317
+version = "1.3.0" #v220_20260317
 
 # ToDo
 
@@ -83,7 +83,12 @@ def main():
         plot_all_data = st.radio("Show all data in background (gray lines):", ("Yes", "No"), horizontal=True, args=[1, 0])
     
     with col2:
-        plot_element = st.radio("Target Parameter:", ("d18O(VSMOW)", "Temperature (°C)", "Salinity"), horizontal=True, args=[1, 0])
+        plot_element = st.radio(
+            "Target Parameter:",
+            ("d18O(VSMOW)", "dD(VSMOW)", "d-excess", "Temperature (°C)", "Salinity"),
+            horizontal=True,
+            args=[1, 0],
+        )
 
 
         
@@ -115,6 +120,48 @@ def main():
             fig_x_min, fig_x_max = -1.4, 0.6  # Around JAPAN(標準)
 
      
+    elif plot_element == "dD(VSMOW)":
+        # 水深-dDの時
+        X_data = "dD"
+        Y_data = "Depth_m"
+        
+        # """XYの表示用のラベルを指定"""
+        X_label = r"$\delta$D"
+        Y_label = "water depth (m)"
+        
+        # """XYの表示用のラベルのスケールを指定"""
+        iso_scale_X = "(VSMOW)"
+        iso_scale_Y = ""
+        
+        # 海域別の初期値設定
+        if ref_data == data_source_GLOBAL:
+            fig_x_min, fig_x_max = -150.0, 50.0
+        elif ref_data == data_source_JAPAN_SEA:
+            fig_x_min, fig_x_max = -20.0, 10.0
+        else:
+            fig_x_min, fig_x_max = -30.0, 20.0
+
+    elif plot_element == "d-excess":
+        # 水深-d-excessの時
+        X_data = "d-excess"
+        Y_data = "Depth_m"
+        
+        # """XYの表示用のラベルを指定"""
+        X_label = "d-excess"
+        Y_label = "water depth (m)"
+        
+        # """XYの表示用のラベルのスケールを指定"""
+        iso_scale_X = ""
+        iso_scale_Y = ""
+        
+        # 海域別の初期値設定
+        if ref_data == data_source_GLOBAL:
+            fig_x_min, fig_x_max = -30.0, 40.0
+        elif ref_data == data_source_JAPAN_SEA:
+            fig_x_min, fig_x_max = -5.0, 25.0
+        else:
+            fig_x_min, fig_x_max = -10.0, 30.0
+
     elif plot_element == "Temperature (°C)":
         #水深-水温の時
         X_data = "Temperature_degC"
@@ -208,10 +255,14 @@ def main():
      submitted) = envgeo_utils.sidebar_filter_and_display(df1, ref_data, data_source_JAPAN_SEA, data_source_AROUND_JAPAN)
 
 
-    # データが一つだけの時に警告　近似直線を引くなどの必要がある図の場合のみ使用，d18Oなどは適宜変更
-    data_found = len(df1["d18O"])
+    # データが一つだけの時に警告。
+    # dD / d-excessは欠損が多いため、対象列と水深が両方ある点だけを数える。
+    data_found = len(df1.dropna(subset=[X_data, "Depth_m"]))
     if data_found == 1:
         st.warning('Only one data point was found. A depth profile could not be meaningfully generated.')
+        st.stop()
+    if data_found == 0:
+        st.warning(f"No valid {plot_element} depth-profile data are available for the selected conditions.")
         st.stop()
     
 
@@ -244,7 +295,7 @@ def main():
     
     
     with st.sidebar.container(border=True):
-        st.subheader(':blue[--- for fig scale only ---]')
+        st.subheader(getattr(envgeo_utils, "FIGURE_CONTROLS_LABEL", "Figure controls"))
         
         # st.sidebar.subheader('描画水深の範囲')
         if ref_data == data_source_JAPAN_SEA:
@@ -278,29 +329,15 @@ def main():
         
 
         # st.sidebar.subheader('X軸の描画範囲の範囲')
-        if ref_data == data_source_JAPAN_SEA:
-            lim_min_X, lim_max_X = st.slider(label=f'Axis Scale for {plot_element}',
-                                        min_value=-fig_x_min,
-                                        max_value=fig_x_max,
-                                        value=(fig_x_min, fig_x_max),
-                                        )
-            # st.sidebar.write(f'Selected: {fig_depth_min} ~ {fig_depth_max}')
-            
-        elif ref_data == data_source_AROUND_JAPAN:
-            lim_min_X, lim_max_X = st.slider(label=f'Axis Scale for {plot_element}',
-                                        min_value=fig_x_min,
-                                        max_value=fig_x_max,
-                                        value=(fig_x_min, fig_x_max),
-                                        )
-            # st.sidebar.write(f'Selected: {fig_depth_min} ~ {fig_depth_max}')
-            
-        else:
-            lim_min_X, lim_max_X = st.slider(label=f'Axis Scale for {plot_element}',
-                                        min_value=-fig_x_min,
-                                        max_value=fig_x_max,
-                                        value=(fig_x_min, fig_x_max),
-                                        )
-            # st.sidebar.write(f'Selected: {fig_depth_min} ~ {fig_depth_max}')
+        axis_margin = max(abs(fig_x_min), abs(fig_x_max)) * 0.5
+        lim_min_X, lim_max_X = st.slider(
+            label=f'Axis Scale for {plot_element}',
+            min_value=float(fig_x_min - axis_margin),
+            max_value=float(fig_x_max + axis_margin),
+            value=(float(fig_x_min), float(fig_x_max)),
+            step=0.1,
+            key=f"depth_profile_axis_scale::{plot_element}::{ref_data}",
+        )
       
             
             
@@ -317,23 +354,47 @@ def main():
     
     
         #フォントサイズ
-        # st.sidebar.subheader('図のサイズ')
-        sld_font_size_min_S, sld_font_size_max_L = st.slider(label='Font size (scale and label)',
-                                    min_value=4,
-                                    max_value=40,
-                                    value=(16, 20),
-                                    )
-        # st.sidebar.write(f'Selected: {sld_fig_size_min_X} ~ {sld_fig_size_max_Y}')
+        font_col1, font_col2 = st.columns(2)
+        with font_col1:
+            sld_font_size_min_S = st.number_input(
+                "Tick font size",
+                min_value=4,
+                max_value=40,
+                value=16,
+                step=1,
+                key=f"depth_profile_tick_font_size::{plot_element}",
+            )
+        with font_col2:
+            sld_font_size_max_L = st.number_input(
+                "Label font size",
+                min_value=4,
+                max_value=40,
+                value=20,
+                step=1,
+                key=f"depth_profile_label_font_size::{plot_element}",
+            )
                     
                     
         #メモリ間隔
-        # st.sidebar.subheader('図のサイズ')
-        tick_interval_min_X, tick_interval_max_Y = st.slider(label='Tick interval (x and y)',
-                                    min_value=4,
-                                    max_value=40,
-                                    value=(11, 11),
-                                    )
-        # st.sidebar.write(f'Selected: {sld_fig_size_min_X} ~ {sld_fig_size_max_Y}')           
+        tick_col1, tick_col2 = st.columns(2)
+        with tick_col1:
+            tick_interval_min_X = st.number_input(
+                "X tick count",
+                min_value=4,
+                max_value=40,
+                value=11,
+                step=1,
+                key=f"depth_profile_x_tick_count::{plot_element}",
+            )
+        with tick_col2:
+            tick_interval_max_Y = st.number_input(
+                "Y tick count",
+                min_value=4,
+                max_value=40,
+                value=11,
+                step=1,
+                key=f"depth_profile_y_tick_count::{plot_element}",
+            )
                     
                     
                     
@@ -369,7 +430,7 @@ def main():
     ############################################################################################### 
     ###############################################################################################
     ###############################################################################################
-    st.markdown("##### :red[--- The map area can be adjusted using the [fig scale] setting in the sidebar---]")
+    st.caption(getattr(envgeo_utils, "MAP_AREA_HELP_TEXT", "Map extent and figure size can be adjusted in the sidebar."))
 
 
 
@@ -512,8 +573,19 @@ def main():
         
 
 
+        # 対象列と水深があるデータだけをプロットする。
+        # dD / d-excessは欠損が多いため、除外数を表示してから空白行を挿入する。
+        df_all_no_gap = df_original.dropna(how='all')
+        df_all_valid = df_all_no_gap.dropna(subset=[X_data, Y_data]).reset_index(drop=True)
+        excluded_all = len(df_all_no_gap) - len(df_all_valid)
+        if excluded_all > 0:
+            st.caption(
+                f":gray[Background profile: {len(df_all_valid):,} samples plotted "
+                f"and {excluded_all:,} excluded due to missing {plot_element} or depth values.]"
+            )
+
         # 同じ地点，同じ年月日，はグループにして他は1行開ける
-        df_fig_ALL = envgeo_utils.insert_gap_rows(df_original)
+        df_fig_ALL = envgeo_utils.insert_gap_rows(df_all_valid)
         
         
         # 特定の列に特定の変数を持つ行と空白行を残す
@@ -541,6 +613,10 @@ def main():
         
         if plot_element == "d18O(VSMOW)":
             ax.xaxis.set_major_formatter(FormatStrFormatter("%+.1f"))
+            ax.yaxis.set_major_formatter(FormatStrFormatter("%.f"))
+
+        elif plot_element in ["dD(VSMOW)", "d-excess"]:
+            ax.xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
             ax.yaxis.set_major_formatter(FormatStrFormatter("%.f"))
 
          
@@ -572,7 +648,16 @@ def main():
             if X_Y_C_add_each == 1:
                 
  
-                df_fig_add = df1    
+                df_add_no_gap = df1.dropna(how='all')
+                df_add_valid = df_add_no_gap.dropna(subset=[X_data, Y_data]).reset_index(drop=True)
+                excluded_add = len(df_add_no_gap) - len(df_add_valid)
+                if excluded_add > 0:
+                    st.caption(
+                        f":blue[Selected profile: {len(df_add_valid):,} samples plotted "
+                        f"and {excluded_add:,} excluded due to missing {plot_element} or depth values.]"
+                    )
+
+                df_fig_add = df_add_valid    
 
                 # 同じ地点，同じ年月日，はグループにして他は1行開ける
                 df_fig_add = envgeo_utils.insert_gap_rows(df_fig_add)
@@ -616,19 +701,10 @@ def main():
     ###############################################################################################
 
     
-    #######################画像を保存するためのボタン作成########################
-    sub_title2 = sub_title
-    sub_title2 = sub_title2.replace(':', '') #pdf書き出し用
-    sub_title2 = sub_title2.replace(',', '_') #pdf書き出し用
-    sub_title2 = sub_title2.replace(' ', '') #pdf書き出し用
-    sub_tite = str('Fig_depth'+'_'+sub_title2+".png")
-
-
-
-
     #Save to memory first. の場合は，ローカルに保存されないので安心
     import io
-    fn = sub_tite
+    safe_parameter_name = envgeo_utils.safe_filename_text(X_data)
+    fn = envgeo_utils.build_figure_filename(f"Fig_depth_{safe_parameter_name}", sub_title)
     img = io.BytesIO()
     plt.savefig(img, format='png')
      
@@ -654,18 +730,21 @@ def main():
 
 
     # 選択されたデータの地点プロット
-    # --- 採取地点の地図表示 (Auto-Zoom & 幅広設定) ---
+    # --- Location map / 採取地点の地図表示 ---
     st.divider()
-    st.subheader('Location Map (Auto-Zoom)')
+    st.subheader('Location Map')
 
 
-    # 1. 地図背景の選択
-    map_mode = st.radio(
-        "Map Style:", 
-        ["Standard", "Satellite", "Bathymetry (Sea)", "Contour (GSI)"], 
-        horizontal=True,
-        key="map_style_31_auto"
-    )
+    # Keep map controls compact so the map remains visible after Streamlit reruns.
+    # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
+    with st.popover("Map controls", use_container_width=True):
+        map_mode = st.radio(
+            "Map Style:", 
+            envgeo_utils.MAP_MODE_OPTIONS, 
+            horizontal=True,
+            key="map_style_31_auto"
+        )
+    st.caption(f"Map Style: {map_mode}")
 
  # 2. データの範囲から中心座標とズームレベルを計算
     lat_min, lat_max = df_fig_add["Latitude_degN"].min(), df_fig_add["Latitude_degN"].max()
@@ -704,29 +783,32 @@ def main():
     
 
     # 3. 地図の作成 (px.scatter_mapbox内ではwidthを指定しない)
-    c_scale_d18o = envgeo_utils.get_custom_colorscale("d18O")
+    c_scale_profile = envgeo_utils.get_custom_colorscale(X_data)
+    hover_columns = [
+        "Latitude_degN",
+        "Longitude_degE",
+        "d18O",
+        "dD",
+        "d-excess",
+        "Salinity",
+        "Temperature_degC",
+        "Year",
+        "Month",
+        "Day",
+        "Cruise",
+        "Station",
+        "Depth_m",
+        "reference",
+    ]
+    hover_data = {column: True for column in hover_columns if column in df_fig_add.columns}
 
     fig_map = px.scatter_mapbox(
         df_fig_add, 
         lat="Latitude_degN", 
         lon="Longitude_degE",
-        color="d18O", 
-        color_continuous_scale=c_scale_d18o,
-        hover_data={
-            "Latitude_degN": True,  
-            "Longitude_degE": True, 
-            "d18O": True, 
-            "dD": True, 
-            "Salinity": True, 
-            "Temperature_degC": True, 
-            "Year": True, 
-            "Month": True, 
-            "Day": True, 
-            "Cruise": True, 
-            "Station": True,
-            "Depth_m": True,
-            "reference": True, 
-        },
+        color=X_data, 
+        color_continuous_scale=c_scale_profile,
+        hover_data=hover_data,
         opacity=0.6,
         height=500  # 高さはここで固定
     )
@@ -747,7 +829,7 @@ def main():
         # widthを指定せず autosize を True にすることで、コンテナいっぱいに広がる
         autosize=True, 
         coloraxis_colorbar=dict(
-            title="δ18O (‰)",
+            title=plot_element,
             x=1.0,           # カラーバーを右端に寄せる
             xanchor='right'
         )
@@ -775,7 +857,23 @@ def main():
         
     with st.expander("selected dataset (CSV)", expanded=False):
         # 1. 必要な列をコピー
-        df1_table = df_fig_add[['reference','Cruise', 'Station', 'Date','Year', 'Month', 'Longitude_degE', 'Latitude_degN', 'Depth_m', 'Temperature_degC', 'Salinity', 'd18O', 'dD']].copy()        
+        table_columns = [
+            'reference',
+            'Cruise',
+            'Station',
+            'Date',
+            'Year',
+            'Month',
+            'Longitude_degE',
+            'Latitude_degN',
+            'Depth_m',
+            'Temperature_degC',
+            'Salinity',
+            'd18O',
+            'dD',
+            'd-excess',
+        ]
+        df1_table = df_fig_add[[column for column in table_columns if column in df_fig_add.columns]].copy()        
         # --- [追加] 空白行（すべての列が欠損値の行）を削除 --- CSV用
         df1_table = df1_table.dropna(how='all')
         # 【重要】表示直前に全列を文字列化（これでArrowエラーは消える）
@@ -798,4 +896,3 @@ if __name__ == '__main__':
     main()
     
     
-

@@ -8,7 +8,7 @@ Created on Sat Apr 22 17:15:03 2023
 
 
 # --- Version info ---
-version = "1.0.0" #v220_20260317
+version = "1.3.0" #v220_20260317
 
 # ToDo
 
@@ -22,6 +22,7 @@ fig_title = "envgeo-seawater-database"
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 import pandas as pd
 import plotly.express as px
 import math
@@ -59,8 +60,22 @@ def main():
     # データソース選択
     ##############################################################################
 
-    # 全データをプロットするかどうか
-    plot_all_data = st.radio("Show all data in background (red):", ("Yes", "No"), horizontal=True, args=[1, 0])
+    # 全データと凡例を表示するかどうか
+    plot_option_col1, plot_option_col2 = st.columns([1, 1])
+    with plot_option_col1:
+        plot_all_data = st.radio(
+            "Show all data in background (red):",
+            ("Yes", "No"),
+            index=1,
+            horizontal=True,
+        )
+    with plot_option_col2:
+        show_legend = st.radio(
+            "Show legend:",
+            ("Yes", "No"),
+            index=0,
+            horizontal=True,
+        )
     
 
 
@@ -135,7 +150,7 @@ def main():
    
 
     with st.sidebar.container(border=True):
-        st.subheader(':blue[--- for fig scale only ---]')
+        st.subheader(getattr(envgeo_utils, "FIGURE_CONTROLS_LABEL", "Figure controls"))
         
         # マーカーの問明度調整
         alpha_selected = st.slider(label='Transparency (Filtered Plot)',
@@ -144,6 +159,78 @@ def main():
                                     value=(0.9),
                                     step=0.05
                                     )
+
+        ts_color_candidates = [
+            "Single color",
+            "Depth_m",
+            "Latitude_degN",
+            "Longitude_degE",
+            "Year",
+            "Month",
+            "d18O",
+            "dD",
+            "d-excess",
+        ]
+        ts_color_options = [
+            item for item in ts_color_candidates
+            if item == "Single color" or item in df1.columns
+        ]
+        ts_color_by = st.selectbox(
+            "Color filtered T-S plot by",
+            ts_color_options,
+            index=0,
+            help=(
+                "Use a single blue marker color, or color the filtered T-S "
+                "data by a numeric column such as depth, latitude, longitude, "
+                "year, month, d18O, dD, or d-excess."
+            ),
+        )
+
+        ts_color_range = None
+        if ts_color_by != "Single color":
+            ts_matplotlib_colormap = envgeo_utils.get_matplotlib_colormap(ts_color_by)
+            ts_color_source = pd.to_numeric(df1[ts_color_by], errors="coerce").dropna()
+            if not ts_color_source.empty:
+                ts_color_min = float(ts_color_source.min())
+                ts_color_max = float(ts_color_source.max())
+
+                if ts_color_min == ts_color_max:
+                    ts_color_range = (ts_color_min, ts_color_max)
+                    st.caption(f"T-S color range: {ts_color_min:g}")
+                elif ts_color_by in ["Year", "Month"]:
+                    ts_color_range = st.slider(
+                        "T-S color range",
+                        min_value=int(math.floor(ts_color_min)),
+                        max_value=int(math.ceil(ts_color_max)),
+                        value=(int(math.floor(ts_color_min)), int(math.ceil(ts_color_max))),
+                        step=1,
+                        help=(
+                            "Set the colorbar range for the selected T-S color "
+                            "parameter. Points outside this range are plotted "
+                            "using the end colors."
+                        ),
+                    )
+                else:
+                    color_step = 10.0 if ts_color_by == "Depth_m" else 0.1
+                    ts_color_range = st.slider(
+                        "T-S color range",
+                        min_value=float(math.floor(ts_color_min)),
+                        max_value=float(math.ceil(ts_color_max)),
+                        value=(
+                            float(math.floor(ts_color_min)),
+                            float(math.ceil(ts_color_max)),
+                        ),
+                        step=color_step,
+                        help=(
+                            "Set the colorbar range for the selected T-S color "
+                            "parameter. Points outside this range are plotted "
+                            "using the end colors."
+                        ),
+                    )
+            else:
+                st.caption(f"No valid {ts_color_by} values are available for color scaling.")
+        else:
+            ts_matplotlib_colormap = None
         
         # --- 図のスケール設定  ---
         if ref_data == data_source_JAPAN_SEA:
@@ -186,6 +273,73 @@ def main():
                                         max_value=40,
                                         value=(-5,40),
                                         )
+
+        # --- Matplotlib figure appearance ---
+        # Depth Profileと同じ考え方で、論文図向けの見た目をページ上で調整する。
+        fig_size_col1, fig_size_col2 = st.columns(2)
+        with fig_size_col1:
+            sld_fig_size_x = st.number_input(
+                "Fig width (x)",
+                min_value=4,
+                max_value=24,
+                value=12,
+                step=1,
+                key="ts_diagram_fig_width_x",
+                help="Adjust the width of the Matplotlib T-S diagram.",
+            )
+        with fig_size_col2:
+            sld_fig_size_y = st.number_input(
+                "Fig height (y)",
+                min_value=4,
+                max_value=24,
+                value=9,
+                step=1,
+                key="ts_diagram_fig_height_y",
+                help="Adjust the height of the Matplotlib T-S diagram.",
+            )
+        font_col1, font_col2 = st.columns(2)
+        with font_col1:
+            sld_font_size_tick = st.number_input(
+                "Tick font size",
+                min_value=6,
+                max_value=32,
+                value=15,
+                step=1,
+                key="ts_diagram_tick_font_size",
+                help="Adjust the tick-label font size for the T-S diagram.",
+            )
+        with font_col2:
+            sld_font_size_label = st.number_input(
+                "Label font size",
+                min_value=6,
+                max_value=32,
+                value=16,
+                step=1,
+                key="ts_diagram_label_font_size",
+                help="Adjust the axis-label and colorbar-label font size for the T-S diagram.",
+            )
+
+        tick_col1, tick_col2 = st.columns(2)
+        with tick_col1:
+            tick_count_x = st.number_input(
+                "X tick count",
+                min_value=3,
+                max_value=30,
+                value=9,
+                step=1,
+                key="ts_diagram_x_tick_count",
+                help="Adjust the number of major tick marks on the salinity axis.",
+            )
+        with tick_col2:
+            tick_count_y = st.number_input(
+                "Y tick count",
+                min_value=3,
+                max_value=30,
+                value=9,
+                step=1,
+                key="ts_diagram_y_tick_count",
+                help="Adjust the number of major tick marks on the temperature axis.",
+            )
    
 
 
@@ -218,7 +372,7 @@ def main():
     ###############################################################################################
     ###############################################################################################
     
-    st.markdown("##### :red[--- The map area can be adjusted using the [fig scale] setting in the sidebar---]")
+    st.caption(getattr(envgeo_utils, "MAP_AREA_HELP_TEXT", "Map extent and figure size can be adjusted in the sidebar."))
     
     
     
@@ -228,8 +382,8 @@ def main():
     ######      font size line etc..       #####
     ############################################
     
-    plt.rcParams["font.size"] = 15
-    fig_size = [12,9] #図のサイズ
+    plt.rcParams["font.size"] = sld_font_size_tick
+    fig_size = [sld_fig_size_x, sld_fig_size_y] #図のサイズ
     fig_dpi = 150 #図の解像度
     ax_length = 15
     
@@ -311,8 +465,8 @@ def main():
         fig = plt.figure(figsize = (fig_size),dpi=fig_dpi)
         ax = plt.subplot(111)
     
-        ax.set_xlabel(X_label + iso_scale_X)
-        ax.set_ylabel(Y_label + iso_scale_Y)  
+        ax.set_xlabel(X_label + iso_scale_X, fontsize=sld_font_size_label)
+        ax.set_ylabel(Y_label + iso_scale_Y, fontsize=sld_font_size_label)  
 
         if plot_all_data == "Yes":
             ax.scatter(-1000, -1000, s=X_Y_S,c=X_Y_C,marker=X_Y_M, alpha=alpha_all, label='ALL') #凡例等のダミー
@@ -338,12 +492,18 @@ def main():
 
         ax.set_xlim(lim_min_X, lim_max_X) 
         ax.set_ylim(lim_min_Y, lim_max_Y) 
+        ax.set_xticks(np.linspace(lim_min_X, lim_max_X, tick_count_x))
+        ax.set_yticks(np.linspace(lim_min_Y, lim_max_Y, tick_count_y))
+        ax.xaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+        ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+        ax.tick_params(labelsize=sld_font_size_tick)
         
         ax.tick_params(length=ax_length)
 
         if plot_all_data == "Yes":
             ax.scatter(Xa, Ya, s=X_Y_S,c=X_Y_C,marker=X_Y_M,lw=0.5, ec="black", alpha=alpha_all)
-            plt.legend(fontsize = 20) # 凡例の数字のフォントサイズを設定
+            if show_legend == "Yes":
+                plt.legend(fontsize = sld_font_size_tick) # 凡例の数字のフォントサイズを設定
         else:()
             
             
@@ -380,8 +540,73 @@ def main():
         X_add = df_fig_add[X_data]
 
         
-        ax.scatter(X_add, Y_add, s=X_Y_S,c=X_Y_C_add,marker=X_Y_M, alpha=alpha_selected,lw=0.5, ec="black", label= sheet_names_add2)
-        plt.legend(fontsize = 15) # 凡例の数字のフォントサイズを設定
+        if ts_color_by == "Single color":
+            ax.scatter(
+                X_add,
+                Y_add,
+                s=X_Y_S,
+                c=X_Y_C_add,
+                marker=X_Y_M,
+                alpha=alpha_selected,
+                lw=0.5,
+                ec="black",
+                label=sheet_names_add2,
+            )
+            if show_legend == "Yes":
+                plt.legend(fontsize = sld_font_size_tick) # 凡例の数字のフォントサイズを設定
+        else:
+            color_values = pd.to_numeric(df_fig_add[ts_color_by], errors="coerce")
+            color_valid = color_values.notna()
+
+            if color_valid.any():
+                st.caption(
+                    f":blue[T-S color: {color_valid.sum():,} / {len(df_fig_add):,} "
+                    f"filtered samples have {ts_color_by} values.]"
+                )
+                ax_color = ax.scatter(
+                    X_add[color_valid],
+                    Y_add[color_valid],
+                    s=X_Y_S,
+                    c=color_values[color_valid],
+                    cmap=ts_matplotlib_colormap,
+                    vmin=ts_color_range[0] if ts_color_range is not None else None,
+                    vmax=ts_color_range[1] if ts_color_range is not None else None,
+                    marker=X_Y_M,
+                    alpha=alpha_selected,
+                    lw=0.5,
+                    ec="black",
+                    label=sheet_names_add2,
+                )
+                cbar_ts = fig.colorbar(
+                    ax_color,
+                    ax=ax,
+                    orientation="vertical",
+                    pad=0.02,
+                    fraction=0.04,
+                    extend="neither",
+                )
+                cbar_ts.set_label(ts_color_by, fontsize=sld_font_size_label)
+                cbar_ts.ax.tick_params(labelsize=sld_font_size_tick)
+
+            if (~color_valid).any():
+                st.caption(
+                    f":gray[T-S color: {(~color_valid).sum():,} filtered samples "
+                    f"without {ts_color_by} values are shown in gray.]"
+                )
+                ax.scatter(
+                    X_add[~color_valid],
+                    Y_add[~color_valid],
+                    s=X_Y_S,
+                    c="lightgray",
+                    marker=X_Y_M,
+                    alpha=0.6,
+                    lw=0.5,
+                    ec="black",
+                    label=f"{sheet_names_add2} (no {ts_color_by})",
+                )
+
+            if show_legend == "Yes":
+                plt.legend(fontsize = sld_font_size_tick) # 凡例の数字のフォントサイズを設定
 
  
         ##############################################################################
@@ -406,7 +631,7 @@ def main():
         
 
         
-        plt.clabel(cs,fontsize=15,inline=True,fmt='%.1f',zorder=0, )
+        plt.clabel(cs,fontsize=sld_font_size_tick,inline=True,fmt='%.1f',zorder=0, )
 
     
     
@@ -470,7 +695,7 @@ def main():
         title_head = str(main_title+'\n'+main_title2+'\n'+sub_title2)
         
         title_head2 = title_head.replace('_', ' ') #図のタイトル表示用
-        fig.suptitle(title_head2,fontsize=20)
+        fig.suptitle(title_head2,fontsize=sld_font_size_label + 4)
         
  
     else:()
@@ -478,18 +703,9 @@ def main():
     
     
     
-    #######################画像を保存するためのボタン作成########################
-    sub_title2 = main_title2
-    sub_title2 = sub_title2.replace(':', '') #pdf書き出し用
-    sub_title2 = sub_title2.replace(',', '_') #pdf書き出し用
-    sub_title2 = sub_title2.replace(' ', '') #pdf書き出し用
-    sub_tite = str('Fig_T-S_SW'+'_'+sub_title2+".png")
-
-
-
     #Save to memory first. の場合は，ローカルに保存されないので安心
     import io
-    fn = sub_tite
+    fn = envgeo_utils.build_figure_filename("Fig_T-S_SW", main_title2)
     img = io.BytesIO()
     plt.savefig(img, format='png')
      
@@ -521,18 +737,21 @@ def main():
     
 
     # 選択されたデータの地点プロット
-    # --- 採取地点の地図表示 (Auto-Zoom & 幅広設定) ---
+    # --- Location map / 採取地点の地図表示 ---
     st.divider()
-    st.subheader('Location Map (Auto-Zoom)')
+    st.subheader('Location Map')
     
 
-    # 1. 地図背景の選択
-    map_mode = st.radio(
-        "Map Style:", 
-        ["Standard", "Satellite", "Bathymetry (Sea)", "Contour (GSI)"], 
-        horizontal=True,
-        key="map_style_31_auto"
-    )
+    # Keep map controls compact so the map remains visible after Streamlit reruns.
+    # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
+    with st.popover("Map controls", use_container_width=True):
+        map_mode = st.radio(
+            "Map Style:", 
+            envgeo_utils.MAP_MODE_OPTIONS, 
+            horizontal=True,
+            key="map_style_31_auto"
+        )
+    st.caption(f"Map Style: {map_mode}")
 
     # 2. データの範囲から中心座標とズームレベルを計算
     lat_min, lat_max = df_fig_add["Latitude_degN"].min(), df_fig_add["Latitude_degN"].max()
@@ -674,4 +893,3 @@ def main():
 if __name__ == '__main__':
     main()
     
-
