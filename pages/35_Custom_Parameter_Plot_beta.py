@@ -23,8 +23,8 @@ fig_title = "envgeo-seawater-database"
 
 
 PARAMETER_LABELS = {
-    "d18O": r"$\delta^{18}$O",
-    "dD": r"$\delta$D",
+    "d18O": "δ18O (‰)",
+    "dD": "δD (‰)",
     "d-excess": "d-excess",
     "Salinity": "Salinity",
     "Temperature_degC": "Temperature (degC)",
