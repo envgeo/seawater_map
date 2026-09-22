@@ -8,6 +8,9 @@ then multiple plot/table views switched by tabs.
 
 EnvGeo-Seawater 統合可視化ページの試作版です。
 共通フィルタで抽出した同じデータを、タブで複数の表示に切り替えます。
+
+Maintainer: Toyoho Ishimura, Kyoto University
+Last updated: 2026-09-22
 """
 
 import math
@@ -22,19 +25,36 @@ import streamlit as st
 import envgeo_utils
 
 
-version = "1.3.0"
+version = "1.3.2"
 
 BASE_DIR = Path(__file__).resolve().parent
 
 FULL_PAGE_WORKFLOWS = {
-    "Interactive 2D/2.5D Visualizer": "03_2Dplus_Visualizer.py",
-    "Interactive 3D/4D Visualizer": "04_3D_4D_Visualizer.py",
+    "Interactive 2D/2.5D Visualizer": "03_[Interactive]_2Dplus_Visualizer.py",
+    "Interactive 3D/4D Visualizer": "04_[Interactive]_3D_4D_Visualizer.py",
     "Salinity-d18O Relationship": "31_Salinity-d18O_Relationship.py",
     "Isotope & Hydrographic Mapping": "32_Isotope_Hydrographic_Mapping.py",
     "T-S Diagram": "34_T-S_diagram.py",
+    "Custom Parameter Plot beta": "35_Custom_Parameter_Plot_beta.py",
     "Depth Profile": "37_Depth_Profile.py",
     "Correlation Overview": "51_Correlation_Overview.py",
     "Vertical Section beta": "53_Vertical_Section_Visualizer.py",
+}
+
+# Pages that render their own upload panel, column mapping, marker style, and
+# frontmost overlay via envgeo_user_data / INTEGRATED_EMBEDDED_PAGE_KEY. Any
+# other page in FULL_PAGE_WORKFLOWS still uses the temporary
+# load_isotope_data() merge fallback below until its own overlay is added.
+# 独自のアップロードパネル・列対応・マーカー設定・最前面オーバーレイを持つページ一覧。
+# ここに無いページは、そのページ固有の重ね描画ができるまで一時的な
+# load_isotope_data() 結合フォールバックを使う。
+NATIVE_UPLOAD_OVERLAY_PAGES = {
+    "31_Salinity-d18O_Relationship.py",
+    "32_Isotope_Hydrographic_Mapping.py",
+    "34_T-S_diagram.py",
+    "35_Custom_Parameter_Plot_beta.py",
+    "37_Depth_Profile.py",
+    "53_Vertical_Section_Visualizer.py",
 }
 
 
@@ -66,10 +86,10 @@ def render_tab_style():
             color: inherit;
         }
         div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] {
-            background: linear-gradient(180deg, #e6f7fb 0%, #d7eef5 100%);
-            border-color: #2f8da8;
-            color: #075064;
-            box-shadow: inset 0 0 0 1px rgba(47, 141, 168, 0.34);
+            background: linear-gradient(180deg, #e8f2ff 0%, #ddeaff 100%);
+            border-color: #4a90e2;
+            color: #0b3e75;
+            box-shadow: inset 0 0 0 1px rgba(74, 144, 226, 0.35);
         }
         html[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"],
         body[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"] {
@@ -79,10 +99,10 @@ def render_tab_style():
         }
         html[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"],
         body[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] {
-            background: linear-gradient(180deg, #17485a 0%, #123645 100%);
-            color: #e9fbff;
-            border-color: #68c3dc;
-            box-shadow: inset 0 0 0 1px rgba(104, 195, 220, 0.42);
+            background: linear-gradient(180deg, #204061 0%, #1a314a 100%);
+            color: #e9f2ff;
+            border-color: #76adff;
+            box-shadow: inset 0 0 0 1px rgba(118, 173, 255, 0.42);
         }
         @media (prefers-color-scheme: dark) {
             div[data-baseweb="tab-list"] button[role="tab"] {
@@ -91,10 +111,10 @@ def render_tab_style():
                 border-color: rgba(240, 244, 250, 0.26);
             }
             div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] {
-                background: linear-gradient(180deg, #17485a 0%, #123645 100%);
-                color: #e9fbff;
-                border-color: #68c3dc;
-                box-shadow: inset 0 0 0 1px rgba(104, 195, 220, 0.42);
+                background: linear-gradient(180deg, #204061 0%, #1a314a 100%);
+                color: #e9f2ff;
+                border-color: #76adff;
+                box-shadow: inset 0 0 0 1px rgba(118, 173, 255, 0.42);
             }
         }
         @media (max-width: 900px) {
@@ -114,20 +134,11 @@ def _numeric_series(df, column):
 
 
 def _quality_rows(df):
-    if envgeo_utils.QUALITY_FLAG_COLUMN not in df.columns:
-        return pd.DataFrame()
-
-    flags = df[envgeo_utils.QUALITY_FLAG_COLUMN].fillna("").astype(str)
-    return df[flags != ""].copy()
+    return envgeo_utils.get_quality_rows(df)
 
 
 def _read_uploaded_table(uploaded_file):
-    suffix = Path(uploaded_file.name).suffix.lower()
-    if suffix in [".xlsx", ".xls"]:
-        return pd.read_excel(uploaded_file)
-    if suffix == ".csv":
-        return pd.read_csv(uploaded_file)
-    raise ValueError("Please upload an Excel or CSV file.")
+    return envgeo_utils.read_uploaded_table(uploaded_file)
 
 
 def _prepare_uploaded_data(df):
@@ -137,52 +148,17 @@ def _prepare_uploaded_data(df):
     アップロードデータを統合ページで扱いやすい形へ軽く標準化します。
     標準列が存在する場合は数値化、品質チェック、d-excess計算を行います。
     """
-    df = envgeo_utils.standardize_uploaded_column_names(df)
-    if "Dataset" not in df.columns:
-        df["Dataset"] = "Uploaded data"
-
-    numeric_cols = [
-        "d18O",
-        "dD",
-        "Longitude_degE",
-        "Latitude_degN",
-        "Depth_m",
-        "Temperature_degC",
-        "Salinity",
-    ]
-    for col in numeric_cols:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-
-    df = envgeo_utils.normalize_quality_values(df)
-    df = envgeo_utils.add_d_excess(df)
-    return df
+    return envgeo_utils.prepare_uploaded_data(df)
 
 
 def _upload_template_csv():
-    template = pd.DataFrame(
-        {
-            "Dataset": ["Uploaded data"],
-            "reference": ["your reference or project name"],
-            "Cruise": ["your cruise"],
-            "Station": ["your station"],
-            "Year": [2026],
-            "Month": [1],
-            "Day": [1],
-            "Longitude_degE": [135.0],
-            "Latitude_degN": [35.0],
-            "Depth_m": [0.0],
-            "Temperature_degC": [20.0],
-            "Salinity": [34.5],
-            "d18O": [0.0],
-            "dD": [0.0],
-        }
-    )
-    return template.to_csv(index=False).encode("utf-8-sig")
+    return envgeo_utils.build_upload_template_csv()
 
 
 def render_upload_panel():
+    uploaded_df = envgeo_utils.get_uploaded_data()
     with st.sidebar.expander("Uploaded data overlay", expanded=False):
+        st.caption(envgeo_utils.AUTO_APPLY_NOTE)
         st.caption(
             "Uploaded files are used only in the current Streamlit session and "
             "are not saved to local or server storage."
@@ -194,16 +170,31 @@ def render_upload_panel():
             mime="text/csv",
         )
 
+        if not uploaded_df.empty:
+            filename = envgeo_utils.get_uploaded_filename() or "current session"
+            st.success(f"Using {len(uploaded_df):,} shared rows from {filename}.")
+            if st.button(
+                "Clear shared uploaded data",
+                key="integrated_clear_uploaded_data",
+            ):
+                envgeo_utils.clear_uploaded_data()
+                st.session_state["integrated_upload_generation"] = (
+                    st.session_state.get("integrated_upload_generation", 0) + 1
+                )
+                st.rerun()
+
+        upload_generation = st.session_state.get("integrated_upload_generation", 0)
         uploaded_file = st.file_uploader(
             "Upload user data",
             type=["xlsx", "xls", "csv"],
-            key="integrated_uploaded_file",
+            key=f"integrated_uploaded_file_{upload_generation}",
         )
         if uploaded_file is None:
-            return pd.DataFrame()
+            return uploaded_df
 
         try:
             uploaded_df = _prepare_uploaded_data(_read_uploaded_table(uploaded_file))
+            envgeo_utils.store_uploaded_data(uploaded_df, uploaded_file.name)
         except Exception as exc:
             st.error(f"Could not read uploaded file: {exc}")
             return pd.DataFrame()
@@ -225,6 +216,7 @@ def render_uploaded_marker_style_controls():
     アップロードデータを参照データより目立たせるための表示設定です。
     """
     with st.sidebar.expander("Uploaded marker style", expanded=False):
+        st.caption(envgeo_utils.AUTO_APPLY_NOTE)
         st.caption(
             "Applied to Shared-filter beta overlays and Upload-tab plots. "
             "Full existing page mode follows each original page's plotting settings."
@@ -338,11 +330,17 @@ def render_full_existing_page(uploaded_df):
         key="integrated_full_page_workflow",
     )
     page_path = BASE_DIR / FULL_PAGE_WORKFLOWS[workflow_name]
+    uses_native_upload_overlay = page_path.name in NATIVE_UPLOAD_OVERLAY_PAGES
 
     if uploaded_df.empty:
         st.caption(
             "This mode keeps the original page behavior, including its own filters "
             "and figure controls."
+        )
+    elif uses_native_upload_overlay:
+        st.caption(
+            "Uploaded rows are handled by this page's native overlay. "
+            "Reference-data filters remain separate from uploaded data."
         )
     else:
         st.caption(
@@ -367,7 +365,21 @@ def render_full_existing_page(uploaded_df):
         st.error(f"Could not load {page_path.name}: {exc}")
         return
 
-    if hasattr(module, "main"):
+    if hasattr(module, "main") and uses_native_upload_overlay:
+        previous_embedded_page = st.session_state.get(
+            envgeo_utils.INTEGRATED_EMBEDDED_PAGE_KEY
+        )
+        try:
+            st.session_state[envgeo_utils.INTEGRATED_EMBEDDED_PAGE_KEY] = page_path.name
+            module.main()
+        finally:
+            if previous_embedded_page is None:
+                st.session_state.pop(envgeo_utils.INTEGRATED_EMBEDDED_PAGE_KEY, None)
+            else:
+                st.session_state[envgeo_utils.INTEGRATED_EMBEDDED_PAGE_KEY] = (
+                    previous_embedded_page
+                )
+    elif hasattr(module, "main"):
         original_loader = envgeo_utils.load_isotope_data
 
         def load_isotope_data_with_upload(ref_data, sheet_num=0):
@@ -529,7 +541,9 @@ def render_summary(df, quality_df, uploaded_quality_df=None):
     available_stats = [column for column in stats_cols if column in df.columns]
     if available_stats:
         summary = df[available_stats].describe().T[["count", "mean", "std", "min", "max"]]
-        st.dataframe(summary.round(3), use_container_width=True)
+        st.dataframe(
+            summary.round(3), **envgeo_utils.stretch_width_kwargs(st.dataframe)
+        )
     envgeo_utils.render_filtered_report_download(
         df,
         {
@@ -553,7 +567,9 @@ def render_map(df, uploaded_df=None, uploaded_style=None):
         for column in ["d18O", "dD", "d-excess", "Salinity", "Temperature_degC", "Depth_m"]
         if column in clean.columns
     ]
-    with st.popover("Map controls", use_container_width=True):
+    with st.popover(
+        "Map controls", **envgeo_utils.stretch_width_kwargs(st.popover)
+    ):
         left_controls, right_controls = st.columns([2, 1])
         with left_controls:
             color_controls = st.columns(2)
@@ -648,7 +664,6 @@ def render_map(df, uploaded_df=None, uploaded_style=None):
                     marker=dict(
                         size=uploaded_style["map_size"],
                         color=uploaded_clean[color_column] if use_colorbar else uploaded_style["color"],
-                        colorscale=None if use_colorbar else None,
                         coloraxis="coloraxis" if use_colorbar else None,
                         symbol=uploaded_style["symbol"],
                         opacity=uploaded_style["opacity"],
@@ -663,7 +678,11 @@ def render_map(df, uploaded_df=None, uploaded_style=None):
                 )
             )
 
-    st.plotly_chart(fig, use_container_width=True, key="integrated_map")
+    st.plotly_chart(
+        fig,
+        key="integrated_map",
+        **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
+    )
 
 def render_ts_diagram(df, uploaded_df=None, uploaded_style=None):
     st.subheader("T-S Diagram")
@@ -754,7 +773,11 @@ def render_ts_diagram(df, uploaded_df=None, uploaded_style=None):
                 ),
             )
 
-    st.plotly_chart(fig, use_container_width=True, key="integrated_ts")
+    st.plotly_chart(
+        fig,
+        key="integrated_ts",
+        **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
+    )
 
 
 def render_salinity_d18o(df, uploaded_df=None, uploaded_style=None):
@@ -845,7 +868,11 @@ def render_salinity_d18o(df, uploaded_df=None, uploaded_style=None):
                 ),
             )
 
-    st.plotly_chart(fig, use_container_width=True, key="integrated_salinity_d18o")
+    st.plotly_chart(
+        fig,
+        key="integrated_salinity_d18o",
+        **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
+    )
 
 
 def render_uploaded_quality_summary(uploaded_quality_df, download_key):
@@ -948,7 +975,11 @@ def render_uploaded_plots(uploaded_df, uploaded_style=None, uploaded_quality_df=
         if fixed_color:
             marker_style["color"] = uploaded_style["color"]
         fig.update_traces(marker=marker_style)
-        st.plotly_chart(fig, use_container_width=True, key="integrated_uploaded_2d")
+        st.plotly_chart(
+            fig,
+            key="integrated_uploaded_2d",
+            **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
+        )
         return
 
     if len(numeric_columns) < 3:
@@ -1003,7 +1034,11 @@ def render_uploaded_plots(uploaded_df, uploaded_style=None, uploaded_quality_df=
     fig.update_traces(marker=marker_style)
     if reverse_z:
         fig.update_layout(scene=dict(zaxis=dict(autorange="reversed")))
-    st.plotly_chart(fig, use_container_width=True, key="integrated_uploaded_3d")
+    st.plotly_chart(
+        fig,
+        key="integrated_uploaded_3d",
+        **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
+    )
 
 
 def render_quality_table(quality_df, uploaded_quality_df=None):
@@ -1048,11 +1083,12 @@ def main():
     )
 
     uploaded_df = render_upload_panel()
-    uploaded_style = render_uploaded_marker_style_controls()
 
     if workflow_mode == "Full existing page":
         render_full_existing_page(uploaded_df)
         return
+
+    uploaded_style = render_uploaded_marker_style_controls()
 
     st.button("Reload")
 
@@ -1109,6 +1145,7 @@ def main():
     uploaded_quality_df = _quality_rows(uploaded_df)
 
     render_tab_style()
+    envgeo_utils.render_earthquake_tab_style()
     st.caption("Select a tab to switch visualization views.")
     tab_summary, tab_map, tab_ts, tab_sal_d18o, tab_upload, tab_data, tab_quality = st.tabs(
         [

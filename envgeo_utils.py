@@ -10,11 +10,14 @@ styling, and reusable Streamlit table display.
 EnvGeo-Seawater 共通処理モジュールです。
 データセット選択肢、バージョン情報、データ読み込み、品質チェック、
 d-excess 計算、地図表示設定、共通テーブル表示をここに集約します。
+
+Maintainer: Toyoho Ishimura, Kyoto University
+Last updated: 2026-09-22
 """
 
 # --- App version / バージョン情報 ---
-APP_VERSION = "1.3.0"
-APP_VERSION_DATE = "2026-09-11"
+APP_VERSION = "1.3.2"
+APP_VERSION_DATE = "2026-09-22"
 APP_VERSION_LABEL = f"{APP_VERSION} ({APP_VERSION_DATE})"
 
 # Backward-compatible alias used by older pages.
@@ -28,6 +31,10 @@ MAP_DISPLAY_SETTINGS_LABEL = "Map display settings"
 CUSTOM_PLOT_SETTINGS_LABEL = "Custom plot settings"
 DATA_RANGE_SETTINGS_LABEL = "Data range settings"
 DATA_FILTERING_LABEL = "Data filtering"
+MANUAL_FILTER_APPLY_NOTE = (
+    ":red[Change filters, then click **Apply settings** to update the figures.]"
+)
+AUTO_APPLY_NOTE = ":blue[Changes in this section are applied automatically.]"
 MAP_AREA_HELP_TEXT = "Map center, extent, colormap, and figure settings can be adjusted in the sidebar."
 AREA_FILTER_MANUAL = "Manual / full data range"
 AREA_FILTER_HELP_TEXT = (
@@ -55,9 +62,11 @@ REGRESSION_HELP_TEXT = (
 import pandas as pd
 import streamlit as st
 import numpy as np
+import inspect
 import math
 import re
 import unicodedata
+from pathlib import Path
 from datetime import datetime
 
 import warnings # for M1/M2 Mac
@@ -73,7 +82,245 @@ warnings.filterwarnings("ignore", message="invalid value encountered in") # メ�
 ##############################################################################
 """
 
-pd.options.mode.copy_on_write = True
+def _major_version(version_text):
+    """Return the leading numeric component of a package version."""
+    match = re.match(r"(\d+)", str(version_text))
+    return int(match.group(1)) if match else 0
+
+
+def configure_pandas_compatibility():
+    """Enable future Pandas behavior only where the options are still needed.
+
+    Pandas 3 uses these behaviors by default and warns when the former opt-in
+    options are set. Pandas 2 still benefits from explicitly enabling them.
+    """
+    if _major_version(pd.__version__) < 3:
+        pd.options.mode.copy_on_write = True
+        pd.set_option("future.no_silent_downcasting", True)
+
+
+def stretch_width_kwargs(widget):
+    """Return full-width arguments compatible with old and new Streamlit APIs.
+
+    Streamlit 1.42 uses ``use_container_width=True``. Newer releases use
+    ``width="stretch"``. Inspection also handles widgets such as ``dataframe``
+    whose older API already had a numeric ``width`` argument.
+    """
+    width_parameter = inspect.signature(widget).parameters.get("width")
+    supports_stretch = width_parameter is not None and (
+        "Width" in str(width_parameter.annotation)
+        or width_parameter.default in {"stretch", "content"}
+    )
+    if supports_stretch:
+        return {"width": "stretch"}
+    return {"use_container_width": True}
+
+
+def arrow_display_dataframe(df):
+    """Return an Arrow-safe copy for Streamlit table display.
+
+    Uploaded station, sample, or cruise identifiers commonly mix numeric and
+    text values in one spreadsheet column (for example ``14`` and ``14_5``).
+    PyArrow cannot serialize that mixed object column as a single type.  This
+    helper converts only object columns in a display copy to pandas strings;
+    the original dataframe remains unchanged for downloads and calculations.
+    """
+    display_df = df.copy()
+    for column in display_df.columns:
+        if pd.api.types.is_object_dtype(display_df[column]):
+            display_df[column] = display_df[column].astype("string")
+    return display_df
+
+
+def render_earthquake_tab_style():
+    """Render the shared blue card-style tabs used by Earthquake Advanced.
+
+    Streamlit 1.63 changed tabs from BaseWeb controls to React Aria controls.
+    Keep both selector families here so public pages retain the same appearance
+    in every supported Streamlit release (1.42--1.63).
+    """
+    tab_css = """
+        <style>
+        div[data-baseweb="tab-list"] { gap: 0.25rem; flex-wrap: wrap; }
+        div[data-baseweb="tab-list"] button[role="tab"] {
+            background: rgba(248, 249, 250, 0.95); color: #1f2937;
+            border: 1px solid rgba(49, 51, 63, 0.22); border-radius: 6px 6px 0 0;
+            padding: 0.35rem 0.65rem; min-height: 2.1rem; white-space: nowrap;
+            font-weight: 600;
+        }
+        div[data-baseweb="tab-list"] button[role="tab"] p { margin: 0; color: inherit; }
+        div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] {
+            background: linear-gradient(180deg, #e8f2ff 0%, #ddeaff 100%);
+            border-color: #4a90e2; color: #0b3e75;
+            box-shadow: inset 0 0 0 1px rgba(74, 144, 226, 0.35);
+        }
+        html[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"],
+        body[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"] {
+            background: rgba(44, 49, 61, 0.96); color: rgba(245, 247, 250, 0.95);
+            border-color: rgba(240, 244, 250, 0.26);
+        }
+        html[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"],
+        body[data-theme="dark"] div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] {
+            background: linear-gradient(180deg, #204061 0%, #1a314a 100%);
+            color: #e9f2ff; border-color: #76adff;
+            box-shadow: inset 0 0 0 1px rgba(118, 173, 255, 0.42);
+        }
+        @media (prefers-color-scheme: dark) {
+            div[data-baseweb="tab-list"] button[role="tab"] {
+                background: rgba(44, 49, 61, 0.96); color: rgba(245, 247, 250, 0.95);
+                border-color: rgba(240, 244, 250, 0.26);
+            }
+            div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] {
+                background: linear-gradient(180deg, #204061 0%, #1a314a 100%);
+                color: #e9f2ff; border-color: #76adff;
+                box-shadow: inset 0 0 0 1px rgba(118, 173, 255, 0.42);
+            }
+        }
+        @media (max-width: 900px) {
+            div[data-baseweb="tab-list"] button[role="tab"] { font-size: 0.86rem; padding: 0.30rem 0.52rem; }
+        }
+        /* Streamlit 1.63 uses data-baseweb="tab" directly.  Keep the
+           role selector above for older Streamlit releases, then apply this
+           more specific override for current releases. */
+        [data-testid="stTabs"] [data-baseweb="tab-list"] {
+            gap: 0.25rem !important;
+            flex-wrap: wrap !important;
+            border-bottom: 1px solid rgba(49, 51, 63, 0.18) !important;
+        }
+        [data-testid="stTabs"] [data-baseweb="tab"],
+        [data-testid="stTabs"] button[role="tab"] {
+            background-color: rgba(248, 249, 250, 0.95) !important;
+            background-image: none !important;
+            color: #1f2937 !important;
+            border: 1px solid rgba(49, 51, 63, 0.22) !important;
+            border-radius: 6px 6px 0 0 !important;
+            padding: 0.35rem 0.65rem !important;
+            min-height: 2.1rem !important;
+            white-space: nowrap !important;
+            font-weight: 600 !important;
+        }
+        [data-testid="stTabs"] [data-baseweb="tab"] p,
+        [data-testid="stTabs"] button[role="tab"] p { color: inherit !important; }
+        [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"],
+        [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+            background-color: #ddeaff !important;
+            background-image: linear-gradient(180deg, #e8f2ff 0%, #ddeaff 100%) !important;
+            border-color: #4a90e2 !important;
+            border-bottom-color: #ddeaff !important;
+            color: #0b3e75 !important;
+            box-shadow: inset 0 0 0 1px rgba(74, 144, 226, 0.35) !important;
+        }
+        @media (prefers-color-scheme: dark) {
+            [data-testid="stTabs"] [data-baseweb="tab"],
+            [data-testid="stTabs"] button[role="tab"] {
+                background-color: rgba(44, 49, 61, 0.96) !important;
+                color: rgba(245, 247, 250, 0.95) !important;
+                border-color: rgba(240, 244, 250, 0.26) !important;
+            }
+            [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"],
+            [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+                background-color: #1a314a !important;
+                background-image: linear-gradient(180deg, #204061 0%, #1a314a 100%) !important;
+                color: #e9f2ff !important;
+                border-color: #76adff !important;
+            }
+        }
+        /* Streamlit may render the tab buttons and its primary-colour
+           highlight outside the expected wrapper.  These global selectors
+           intentionally override that 1.63 structure as well. */
+        [data-baseweb="tab"] {
+            background-color: rgba(248, 249, 250, 0.95) !important;
+            background-image: none !important;
+            color: #1f2937 !important;
+            border: 1px solid rgba(49, 51, 63, 0.22) !important;
+            border-radius: 6px 6px 0 0 !important;
+            padding: 0.35rem 0.65rem !important;
+            min-height: 2.1rem !important;
+            font-weight: 600 !important;
+        }
+        [data-baseweb="tab"][aria-selected="true"] {
+            background-color: #ddeaff !important;
+            background-image: linear-gradient(180deg, #e8f2ff 0%, #ddeaff 100%) !important;
+            border-color: #4a90e2 !important;
+            color: #0b3e75 !important;
+            box-shadow: inset 0 0 0 1px rgba(74, 144, 226, 0.35) !important;
+        }
+        [data-baseweb="tab-highlight"] {
+            display: none !important;
+            background-color: transparent !important;
+        }
+        /* Streamlit 1.63+: tabs are React Aria controls, not BaseWeb tabs.
+           The selected state is expressed by data-selected, and the default
+           red/primary underline is a nested SelectionIndicator element. */
+        [data-testid="stTabs"] [role="tablist"] {
+            gap: 0.25rem !important;
+            flex-wrap: wrap !important;
+            border-bottom: 1px solid rgba(49, 51, 63, 0.18) !important;
+            padding-bottom: 0 !important;
+        }
+        [data-testid="stTabs"] [role="tablist"]::after {
+            background-color: transparent !important;
+            height: 0 !important;
+        }
+        [data-testid="stTabs"] [data-testid="stTab"] {
+            height: auto !important;
+            min-height: 2.1rem !important;
+            padding: 0.35rem 0.65rem !important;
+            background: rgba(248, 249, 250, 0.95) !important;
+            color: #1f2937 !important;
+            border: 1px solid rgba(49, 51, 63, 0.22) !important;
+            border-radius: 6px 6px 0 0 !important;
+            font-weight: 600 !important;
+        }
+        [data-testid="stTabs"] [data-testid="stTab"] p {
+            margin: 0 !important;
+            color: inherit !important;
+        }
+        [data-testid="stTabs"] [data-testid="stTab"] .react-aria-SelectionIndicator {
+            height: 0 !important;
+            background-color: transparent !important;
+        }
+        [data-testid="stTabs"] [data-testid="stTab"][data-selected] {
+            background: linear-gradient(180deg, #e8f2ff 0%, #ddeaff 100%) !important;
+            border-color: #4a90e2 !important;
+            color: #0b3e75 !important;
+            box-shadow: inset 0 0 0 1px rgba(74, 144, 226, 0.35) !important;
+        }
+        @media (prefers-color-scheme: dark) {
+            [data-testid="stTabs"] [data-testid="stTab"] {
+                background: rgba(44, 49, 61, 0.96) !important;
+                color: rgba(245, 247, 250, 0.95) !important;
+                border-color: rgba(240, 244, 250, 0.26) !important;
+            }
+            [data-testid="stTabs"] [data-testid="stTab"][data-selected] {
+                background: linear-gradient(180deg, #204061 0%, #1a314a 100%) !important;
+                color: #e9f2ff !important;
+                border-color: #76adff !important;
+            }
+        }
+        </style>
+        """
+    # The original Earthquake page injects page-wide styles through Markdown.
+    # This also works in both supported Streamlit lines, whereas st.html()
+    # may isolate the style node from sibling elements in newer releases.
+    st.markdown(tab_css, unsafe_allow_html=True)
+
+
+def bounded_container(max_width=850):
+    """Return a container capped on desktop and fluid on narrow screens.
+
+    Streamlit 1.63 accepts an integer container width and automatically caps it
+    to the parent width. Older supported versions fall back to a normal
+    container.
+
+    PCでは指定幅を上限とし、狭い画面では親幅まで縮むコンテナを返します。
+    """
+    if "width" in inspect.signature(st.container).parameters:
+        return st.container(width=max_width)
+    return st.container()
+
+
+configure_pandas_compatibility()
 
 
 
@@ -156,8 +403,28 @@ STANDARD_UPLOAD_COLUMNS = [
     "dD",
 ]
 
+UPLOADED_DATA_LABEL = "Uploaded data"
+UPLOAD_NUMERIC_COLUMNS = [
+    "Longitude_degE",
+    "Latitude_degN",
+    "Depth_m",
+    "Temperature_degC",
+    "Salinity",
+    "d18O",
+    "dD",
+]
+UPLOAD_SESSION_DATA_KEY = "envgeo_uploaded_data"
+UPLOAD_SESSION_FILENAME_KEY = "envgeo_uploaded_filename"
+INTEGRATED_EMBEDDED_PAGE_KEY = "envgeo_integrated_embedded_page"
+
 
 UPLOAD_COLUMN_ALIASES = {
+    "Month": [
+        "month",
+        "sampling_month",
+        "sample_month",
+        "月",
+    ],
     "Longitude_degE": [
         "longitude_dege",
         "longitude",
@@ -166,6 +433,8 @@ UPLOAD_COLUMN_ALIASES = {
         "x",
         "east_longitude",
         "longitude_e",
+        "経度",
+        "東経",
     ],
     "Latitude_degN": [
         "latitude_degn",
@@ -174,6 +443,8 @@ UPLOAD_COLUMN_ALIASES = {
         "y",
         "north_latitude",
         "latitude_n",
+        "緯度",
+        "北緯",
     ],
     "Depth_m": [
         "depth_m",
@@ -183,6 +454,8 @@ UPLOAD_COLUMN_ALIASES = {
         "sample_depth",
         "sampledepth",
         "depthmeter",
+        "水深",
+        "水深_m",
     ],
     "Temperature_degC": [
         "temperature_degc",
@@ -191,12 +464,15 @@ UPLOAD_COLUMN_ALIASES = {
         "temp_c",
         "temperature_c",
         "t",
+        "水温",
+        "水温_c",
     ],
     "Salinity": [
         "salinity",
         "sal",
         "psu",
         "s",
+        "塩分",
     ],
     "d18O": [
         "d18o",
@@ -271,6 +547,42 @@ def standardize_uploaded_column_names(df):
     df = df.rename(columns=rename_map)
     df.attrs["standardized_column_renames"] = rename_map
     return df
+
+
+def read_uploaded_table(uploaded_file):
+    """Read an uploaded CSV or Excel table without saving it to disk."""
+    suffix = Path(getattr(uploaded_file, "name", "")).suffix.lower()
+    if suffix == ".csv":
+        return pd.read_csv(uploaded_file)
+    if suffix in {".xlsx", ".xls"}:
+        return pd.read_excel(uploaded_file)
+    raise ValueError("Unsupported file type. Upload a CSV, XLSX, or XLS file.")
+
+
+def build_upload_template_csv():
+    """Return a small seawater upload template for spreadsheet applications."""
+    template = pd.DataFrame(
+        [
+            {
+                "Dataset": UPLOADED_DATA_LABEL,
+                "reference": "Your reference",
+                "Cruise": "Cruise ID",
+                "Station": "Station ID",
+                "Year": 2026,
+                "Month": 1,
+                "Day": 1,
+                "Longitude_degE": 135.0,
+                "Latitude_degN": 35.0,
+                "Depth_m": 10.0,
+                "Temperature_degC": 20.0,
+                "Salinity": 34.5,
+                "d18O": 0.0,
+                "dD": 0.0,
+            }
+        ],
+        columns=STANDARD_UPLOAD_COLUMNS,
+    )
+    return template.to_csv(index=False).encode("utf-8-sig")
 
 
 MAP_REGION_AUTO = "Auto from filtered data"
@@ -589,6 +901,132 @@ def add_d_excess(df, output_col="d-excess", d18o_col="d18O", dd_col="dD"):
     return df
 
 
+def prepare_uploaded_data(df, dataset_label=UPLOADED_DATA_LABEL):
+    """Prepare uploaded seawater data for quality review and plotting.
+
+    File reading is generic. This composition deliberately contains the
+    seawater-specific numeric columns, quality rules, and d-excess calculation.
+    """
+    prepared = standardize_uploaded_column_names(df)
+    rename_map = prepared.attrs.get("standardized_column_renames", {}).copy()
+
+    if "Dataset" not in prepared.columns:
+        prepared["Dataset"] = dataset_label
+
+    # Replace '**' placeholders with NaN (same convention as main data loading)
+    # プレースホルダ '**' をNaNへ置換する（メインデータの読み込みと同じ処理）
+    prepared = prepared.mask(prepared.eq('**'), np.nan)
+
+    # Convert Year and Month to nullable integers to prevent Arrow serialization errors
+    # Year・Month を nullable 整数型に変換してArrowシリアライズエラーを防ぐ
+    for col in ('Year', 'Month'):
+        if col in prepared.columns:
+            prepared[col] = pd.to_numeric(prepared[col], errors='coerce').astype('Int64')
+
+    for column in UPLOAD_NUMERIC_COLUMNS:
+        if column in prepared.columns:
+            prepared[column] = pd.to_numeric(prepared[column], errors="coerce")
+
+    prepared = normalize_quality_values(prepared)
+    prepared = add_d_excess(prepared)
+    prepared.attrs["standardized_column_renames"] = rename_map
+    return prepared
+
+
+def apply_uploaded_column_mapping(df, column_mapping):
+    """Copy user-selected source columns into standard roles and revalidate.
+
+    ``column_mapping`` uses standard EnvGeo column names as keys and uploaded
+    source-column names as values. Source columns are retained so experimental
+    parameters remain available for later custom plots.
+    """
+    mapped = df.copy()
+    existing_flags = mapped.get(
+        QUALITY_FLAG_COLUMN,
+        pd.Series("", index=mapped.index, dtype="object"),
+    ).fillna("").astype(str)
+    existing_original_values = mapped.get(
+        QUALITY_ORIGINAL_VALUE_COLUMN,
+        pd.Series("", index=mapped.index, dtype="object"),
+    ).fillna("").astype(str)
+    applied_mapping = {}
+
+    for target_column, source_column in column_mapping.items():
+        if not source_column:
+            continue
+        if source_column not in mapped.columns:
+            raise KeyError(f"Uploaded column not found: {source_column}")
+        if source_column != target_column:
+            mapped[target_column] = mapped[source_column]
+        applied_mapping[target_column] = source_column
+
+    mapped = prepare_uploaded_data(mapped)
+    mapped[QUALITY_FLAG_COLUMN] = [
+        _merge_quality_text(old, new)
+        for old, new in zip(existing_flags, mapped[QUALITY_FLAG_COLUMN])
+    ]
+    mapped[QUALITY_ORIGINAL_VALUE_COLUMN] = [
+        _merge_quality_text(old, new)
+        for old, new in zip(
+            existing_original_values,
+            mapped[QUALITY_ORIGINAL_VALUE_COLUMN],
+        )
+    ]
+    mapped.attrs["manual_column_mapping"] = applied_mapping
+    return mapped
+
+
+def _merge_quality_text(existing, new):
+    """Combine quality messages while avoiding exact repeated content."""
+    existing = str(existing).strip()
+    new = str(new).strip()
+    if not existing:
+        return new
+    if not new or new in existing:
+        return existing
+    if existing in new:
+        return new
+    return f"{existing}; {new}"
+
+
+def get_quality_rows(df):
+    """Return only rows carrying one or more quality flags."""
+    if df is None or df.empty or QUALITY_FLAG_COLUMN not in df.columns:
+        columns = getattr(df, "columns", None)
+        return pd.DataFrame(columns=columns)
+    flags = df[QUALITY_FLAG_COLUMN].fillna("").astype(str).str.strip()
+    return df.loc[flags.ne("")].copy()
+
+
+def store_uploaded_data(df, filename=None, state=None):
+    """Keep prepared upload data in the current Streamlit session only."""
+    state = st.session_state if state is None else state
+    state[UPLOAD_SESSION_DATA_KEY] = df.copy()
+    state[UPLOAD_SESSION_FILENAME_KEY] = filename
+
+
+def get_uploaded_data(state=None):
+    """Return a copy of upload data shared by EnvGeo pages in this session."""
+    state = st.session_state if state is None else state
+    uploaded_df = state.get(UPLOAD_SESSION_DATA_KEY)
+    if not isinstance(uploaded_df, pd.DataFrame):
+        return pd.DataFrame()
+    return uploaded_df.copy()
+
+
+def get_uploaded_filename(state=None):
+    """Return the source filename recorded for the current session upload."""
+    state = st.session_state if state is None else state
+    return state.get(UPLOAD_SESSION_FILENAME_KEY)
+
+
+def clear_uploaded_data(state=None):
+    """Remove shared upload data from the current Streamlit session."""
+    state = st.session_state if state is None else state
+    state.pop(UPLOAD_SESSION_DATA_KEY, None)
+    state.pop(UPLOAD_SESSION_FILENAME_KEY, None)
+
+
 
 # DATA ATTRIBUTION & CITATIONS (For UI Display) / データ出典と引用表示
 
@@ -763,23 +1201,35 @@ def load_isotope_data(ref_data, sheet_num=0):
 ##############################################################################
 """
 @st.cache_data
-def load_coastline_data(ref_data):
-    
-    # 1. Select the source file (currently 50 m for all regions) / 1. 読み込みファイルを選択する（現状は全地域で50m解像度）
-    if ref_data == data_source_GLOBAL:
-        coastline_excel = 'coastline/world_coastline_coordinates_50m.xlsx'
-    else:
-        # Note: Regional settings (e.g., Japan Sea) currently utilize the global file　/ 注: 日本海など地域設定でも現状はグローバル海岸線ファイルを流用している
-        # coastline_excel = 'coastline/japan_coast_line.xlsx'
-        coastline_excel = 'coastline/world_coastline_coordinates_50m.xlsx'
-        
-    
-    # 2. Process data loading / 2. 海岸線データを読み込む
+def load_coastline_data(ref_data, resolution="50m"):
+    """Load shared Natural Earth coastline coordinates from CSV.
+
+    ``ref_data`` remains in the signature for compatibility with existing pages.
+    All regions currently use the same global coastline coordinate file.
+    """
+    _ = ref_data
+    coastline_files = {
+        "50m": "world_coastline_coordinates_50m.csv",
+        "110m": "world_coastline_coordinates_110m.csv",
+    }
+    if resolution not in coastline_files:
+        st.error(
+            f"Unsupported coastline resolution: {resolution}. "
+            "Choose '50m' or '110m'."
+        )
+        return [], []
+
+    coastline_path = (
+        Path(__file__).resolve().parent
+        / "coastline"
+        / coastline_files[resolution]
+    )
+
     try:
-        df_coast = pd.read_excel(coastline_excel)
+        df_coast = pd.read_csv(coastline_path)
         return df_coast['Longitude'].tolist(), df_coast['Latitude'].tolist()
     except Exception as e:
-        st.error(f"Failed to load the file.: {coastline_excel} - {e}")
+        st.error(f"Failed to load the coastline file: {coastline_path.name} - {e}")
         return [], []
     
 
@@ -1042,8 +1492,6 @@ def apply_map_style(fig, map_mode):
         require an API key. The Standard mode therefore uses OpenStreetMap.
     """
     
-    fig.update_layout(mapbox_style="open-street-map")
-
     if map_mode == "Standard":
         fig.update_layout(mapbox_style="open-street-map")
         
@@ -1396,11 +1844,109 @@ def display_isotope_table(df, title="Filtered dataset (CSV)"):
 # Apply filters while exempting NaN rows (Gap Rows) to preserve data segmentation.
 
 
+def _uploaded_filter_state_key(filter_key):
+    """Return the session-state key used by a page's uploaded-data filter."""
+    return f"uploaded_data_filter::{filter_key}"
+
+
+def uploaded_dataset_selected(filter_key, state=None):
+    """Return whether the shared Dataset chooser includes uploaded rows."""
+    state = st.session_state if state is None else state
+    return bool(
+        state.get(_uploaded_filter_state_key(filter_key), {}).get(
+            "include_uploaded_dataset", False
+        )
+    )
+
+
+def combine_reference_and_uploaded_for_filtering(reference_df, uploaded_df):
+    """Build a page-local dataframe for one common filtering workflow.
+
+    This does not modify the loaded reference data or the session upload.  It
+    simply lets the Dataset selector and range controls operate on both row
+    sources during the current page run.
+    """
+    reference_copy = reference_df.copy()
+    if uploaded_df is None or uploaded_df.empty:
+        return reference_copy
+    return pd.concat(
+        [reference_copy, uploaded_df.copy()], ignore_index=True, sort=False
+    )
+
+
+def split_uploaded_rows(filtered_df, dataset_label=UPLOADED_DATA_LABEL):
+    """Return reference rows and selected uploaded rows from a filtered frame."""
+    if filtered_df is None or filtered_df.empty:
+        empty = pd.DataFrame(columns=getattr(filtered_df, "columns", None))
+        return empty, empty.copy()
+    upload_mask = filtered_df["Dataset"].eq(dataset_label)
+    return (
+        filtered_df.loc[~upload_mask].copy(),
+        filtered_df.loc[upload_mask].copy(),
+    )
+
+
+def filter_uploaded_data_for_sidebar(
+    uploaded_df, filter_key, state=None, respect_visibility=True
+):
+    """Apply the common Data filtering choices to an uploaded-data copy.
+
+    Uploaded rows remain independent from the reference dataframe: this helper
+    only determines which uploaded rows are rendered as an overlay.  A missing
+    uploaded column is deliberately ignored, so a partially mapped upload can
+    still be used by pages that do not need that particular measurement.
+    """
+    if uploaded_df is None:
+        return pd.DataFrame()
+
+    result = uploaded_df.copy()
+    state = st.session_state if state is None else state
+    settings = state.get(_uploaded_filter_state_key(filter_key), {})
+    if (
+        settings.get("uploaded_dataset_mode", False)
+        and not settings.get("include_uploaded_dataset", False)
+    ):
+        return result.iloc[0:0].copy()
+    if respect_visibility and not settings.get("show", True):
+        return result.iloc[0:0].copy()
+    include_uploaded_dataset = settings.get("include_uploaded_dataset", False)
+    if not settings.get("apply_reference_filters", False) and not include_uploaded_dataset:
+        return result
+
+    # Dataset and Transect choices identify reference cruises.  Uploads are
+    # normally labelled "Uploaded data", so applying those choices would hide
+    # every overlay by default.  Month is a shared physical field and is safe
+    # to apply when it is supplied by the upload.
+    categorical_filters = {"Month": settings.get("selected_months")}
+    for column, selected_values in categorical_filters.items():
+        if column in result.columns and selected_values is not None:
+            result = result[result[column].isin(selected_values)].copy()
+
+    numeric_filters = {
+        "Year": settings.get("year_range"),
+        "Longitude_degE": settings.get("longitude_range"),
+        "Latitude_degN": settings.get("latitude_range"),
+        "Depth_m": settings.get("depth_range"),
+        "Salinity": settings.get("salinity_range"),
+        "d18O": settings.get("d18o_range"),
+        "Temperature_degC": settings.get("temperature_range"),
+    }
+    for column, value_range in numeric_filters.items():
+        if column not in result.columns or value_range is None:
+            continue
+        values = pd.to_numeric(result[column], errors="coerce")
+        result = result[values.between(value_range[0], value_range[1])].copy()
+    return result
+
+
 def sidebar_filter_and_display(
     df1,
     ref_data,
     data_source_JAPAN_SEA,
     data_source_AROUND_JAPAN,
+    uploaded_df=None,
+    uploaded_filter_key=None,
+    uploaded_dataset_label=None,
 ):
     """
     サイドバーのフィルター設定、データ抽出、および選択データの統計表示を一括で行う関数。
@@ -1424,6 +1970,9 @@ def sidebar_filter_and_display(
         ref_data (str): Current active data source identifier.
         data_source_JAPAN_SEA: Constant for Japan Sea dataset.
         data_source_AROUND_JAPAN: Constant for Around Japan dataset.
+        uploaded_df: Optional separately managed uploaded rows for an overlay.
+        uploaded_filter_key: Page-specific key for the uploaded overlay state.
+        uploaded_dataset_label: Optional Dataset chooser label for uploaded rows.
 
     Returns:
         tuple: (filtered_df, map_settings, colorscale_configs)
@@ -1442,9 +1991,11 @@ def sidebar_filter_and_display(
         
         
         st.header(DATA_FILTERING_LABEL)
-        st.caption("Change filters, then click **Apply settings** to update the figures.")
+        st.caption(MANUAL_FILTER_APPLY_NOTE)
         
-        submit_top = st.form_submit_button("Apply settings", use_container_width=True)
+        submit_top = st.form_submit_button(
+            "Apply settings", **stretch_width_kwargs(st.form_submit_button)
+        )
 
         # Two buttons can be placed at the top and bottom if needed / 必要ならsubmitボタンを上下に配置できる
         # In Streamlit 1.42, form submit buttons do not support key, so labels must be unique.
@@ -1475,12 +2026,19 @@ def sidebar_filter_and_display(
         with st.expander("Select sub-dataset", expanded=False):
             # st.sidebar.subheader('航海区の範囲')dfから要素抽出
             Transect_list = df1["Dataset"].dropna().unique().tolist()
+            if (
+                uploaded_dataset_label is not None
+                and uploaded_dataset_label not in Transect_list
+            ):
+                Transect_list.append(uploaded_dataset_label)
             # print(Transect_list,"<<< Dataset list")
             
             selected_dataset = st.multiselect('Choose datasets', Transect_list,default=Transect_list)
 
             
         # datasetのフィルタリング　2026/03/09追加
+        # When a page supplies uploaded rows in its local filter dataframe,
+        # Uploaded data behaves exactly like any other sub-dataset.
         df1 = df1[df1["Dataset"].isin(selected_dataset)
                    | df1['Dataset'].isna()]  # ← 【修正】Datasetが空欄（または空白行）なら残す
         
@@ -1547,8 +2105,12 @@ def sidebar_filter_and_display(
         #                             value=(min_df_year, max_df_year),
         #                             )
         
-        min_df_year = int(df1['Year'].dropna().min())
-        max_df_year = int(df1['Year'].dropna().max())
+        year_values = pd.to_numeric(df1['Year'], errors='coerce').dropna()
+        if year_values.empty:
+            min_df_year, max_df_year = 0, 0
+        else:
+            min_df_year = int(year_values.min())
+            max_df_year = int(year_values.max())
         
         # 最小と最大が同じ場合、エラー回避のために範囲を広げる
         if min_df_year == max_df_year:
@@ -1628,10 +2190,18 @@ def sidebar_filter_and_display(
         # Safely compute the minimum and maximum, then floor/ceil them / 最小値・最大値を安全に取得し、切り下げ・切り上げする
         # 1. データの最小値・最大値を安全に取得し、切り下げ・切り上げを行う
         # 経度は範囲が広いため、整数(int)にしておくとユーザーが操作しやすくなる
-        min_df_lon = int(math.floor(df1['Longitude_degE'].min()))
-        max_df_lon = int(math.ceil(df1['Longitude_degE'].max()))
-        max_df_lat = int(math.ceil(df1['Latitude_degN'].max()))
-        min_df_lat = int(math.floor(df1['Latitude_degN'].min()))
+        lon_values = pd.to_numeric(df1['Longitude_degE'], errors='coerce').dropna()
+        lat_values = pd.to_numeric(df1['Latitude_degN'], errors='coerce').dropna()
+        if lon_values.empty:
+            min_df_lon, max_df_lon = -180, 180
+        else:
+            min_df_lon = int(math.floor(lon_values.min()))
+            max_df_lon = int(math.ceil(lon_values.max()))
+        if lat_values.empty:
+            min_df_lat, max_df_lat = -90, 90
+        else:
+            max_df_lat = int(math.ceil(lat_values.max()))
+            min_df_lat = int(math.floor(lat_values.min()))
 
         area_filter_preset = st.selectbox(
             "Area filter preset",
@@ -1710,8 +2280,12 @@ def sidebar_filter_and_display(
 
         # Floor the minimum and ceil the maximum, then use integer steps / 最小値は切り下げ、最大値は切り上げた上で整数刻みにする
         # 水深は範囲が広いため、int型に変換してスッキリ
-        min_depth = int(math.floor(df1['Depth_m'].min()))
-        max_depth = int(math.ceil(df1['Depth_m'].max()))
+        depth_values = pd.to_numeric(df1['Depth_m'], errors='coerce').dropna()
+        if depth_values.empty:
+            min_depth, max_depth = 0, 0
+        else:
+            min_depth = int(math.floor(depth_values.min()))
+            max_depth = int(math.ceil(depth_values.max()))
         
         # 2. スライダーの設定
         if min_depth == max_depth:
@@ -1719,7 +2293,9 @@ def sidebar_filter_and_display(
         else:
             slider_max = max_depth
         
-        if min_depth > 0:
+        if min_depth == max_depth:
+            default_value = (min_depth, slider_max)
+        elif min_depth > 0:
             default_value = (min_depth, max_depth)
         else:
             default_value = (0, max_depth)
@@ -1752,8 +2328,12 @@ def sidebar_filter_and_display(
         ##########################
         # Use integer bounds for a simpler salinity slider / 塩分スライダーを簡潔に保つため整数範囲を使う
         
-        min_df_sal = int(math.floor(df1['Salinity'].min()))
-        max_df_sal = int(math.ceil(df1['Salinity'].max()))
+        salinity_values = pd.to_numeric(df1['Salinity'], errors='coerce').dropna()
+        if salinity_values.empty:
+            min_df_sal, max_df_sal = 0, 0
+        else:
+            min_df_sal = int(math.floor(salinity_values.min()))
+            max_df_sal = int(math.ceil(salinity_values.max()))
 
         
         # 2. スライダーの設定
@@ -1762,7 +2342,9 @@ def sidebar_filter_and_display(
         else:
             slider_max_sal = max_df_sal
         
-        if min_df_sal > 0:
+        if min_df_sal == max_df_sal:
+            default_sal = (min_df_sal, slider_max_sal)
+        elif min_df_sal > 0:
             default_sal = (min_df_sal, max_df_sal)
         else:
             default_sal = (0, max_df_sal)
@@ -1890,9 +2472,68 @@ def sidebar_filter_and_display(
             st.warning("⚠️ no data found.")
             st.stop()
 
+        # The upload is never merged into df1.  It can nevertheless follow the
+        # same filter choices for display, which keeps large uploads from
+        # burdening map/section selectors unnecessarily.
+        # Pages that expose uploads as a normal sub-dataset (currently the
+        # vertical section workflow) use that single chooser for both display
+        # and calculation.  Keep the separate overlay controls only for the
+        # other native-overlay pages, where no Dataset chooser is available.
+        show_uploaded_data = True
+        apply_reference_filters = False
+        if uploaded_filter_key is not None and uploaded_dataset_label is None:
+            uploaded_count = 0 if uploaded_df is None else len(uploaded_df)
+            with st.expander("Uploaded data", expanded=False):
+                show_uploaded_data = st.checkbox(
+                    "Show uploaded data",
+                    value=True,
+                    key=f"{uploaded_filter_key}::show_uploaded_data",
+                    disabled=uploaded_count == 0,
+                )
+                apply_reference_filters = st.checkbox(
+                    "Apply current data filters to uploaded data",
+                    value=False,
+                    key=f"{uploaded_filter_key}::apply_uploaded_filters",
+                    disabled=uploaded_count == 0,
+                    help=(
+                        "Filters only the upload overlay. Uploaded rows are not "
+                        "added to interpolation, statistics, or reference data."
+                    ),
+                )
+                if uploaded_count:
+                    st.caption(
+                        f"{uploaded_count:,} uploaded rows available for the overlay."
+                    )
+                else:
+                    st.caption("No uploaded data is currently available.")
+
+        if uploaded_filter_key is not None:
+            st.session_state[_uploaded_filter_state_key(uploaded_filter_key)] = {
+                "show": show_uploaded_data,
+                "apply_reference_filters": apply_reference_filters,
+                "uploaded_dataset_mode": uploaded_dataset_label is not None,
+                "include_uploaded_dataset": (
+                    uploaded_dataset_label in selected_dataset
+                    if uploaded_dataset_label is not None
+                    else False
+                ),
+                "selected_dataset": list(selected_dataset),
+                "selected_cruise": list(selected_cruise),
+                "selected_months": list(selected_months) if selected_months else [],
+                "year_range": (sld_year_min, sld_year_max),
+                "longitude_range": (sld_lon_min, sld_lon_max),
+                "latitude_range": (sld_lat_min, sld_lat_max),
+                "depth_range": (sld_depth_min, sld_depth_max),
+                "salinity_range": (sld_sal_min, sld_sal_max),
+                "d18o_range": (sld_d18O_min, sld_d18O_max),
+                "temperature_range": (sld_temp_min, sld_temp_max),
+            }
+
  
         
-        submit_bottom = st.form_submit_button("Apply settings!", use_container_width=True)
+        submit_bottom = st.form_submit_button(
+            "Apply settings!", **stretch_width_kwargs(st.form_submit_button)
+        )
         submitted = submit_top or submit_bottom
         
     # ----------------サイドバーここまで------------------------
@@ -1911,15 +2552,26 @@ def sidebar_filter_and_display(
 
     # st.write(df_empty)
     data_found_num = str(len(df1["Dataset"]))
+    uploaded_filtered_count = 0
+    if uploaded_dataset_label is not None and "Dataset" in df1.columns:
+        uploaded_filtered_count = int(
+            df1["Dataset"].eq(uploaded_dataset_label).sum()
+        )
 
     
     # バリデーション処理
-    if df_empty == 1:  #データが無かったとき
+    if df_empty:  #データが無かったとき
         st.warning('no data found')
         # 条件を満たないときは処理を停止する
         st.stop()
-    elif df_empty == 0: #データがあったとき
-        st.write(data_found_num,'data found')
+    else: #データがあったとき
+        if uploaded_dataset_label is not None:
+            st.write(
+                f"{data_found_num} data found "
+                f"(Uploaded data: {uploaded_filtered_count})"
+            )
+        else:
+            st.write(data_found_num,'data found')
         
         
         
@@ -1984,8 +2636,8 @@ def sidebar_filter_and_display(
             pd.DataFrame(
                 [{"Item": key, "Value": value} for key, value in filter_conditions.items()]
             ),
-            use_container_width=True,
             hide_index=True,
+            **stretch_width_kwargs(st.dataframe),
         )
 
         st.markdown("**Filtered data counts by dataset**")
@@ -1993,14 +2645,18 @@ def sidebar_filter_and_display(
             [{"Dataset": key, "Rows": value} for key, value in d_select_add2.items()]
         )
         if not df_selected_counts.empty:
-            st.dataframe(df_selected_counts, use_container_width=True, hide_index=True)
+            st.dataframe(
+                df_selected_counts,
+                hide_index=True,
+                **stretch_width_kwargs(st.dataframe),
+            )
 
         st.markdown("**Summary statistics**")
         df_stats = filtered_statistics_dataframe(summary)
         if not df_stats.empty:
             numeric_cols = ["Mean", "Stdev", "Min", "Max"]
             df_stats[numeric_cols] = df_stats[numeric_cols].round(3)
-            st.dataframe(df_stats, use_container_width=True)
+            st.dataframe(df_stats, **stretch_width_kwargs(st.dataframe))
         render_filtered_report_download(
             df1,
             filter_conditions,

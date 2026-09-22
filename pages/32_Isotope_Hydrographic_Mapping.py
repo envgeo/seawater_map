@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Apr 22 17:15:03 2023
-@author: Toyoho Ishimura @Kyoto-U
-2026/02/10 update
+Isotope and hydrographic mapping visualizer for EnvGeo-Seawater data.
+
+Created: 2023-04-22
+Author: Toyoho Ishimura, Kyoto University
+Last updated: 2026-09-22
 """
 
 
 
 
 # --- Version info ---
-version = "1.3.0" #v220f_20260425
+version = "1.3.2"  # 2026-09-22
 
 # ToDo
 # このバージョンは補完計算の調整が必要
@@ -28,10 +30,10 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import math
 import envgeo_utils
+import envgeo_user_data
 from scipy.interpolate import griddata # コンターマップ用
 import cartopy.feature as cfeature  # 陸地塗りつぶし用
 import io # ファイル処理用
-pd.set_option('future.no_silent_downcasting', True)
 
 
 MAP_PARAMETER_LABELS = {
@@ -174,7 +176,7 @@ def main():
     ##############################################################################
     # データソース選択
     ##############################################################################
-    ref_data = st.radio("Data source (see Home > About):", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True, args=[1, 0])
+    ref_data = st.radio("Data source (see Home > About):", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True)
 
 
 
@@ -207,6 +209,34 @@ def main():
         return
 
     ##############################################################################
+    # アップロードデータUI（Integrated埋め込み時はファイルアップロードを省略）
+    ##############################################################################
+    embedded_in_integrated = (
+        st.session_state.get(envgeo_utils.INTEGRATED_EMBEDDED_PAGE_KEY)
+        == "32_Isotope_Hydrographic_Mapping.py"
+    )
+    if embedded_in_integrated:
+        uploaded_df = envgeo_utils.get_uploaded_data()
+    else:
+        uploaded_df = envgeo_user_data.render_upload_panel(
+            "iso_map",
+            "Longitude and latitude columns are required to plot uploaded "
+            "locations on the map. The currently selected map parameter "
+            "(d18O, dD, etc.) is used for color when available.",
+        )
+    uploaded_df = envgeo_user_data.render_column_controls(
+        uploaded_df,
+        {
+            "Longitude column": "Longitude_degE",
+            "Latitude column": "Latitude_degN",
+        },
+        "iso_map",
+    )
+    uploaded_style = envgeo_user_data.render_marker_style_controls(
+        uploaded_df, "iso_map"
+    )
+
+    ##############################################################################
     # サイドバーここから　　df1フィルタリング　も一括で
     #　2026/03/06　Min-Maxをdfから取得に変更
     #  緯度経度などは型変換をせず、そのまま最小・最大を取得
@@ -224,7 +254,22 @@ def main():
      sld_d18O_min, sld_d18O_max,
      sld_temp_min, sld_temp_max,
      selected_cruise,
-     submitted) = envgeo_utils.sidebar_filter_and_display(df1, ref_data, data_source_JAPAN_SEA, data_source_AROUND_JAPAN)
+     submitted) = envgeo_utils.sidebar_filter_and_display(
+         envgeo_utils.combine_reference_and_uploaded_for_filtering(
+             df1, uploaded_df
+         ),
+         ref_data, data_source_JAPAN_SEA, data_source_AROUND_JAPAN,
+         uploaded_df=uploaded_df, uploaded_filter_key="isotope_mapping",
+         uploaded_dataset_label=envgeo_utils.UPLOADED_DATA_LABEL,
+     )
+    # Use the selected, integrated table for both scatter and contour
+    # calculations.  Keep a separate uploaded subset only to redraw it above
+    # the calculated layer with the user-selected marker style.
+    filtered_integrated_df = df1.copy()
+    _, uploaded_df = envgeo_utils.split_uploaded_rows(
+        filtered_integrated_df, envgeo_utils.UPLOADED_DATA_LABEL
+    )
+    df1 = filtered_integrated_df
 
     map_parameter_candidates = [
         "d18O",
@@ -272,6 +317,7 @@ def main():
     # サイドバーの中にコンテナを作成し、境界線（border）を有効にする
     with st.sidebar.container(border=True):
         st.subheader(getattr(envgeo_utils, "MAP_DISPLAY_SETTINGS_LABEL", "Map display settings"))
+        st.caption(envgeo_utils.AUTO_APPLY_NOTE)
         
         center_option = st.radio(
             ":blue[Map Center:]",
@@ -363,7 +409,7 @@ def main():
                 map_lon_default = dataset_lon_default
                 map_lat_default = dataset_lat_default
 
-        map_state_key = f"map_display_settings::{ref_data}::{lon_center}::{region_preset}"
+        map_state_key = f"map_display::{ref_data}::{lon_center}::{region_preset}"
 
         color_range_min, color_range_max, color_range_default, color_range_step = (
             get_parameter_color_range_defaults(
@@ -373,99 +419,76 @@ def main():
             )
         )
 
-        if map_state_key not in st.session_state:
-            st.session_state[map_state_key] = {
-                "map_lon_raw": map_lon_default,
-                "map_lat_raw": map_lat_default,
-                "color_ranges": {},
-                "colorbar_thickness": 4,
-                "colorbar_length": 90,
-                "colorbar_font_size": 12,
-            }
-
-        map_settings = st.session_state[map_state_key]
-        color_ranges = map_settings.setdefault("color_ranges", {})
-        current_color_range = color_ranges.get(selected_parameter, color_range_default)
-
-        with st.form(key=f"map_display_form::{ref_data}::{lon_center}"):
-            map_lon_raw_form = st.slider(
-                'Map Longitude ',
-                lon_slider_min,
-                lon_slider_max,
-                map_settings["map_lon_raw"],
-                step=1
-            )
-            map_lat_raw_form = st.slider(
-                'Map Latitude ',
-                lat_slider_min,
-                lat_slider_max,
-                map_settings["map_lat_raw"],
-                step=1
-            )
-        
-            selected_color_range_form = st.slider(
-                label=f'{selected_parameter} range for colorbar',
-                min_value=color_range_min,
-                max_value=color_range_max,
-                value=current_color_range,
-                step=color_range_step
-            )
-            colorbar_thickness_form = st.slider(
-                "Colorbar thickness",
-                min_value=2,
-                max_value=10,
-                value=map_settings.get("colorbar_thickness", 4),
-                step=1,
-                help=(
-                    "Adjust the thickness of the horizontal parameter colorbar "
-                    "in the Matplotlib scatter and contour maps."
-                ),
-            )
-            colorbar_length_form = st.slider(
-                "Colorbar length",
-                min_value=40,
-                max_value=100,
-                value=map_settings.get("colorbar_length", 90),
-                step=5,
-                help=(
-                    "Adjust the displayed length of the horizontal parameter colorbar. "
-                    "100 uses the full available width."
-                ),
-            )
-            colorbar_font_size_form = st.number_input(
-                "Colorbar font size",
-                min_value=8,
-                max_value=20,
-                value=map_settings.get("colorbar_font_size", 12),
-                step=1,
-                help="Adjust the label and tick font size of the parameter colorbar.",
-            )
-            apply_map_settings = st.form_submit_button("Apply map settings")
-
-        if apply_map_settings:
-            map_settings = {
-                "map_lon_raw": map_lon_raw_form,
-                "map_lat_raw": map_lat_raw_form,
-                "color_ranges": {
-                    **map_settings.get("color_ranges", {}),
-                    selected_parameter: selected_color_range_form,
-                },
-                "colorbar_thickness": colorbar_thickness_form,
-                "colorbar_length": colorbar_length_form,
-                "colorbar_font_size": colorbar_font_size_form,
-            }
-            st.session_state[map_state_key] = map_settings
-
-        map_lon_raw = map_settings["map_lon_raw"]
-        map_lat_raw = map_settings["map_lat_raw"]
-        selected_color_range = map_settings.get("color_ranges", {}).get(
-            selected_parameter,
-            current_color_range,
+        map_lon_raw = st.slider(
+            "Map Longitude",
+            lon_slider_min,
+            lon_slider_max,
+            map_lon_default,
+            step=1,
+            key=f"{map_state_key}::longitude",
         )
+        map_lat_raw = st.slider(
+            "Map Latitude",
+            lat_slider_min,
+            lat_slider_max,
+            map_lat_default,
+            step=1,
+            key=f"{map_state_key}::latitude",
+        )
+
+        selected_color_range = st.slider(
+            label=f"{selected_parameter} range for colorbar",
+            min_value=color_range_min,
+            max_value=color_range_max,
+            value=color_range_default,
+            step=color_range_step,
+            key=f"{map_state_key}::color_range::{selected_parameter}",
+        )
+        colorbar_thickness_value = st.slider(
+            "Colorbar thickness",
+            min_value=2,
+            max_value=10,
+            value=4,
+            step=1,
+            key=f"{map_state_key}::colorbar_thickness",
+            help=(
+                "Adjust the thickness of the horizontal parameter colorbar "
+                "in the Matplotlib scatter and contour maps."
+            ),
+        )
+        colorbar_length_value = st.slider(
+            "Colorbar length",
+            min_value=40,
+            max_value=100,
+            value=90,
+            step=5,
+            key=f"{map_state_key}::colorbar_length",
+            help=(
+                "Adjust the displayed length of the horizontal parameter colorbar. "
+                "100 uses the full available width."
+            ),
+        )
+        colorbar_font_size = st.number_input(
+            "Colorbar font size",
+            min_value=8,
+            max_value=20,
+            value=12,
+            step=1,
+            key=f"{map_state_key}::colorbar_font_size",
+            help="Adjust the label and tick font size of the parameter colorbar.",
+        )
+
+        # アップロードデータのうちカラーバー要素が無いポイントの表示切替
+        show_nodata_uploaded = st.checkbox(
+            f"Show uploaded points without {selected_parameter} values",
+            value=True,
+            key=f"{map_state_key}::show_nodata_uploaded",
+            help="Show or hide uploaded map points that have no value for the mapped parameter.",
+        )
+
         parameter_min, parameter_max = selected_color_range
-        colorbar_thickness = map_settings.get("colorbar_thickness", 4) / 100
-        colorbar_length = map_settings.get("colorbar_length", 90) / 100
-        colorbar_font_size = map_settings.get("colorbar_font_size", 12)
+        colorbar_thickness = colorbar_thickness_value / 100
+        colorbar_length = colorbar_length_value / 100
 
         # 内部計算用に0.001のオフセットを適用
         map_lon_min, map_lon_max = map_lon_raw[0] - 0.001, map_lon_raw[1] + 0.001
@@ -535,10 +558,6 @@ def main():
     # --- 月 (スライダー用) ---
     # sub_title = 'Lon:'+str(sld_lon_min)+'-'+str(sld_lon_max)+', Lat:'+str(sld_lat_min)+'-'+str(sld_lat_max)+', Y:'+str(sld_year_min)+'-'+str(sld_year_max)+', M:'+str(sld_month_min)+'-'+str(sld_month_max)+', S:'+str(sld_sal_min)+'-'+str(sld_sal_max)+', D:'+str(sld_depth_min)+'-'+str(sld_depth_max)+'m'
     # --- 月 (multiselect用) ---
-    # 月の表示用テキストを作成（選択されたリストをカンマ区切りにする）
-    month_text = ", ".join(map(str, sorted(selected_months))) if selected_months else "None"
-    
-    
     ### もし「月が多すぎてサブタイトルが長くなる」のが嫌な場合
    # 月の表示ロジック
     if len(selected_months) == 12:
@@ -580,6 +599,68 @@ def main():
     ###############################################################################################
     ###############################################################################################
 
+
+    ##############################################################################
+    # アップロードデータ前処理と品質チェック
+    ##############################################################################
+    uploaded_map_valid = pd.DataFrame()
+    if not uploaded_df.empty:
+        _has_position = {
+            "Longitude_degE", "Latitude_degN"
+        }.issubset(uploaded_df.columns)
+        if _has_position:
+            _udf = uploaded_df.copy()
+            _udf["Longitude_degE"] = pd.to_numeric(
+                _udf["Longitude_degE"], errors="coerce"
+            )
+            _udf["Latitude_degN"] = pd.to_numeric(
+                _udf["Latitude_degN"], errors="coerce"
+            )
+            uploaded_map_valid = (
+                _udf.dropna(subset=["Longitude_degE", "Latitude_degN"])
+                .loc[lambda d: d["Latitude_degN"].between(-90, 90)]
+                .copy()
+            )
+        _u_total = len(uploaded_df)
+        _u_plotted = len(uploaded_map_valid)
+        if (
+            _has_position
+            and uploaded_style["color_mode"] == "Use current colorbar when possible"
+            and selected_parameter in uploaded_map_valid.columns
+            and not show_nodata_uploaded
+        ):
+            _u_plotted = int(
+                pd.to_numeric(
+                    uploaded_map_valid[selected_parameter], errors="coerce"
+                ).notna().sum()
+            )
+        _u_excluded = _u_total - _u_plotted
+        if _has_position:
+            st.caption(
+                f":blue[Uploaded overlay: {_u_plotted:,} / {_u_total:,} samples "
+                f"plotted ({_u_excluded:,} excluded due to missing or invalid "
+                "longitude/latitude).]"
+            )
+        else:
+            st.info(
+                "Uploaded data is not shown because longitude and latitude "
+                "columns are not assigned. "
+                "Use \"Uploaded data columns\" in the sidebar."
+            )
+        _uploaded_quality_df = envgeo_utils.get_quality_rows(uploaded_df)
+        with st.expander("Uploaded data quality check", expanded=False):
+            envgeo_utils.render_quality_flag_criteria_note()
+            st.write(
+                f"Quality-flagged rows: {len(_uploaded_quality_df):,} / "
+                f"{_u_total:,}"
+            )
+            if _uploaded_quality_df.empty:
+                st.success("No uploaded rows triggered the current quality rules.")
+            else:
+                st.dataframe(
+                    _uploaded_quality_df,
+                    **envgeo_utils.stretch_width_kwargs(st.dataframe),
+                )
 
     plt.rcParams["font.size"] = 15
 
@@ -650,7 +731,64 @@ def main():
         )
         cbar_scatter.set_label(parameter_label, fontsize=colorbar_font_size)
         cbar_scatter.ax.tick_params(labelsize=colorbar_font_size)
-        
+
+        # --- Uploaded data overlay (Scatter Map / 最前面) ---
+        if not uploaded_map_valid.empty:
+            _lon_up_sc = normalize_lon_to_center(
+                uploaded_map_valid["Longitude_degE"].values, lon_center
+            )
+            _use_color_sc = (
+                uploaded_style["color_mode"] == "Use current colorbar when possible"
+                and selected_parameter in uploaded_map_valid.columns
+            )
+            if _use_color_sc:
+                _up_cv_sc = pd.to_numeric(
+                    uploaded_map_valid[selected_parameter], errors="coerce"
+                )
+                _up_valid_sc = _up_cv_sc.notna()
+                if _up_valid_sc.any():
+                    ax.scatter(
+                        _lon_up_sc[_up_valid_sc.values],
+                        uploaded_map_valid.loc[_up_valid_sc, "Latitude_degN"],
+                        c=_up_cv_sc[_up_valid_sc],
+                        cmap=map_matplotlib_colormap,
+                        s=uploaded_style["size"],
+                        alpha=uploaded_style["alpha"],
+                        vmin=parameter_min,
+                        vmax=parameter_max,
+                        marker=uploaded_style["marker"],
+                        linewidths=uploaded_style["outline_width"],
+                        edgecolors=uploaded_style["outline_color"],
+                        transform=ccrs.PlateCarree(),
+                        zorder=10,
+                    )
+                if (~_up_valid_sc).any() and show_nodata_uploaded:
+                    ax.scatter(
+                        _lon_up_sc[~_up_valid_sc.values],
+                        uploaded_map_valid.loc[~_up_valid_sc, "Latitude_degN"],
+                        c=uploaded_style["color"],
+                        s=uploaded_style["size"],
+                        alpha=uploaded_style["alpha"],
+                        marker=uploaded_style["marker"],
+                        linewidths=uploaded_style["outline_width"],
+                        edgecolors=uploaded_style["outline_color"],
+                        transform=ccrs.PlateCarree(),
+                        zorder=10,
+                    )
+            else:
+                ax.scatter(
+                    _lon_up_sc,
+                    uploaded_map_valid["Latitude_degN"],
+                    c=uploaded_style["color"],
+                    s=uploaded_style["size"],
+                    alpha=uploaded_style["alpha"],
+                    marker=uploaded_style["marker"],
+                    linewidths=uploaded_style["outline_width"],
+                    edgecolors=uploaded_style["outline_color"],
+                    transform=ccrs.PlateCarree(),
+                    zorder=10,
+                )
+
         ax.set_title(title_head2,fontsize=15)
         
         # PNG保存（Scatter）
@@ -674,27 +812,61 @@ def main():
         #############################################################
         # Contour Map
         #############################################################
-        lon_original = df1["Longitude_degE"].values
+        # ``linear`` interpolation needs at least three non-collinear points.
+        # Uploaded-only selections can legitimately contain fewer points, so
+        # fall back to nearest-neighbour interpolation rather than erroring.
+        contour_df = df1.loc[:, [
+            "Longitude_degE", "Latitude_degN", selected_parameter
+        ]].copy()
+        for _column in contour_df.columns:
+            contour_df[_column] = pd.to_numeric(
+                contour_df[_column], errors="coerce"
+            )
+        contour_df = contour_df.dropna().loc[
+            lambda data: data["Latitude_degN"].between(-90, 90)
+        ]
+        if contour_df.empty:
+            st.warning(
+                f"No valid longitude, latitude, and {selected_parameter} values "
+                "are available for the contour map."
+            )
+            return
+
+        lon_original = contour_df["Longitude_degE"].values
         # Interpolation also needs the center-adjusted longitude frame to match the displayed window.
         # 補間計算でも、表示中のウィンドウと同じ経度系を使う必要がある。
         lon_for_interp = normalize_lon_to_center(lon_original, lon_center)
         # Build the interpolation grid in the same longitude domain as the slider and set_extent.
         # 補間グリッドも slider / set_extent と同じ経度範囲で作る。
         grid_lon = np.linspace(lon_slider_min, lon_slider_max, 360)
-        lat_vals     = df1["Latitude_degN"].values
-        val          = df1[selected_parameter].values
+        lat_vals     = contour_df["Latitude_degN"].values
+        val          = contour_df[selected_parameter].values
         
         # ---- グリッド ----
         grid_lat = np.linspace(map_lat_min, map_lat_max, 250)
         X, Y = np.meshgrid(grid_lon, grid_lat)
         
         # ---- 補間 ----
-        Z = griddata(
-            (lon_for_interp, lat_vals),
-            val,
-            (X, Y),
-            method="linear"
-        )
+        Z = None
+        if len(contour_df) >= 3:
+            try:
+                Z = griddata(
+                    (lon_for_interp, lat_vals), val, (X, Y), method="linear"
+                )
+            except Exception:
+                # Collinear or duplicate locations are valid uploads but are
+                # not a valid Delaunay triangulation for linear interpolation.
+                Z = None
+        if Z is None or not np.isfinite(Z).any():
+            try:
+                Z = griddata(
+                    (lon_for_interp, lat_vals), val, (X, Y), method="nearest"
+                )
+            except Exception:
+                st.warning(
+                    "The selected locations could not be interpolated for the contour map."
+                )
+                return
         Z_plot = np.ma.masked_invalid(Z)
         lon_plot = grid_lon
         
@@ -760,7 +932,64 @@ def main():
         cbar.ax.set_xticklabels([f"{t:.1f}" for t in fixed_ticks])
         cbar.set_label(parameter_label, fontsize=colorbar_font_size)
         cbar.ax.tick_params(labelsize=colorbar_font_size)
-        
+
+        # --- Uploaded data overlay (Contour Map / 最前面) ---
+        if not uploaded_map_valid.empty:
+            _lon_up_ct = normalize_lon_to_center(
+                uploaded_map_valid["Longitude_degE"].values, lon_center
+            )
+            _use_color_ct = (
+                uploaded_style["color_mode"] == "Use current colorbar when possible"
+                and selected_parameter in uploaded_map_valid.columns
+            )
+            if _use_color_ct:
+                _up_cv_ct = pd.to_numeric(
+                    uploaded_map_valid[selected_parameter], errors="coerce"
+                )
+                _up_valid_ct = _up_cv_ct.notna()
+                if _up_valid_ct.any():
+                    ax2.scatter(
+                        _lon_up_ct[_up_valid_ct.values],
+                        uploaded_map_valid.loc[_up_valid_ct, "Latitude_degN"],
+                        c=_up_cv_ct[_up_valid_ct],
+                        cmap=map_matplotlib_colormap,
+                        s=uploaded_style["size"],
+                        alpha=uploaded_style["alpha"],
+                        vmin=parameter_min,
+                        vmax=parameter_max,
+                        marker=uploaded_style["marker"],
+                        linewidths=uploaded_style["outline_width"],
+                        edgecolors=uploaded_style["outline_color"],
+                        transform=ccrs.PlateCarree(),
+                        zorder=10,
+                    )
+                if (~_up_valid_ct).any() and show_nodata_uploaded:
+                    ax2.scatter(
+                        _lon_up_ct[~_up_valid_ct.values],
+                        uploaded_map_valid.loc[~_up_valid_ct, "Latitude_degN"],
+                        c=uploaded_style["color"],
+                        s=uploaded_style["size"],
+                        alpha=uploaded_style["alpha"],
+                        marker=uploaded_style["marker"],
+                        linewidths=uploaded_style["outline_width"],
+                        edgecolors=uploaded_style["outline_color"],
+                        transform=ccrs.PlateCarree(),
+                        zorder=10,
+                    )
+            else:
+                ax2.scatter(
+                    _lon_up_ct,
+                    uploaded_map_valid["Latitude_degN"],
+                    c=uploaded_style["color"],
+                    s=uploaded_style["size"],
+                    alpha=uploaded_style["alpha"],
+                    marker=uploaded_style["marker"],
+                    linewidths=uploaded_style["outline_width"],
+                    edgecolors=uploaded_style["outline_color"],
+                    transform=ccrs.PlateCarree(),
+                    zorder=10,
+                )
+
         img_contour = io.BytesIO()
         fig_contour.savefig(img_contour, format="png", dpi=300, bbox_inches="tight")
         img_contour.seek(0)
@@ -800,7 +1029,9 @@ def main():
 
     # Keep map controls compact so the map remains visible after Streamlit reruns.
     # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
-    with st.popover("Map controls", use_container_width=True):
+    with st.popover(
+        "Map controls", **envgeo_utils.stretch_width_kwargs(st.popover)
+    ):
         map_mode = st.radio(
             "Map style",
             envgeo_utils.MAP_MODE_OPTIONS,
@@ -810,9 +1041,21 @@ def main():
         )
     st.caption(f"Map style: {map_mode}")
 
-    # 2. データの範囲から中心座標とズームレベルを計算
-    lat_min, lat_max = df1["Latitude_degN"].min(), df1["Latitude_degN"].max()
-    lon_min, lon_max = df1["Longitude_degE"].min(), df1["Longitude_degE"].max()
+    # 2. データの範囲から中心座標とズームレベルを計算（アップロード地点を含む）
+    _map_extent_srcs = [df1[["Longitude_degE", "Latitude_degN"]]]
+    if not uploaded_map_valid.empty:
+        _map_extent_srcs.append(
+            uploaded_map_valid[["Longitude_degE", "Latitude_degN"]]
+        )
+    _map_extent_df = pd.concat(_map_extent_srcs, ignore_index=True)
+    lat_min, lat_max = (
+        _map_extent_df["Latitude_degN"].min(),
+        _map_extent_df["Latitude_degN"].max(),
+    )
+    lon_min, lon_max = (
+        _map_extent_df["Longitude_degE"].min(),
+        _map_extent_df["Longitude_degE"].max(),
+    )
 
     # 初期値（日本）の設定
     default_lat, default_lon, default_zoom = 36.0, 138.0, 4.0
@@ -878,28 +1121,67 @@ def main():
 
     # 4. 背景スタイルの適用
     fig_map = envgeo_utils.apply_map_style(fig_map, map_mode)
-    
-    
 
-    
+    # --- Uploaded overlay (Plotly Sampling Location Map) ---
+    _plotly_color_range = (
+        (parameter_min, parameter_max)
+        if parameter_min < parameter_max
+        else None
+    )
+    fig_map, _uploaded_plotly_count = envgeo_user_data.add_uploaded_map_overlay(
+        fig_map,
+        uploaded_map_valid,
+        uploaded_style,
+        color_column=selected_parameter,
+        colorscale=map_plotly_colorscale,
+        color_range=_plotly_color_range,
+        show_nodata=show_nodata_uploaded,
+    )
+    if not uploaded_df.empty:
+        if _uploaded_plotly_count:
+            st.caption(
+                f":blue[Uploaded locations: {_uploaded_plotly_count:,} / "
+                f"{len(uploaded_df):,} plotted on the sampling location map.]"
+            )
+        else:
+            st.caption(
+                ":gray[Uploaded locations are not shown on the sampling location "
+                "map because valid longitude and latitude columns are unavailable.]"
+            )
 
     # 5. レイアウト設定 (ここが幅を広げる決め手)
+    # カラーバーと凡例を地図内オーバーレイにして、外側余白で地図が圧縮されないようにする。
+    # x=1.0 は Plotly が余白を自動追加して地図を圧縮するため使わない。
+    # autoexpand=False で凡例による余白自動拡張を抑制し、
+    # mapbox.domain で地図がフル幅を使うよう明示する。
     fig_map.update_layout(
         mapbox=dict(
             center=dict(lat=center_lat, lon=center_lon),
-            zoom=auto_zoom
+            zoom=auto_zoom,
+            domain=dict(x=[0.0, 1.0], y=[0.0, 1.0]),
         ),
-        margin=dict(l=0, r=0, t=0, b=0),
-        # widthを指定せず autosize を True にすることで、コンテナいっぱいに広がる
+        margin=dict(l=0, r=0, t=0, b=0, autoexpand=False),
         autosize=True,
         coloraxis_colorbar=dict(
             title=parameter_plotly_label,
-            x=1.0,           # カラーバーを右端に寄せる
+            x=0.98,          # 地図内右端にオーバーレイ（1.0 にすると外側扱いで余白が生じる）
             xanchor='right',
+            bgcolor='rgba(255,255,255,0.75)',
+            bordercolor='rgba(150,150,150,0.5)',
+            borderwidth=1,
         ),
-        # --- ここで初期値を設定 ---
-        coloraxis_cmin=parameter_min, # 最小値
-        coloraxis_cmax=parameter_max   # 最大値
+        # 凡例をツールバー（右上）と重ならないよう左下に配置
+        legend=dict(
+            x=0.01,
+            y=0.01,
+            xanchor='left',
+            yanchor='bottom',
+            bgcolor='rgba(255,255,255,0.85)',
+            bordercolor='rgba(150,150,150,0.5)',
+            borderwidth=1,
+        ),
+        coloraxis_cmin=parameter_min,
+        coloraxis_cmax=parameter_max,
     )
     
 
@@ -908,9 +1190,9 @@ def main():
     # マウスホイールでのズームが強制的に有効
     st.plotly_chart(
         fig_map,
-        use_container_width=True, # クラウドではTrueの方が見やすいです
         key=f"parameter_map_{selected_parameter}",
-        config={'scrollZoom': True, 'displayModeBar': True} # ズームを有効化
+        config={'scrollZoom': True, 'displayModeBar': True}, # ズームを有効化
+        **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
     )
 
 

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Apr 22 17:15:03 2023
-@author: Toyoho Ishimura @Kyoto-U
-2026/02/10 update 
+Depth-profile visualizer for EnvGeo-Seawater data.
+
+Created: 2023-04-22
+Author: Toyoho Ishimura, Kyoto University
+Last updated: 2026-09-22
 """
 
 
 # --- Version info ---
-version = "1.3.0" #v220_20260317
+version = "1.3.2"  # 2026-09-22
 
 # ToDo
 
@@ -24,9 +26,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly.express as px
 import math
+import io
+import textwrap
 from matplotlib.ticker import FormatStrFormatter
-import envgeo_utils  
-pd.set_option('future.no_silent_downcasting', True)
+import envgeo_utils
+import envgeo_user_data
 
     
 
@@ -52,7 +56,7 @@ def main():
     ##############################################################################
     # データソース選択
     ##############################################################################
-    ref_data = st.radio("Data source (see Home > About):", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True, args=[1, 0])
+    ref_data = st.radio("Data source (see Home > About):", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True)
 
 
 
@@ -84,7 +88,6 @@ def main():
             "Show background data",
             ("Yes", "No"),
             horizontal=True,
-            args=[1, 0],
             help=getattr(envgeo_utils, "BACKGROUND_DATA_HELP_TEXT", "Show the unfiltered dataset behind the currently filtered data for context."),
         )
     
@@ -93,7 +96,6 @@ def main():
             "Profile parameter",
             ("d18O(VSMOW)", "dD(VSMOW)", "d-excess", "Temperature (°C)", "Salinity"),
             horizontal=True,
-            args=[1, 0],
             help="Choose the seawater parameter plotted against water depth.",
         )
 
@@ -220,7 +222,8 @@ def main():
         else:
             fig_x_min, fig_x_max = 28, 36  # Around JAPAN(標準)
     
-    else:()
+    else:
+        pass
 
 
 
@@ -241,12 +244,51 @@ def main():
 
 
     ##############################################################################
+    # --- Upload overlay ---
+    ##############################################################################
+
+    embedded_in_integrated = (
+        st.session_state.get(envgeo_utils.INTEGRATED_EMBEDDED_PAGE_KEY)
+        == "37_Depth_Profile.py"
+    )
+    if embedded_in_integrated:
+        uploaded_df = envgeo_utils.get_uploaded_data()
+    else:
+        uploaded_df = envgeo_user_data.render_upload_panel(
+            "depth_profile",
+            f"Requires {X_data} and Depth_m for the depth profile; "
+            "latitude and longitude are optional and used for the location map.",
+        )
+    uploaded_df = envgeo_user_data.render_column_controls(
+        uploaded_df,
+        {
+            f"X parameter ({X_data})": X_data,
+            "Depth (Depth_m)": "Depth_m",
+        },
+        "depth_profile",
+        optional_roles={
+            "Month (optional)": "Month",
+            "Latitude (Latitude_degN)": "Latitude_degN",
+            "Longitude (Longitude_degE)": "Longitude_degE",
+        },
+    )
+    uploaded_style = envgeo_user_data.render_marker_style_controls(
+        uploaded_df,
+        "depth_profile",
+        include_line=True,
+        marker_size_default=10,
+        marker_size_min=1,
+        marker_size_step=1,
+    )
+
+
+    ##############################################################################
     # サイドバーここから　　df1フィルタリング　も一括で
     #　2026/03/06　Min-Maxをdfから取得に変更
     #  緯度経度などは型変換をせず、そのまま最小・最大を取得
     ##############################################################################
 
-    
+
     # 関数の呼び出し
     # すべての変数を順番通りに受け取り
     (df1,
@@ -259,12 +301,26 @@ def main():
      sld_d18O_min, sld_d18O_max,
      sld_temp_min, sld_temp_max,
      selected_cruise,
-     submitted) = envgeo_utils.sidebar_filter_and_display(df1, ref_data, data_source_JAPAN_SEA, data_source_AROUND_JAPAN)
+     submitted) = envgeo_utils.sidebar_filter_and_display(
+         envgeo_utils.combine_reference_and_uploaded_for_filtering(
+             df1, uploaded_df
+         ),
+         ref_data, data_source_JAPAN_SEA, data_source_AROUND_JAPAN,
+         uploaded_df=uploaded_df, uploaded_filter_key="depth_profile",
+         uploaded_dataset_label=envgeo_utils.UPLOADED_DATA_LABEL,
+     )
+    filtered_profile_df = df1.copy()
+    df1, uploaded_df = envgeo_utils.split_uploaded_rows(
+        filtered_profile_df, envgeo_utils.UPLOADED_DATA_LABEL
+    )
 
 
     # データが一つだけの時に警告。
     # dD / d-excessは欠損が多いため、対象列と水深が両方ある点だけを数える。
-    data_found = len(df1.dropna(subset=[X_data, "Depth_m"]))
+    # The selected Dataset list can contain only Uploaded data.  Use the
+    # complete filtered input here; df1 below remains reference-only so the
+    # existing foreground uploaded trace stays visually distinct.
+    data_found = len(filtered_profile_df.dropna(subset=[X_data, "Depth_m"]))
     if data_found == 1:
         st.warning('Only one data point was found. A depth profile could not be meaningfully generated.')
         st.stop()
@@ -303,6 +359,7 @@ def main():
     
     with st.sidebar.container(border=True):
         st.subheader(getattr(envgeo_utils, "FIGURE_CONTROLS_LABEL", "Figure controls"))
+        st.caption(envgeo_utils.AUTO_APPLY_NOTE)
         
         # st.sidebar.subheader('描画水深の範囲')
         if ref_data == data_source_JAPAN_SEA:
@@ -417,12 +474,18 @@ def main():
                 step=1,
                 key=f"depth_profile_y_tick_count::{plot_element}",
             )
-                    
-                    
-                    
-    
-      
-    
+
+        # アップロードデータのうち月情報が無い行の表示切替
+        show_nodata_uploaded = st.checkbox(
+            "Show uploaded data without Month information",
+            value=True,
+            key=f"depth_profile_show_nodata_uploaded::{plot_element}",
+            help=(
+                "When the uploaded data has no Month column (or has rows with missing Month), "
+                "show those lines using the fixed marker color. "
+                "Uncheck to hide lines that cannot be colored by month."
+            ),
+        )
 
     ##############################################################################
     # キャッシュクリア
@@ -455,6 +518,22 @@ def main():
     st.caption(getattr(envgeo_utils, "MAP_AREA_HELP_TEXT", "Map center, extent, colormap, and figure settings can be adjusted in the sidebar."))
 
 
+
+    if not uploaded_df.empty:
+        uploaded_quality_df = envgeo_utils.get_quality_rows(uploaded_df)
+        with st.expander("Uploaded data quality check", expanded=False):
+            envgeo_utils.render_quality_flag_criteria_note()
+            st.write(
+                f"Quality-flagged rows: {len(uploaded_quality_df):,} / "
+                f"{len(uploaded_df):,}"
+            )
+            if uploaded_quality_df.empty:
+                st.success("No uploaded rows triggered the current quality rules.")
+            else:
+                st.dataframe(
+                    uploaded_quality_df,
+                    **envgeo_utils.stretch_width_kwargs(st.dataframe),
+                )
 
     ############################################
     ######      font size line etc..       #####
@@ -510,7 +589,6 @@ def main():
     
     # Keep the saved Depth Profile title inside the figure width.
     # Depth Profileはフィルタ条件が長くなりやすいため、保存図では少し短めに折り返す。
-    import textwrap
     wrapped_sub_title = "\n".join(textwrap.wrap(sub_title, width=62))
     title_head = str(main_title+'\n'+wrapped_sub_title+'\n'+sub_title2)
     
@@ -619,7 +697,8 @@ def main():
 
         if plot_all_data == "Yes":
             plt.plot(df_fig_ALL[X_data], df_fig_ALL[Y_data],c=X_Y_C, marker=X_Y_M, lw=0.5, alpha=alpha_all, label='ALL')
-        else:()
+        else:
+            pass
 
 
 
@@ -659,7 +738,8 @@ def main():
             ax.yaxis.set_major_formatter(FormatStrFormatter("%.f"))
 
         
-        else:()
+        else:
+            pass
 
             
 
@@ -717,8 +797,96 @@ def main():
 
 
                 
-        else:()
-    else:()
+        else:
+            pass
+
+        # --- Uploaded data overlay: month-colored dotted lines and markers ---
+        uploaded_depth_plot_count = 0
+        if not uploaded_df.empty and {X_data, "Depth_m"}.issubset(uploaded_df.columns):
+            uploaded_depth = uploaded_df.copy()
+            uploaded_depth[X_data] = pd.to_numeric(uploaded_depth[X_data], errors="coerce")
+            uploaded_depth["Depth_m"] = pd.to_numeric(uploaded_depth["Depth_m"], errors="coerce")
+            uploaded_depth = uploaded_depth.dropna(subset=[X_data, "Depth_m"])
+            uploaded_depth_excluded = len(uploaded_df) - len(uploaded_depth)
+            if not uploaded_depth.empty:
+                lw_up = float(uploaded_style["line_width"])
+                ls_up = uploaded_style["line_style"]
+                alpha_up = float(uploaded_style["alpha"])
+                marker_size_up = max(1.0, math.sqrt(float(uploaded_style["size"])))
+                marker_kwargs_up = {
+                    "marker": uploaded_style["marker"],
+                    "markersize": marker_size_up,
+                    "markeredgecolor": uploaded_style["outline_color"],
+                    "markeredgewidth": uploaded_style["outline_width"],
+                }
+                MONTH_BANDS = [
+                    ((1,  3), 'blue',   '1-3'),
+                    ((4,  6), 'green',  '4-6'),
+                    ((7,  9), 'orange', '7-9'),
+                    ((10, 12), 'purple', '10-12'),
+                ]
+                site_cols_up = [c for c in ['Latitude_degN', 'Longitude_degE'] if c in uploaded_depth.columns]
+                if site_cols_up:
+                    uploaded_depth['_site_key'] = (
+                        uploaded_depth[site_cols_up].round(4).apply(
+                            lambda row: '_'.join(str(value) for value in row),
+                            axis=1,
+                        )
+                    )
+                else:
+                    uploaded_depth['_site_key'] = 'all'
+                has_month = (
+                    'Month' in uploaded_depth.columns
+                    and pd.to_numeric(uploaded_depth['Month'], errors='coerce').notna().any()
+                )
+                if has_month:
+                    uploaded_depth['Month'] = pd.to_numeric(uploaded_depth['Month'], errors='coerce')
+                    valid_month = uploaded_depth['Month'].between(1, 12)
+                    for (m_min, m_max), color, label_str in MONTH_BANDS:
+                        df_m = uploaded_depth[uploaded_depth['Month'].between(m_min, m_max)]
+                        uploaded_depth_plot_count += len(df_m)
+                        label_used = False
+                        for _sk, grp in df_m.groupby('_site_key', sort=False):
+                            g = grp.sort_values('Depth_m')
+                            ax.plot(
+                                g[X_data], g['Depth_m'],
+                                c=color, lw=lw_up, ls=ls_up, alpha=alpha_up,
+                                label=f'Uploaded {label_str}' if not label_used else '_nolegend_',
+                                zorder=10,
+                                **marker_kwargs_up,
+                            )
+                            label_used = True
+                    if show_nodata_uploaded:
+                        no_month = uploaded_depth[~valid_month]
+                        if not no_month.empty:
+                            uploaded_depth_plot_count += len(no_month)
+                            label_used = False
+                            for _sk, grp in no_month.groupby('_site_key', sort=False):
+                                g = grp.sort_values('Depth_m')
+                                ax.plot(
+                                    g[X_data], g['Depth_m'],
+                                    c=uploaded_style["color"], lw=lw_up, ls=ls_up, alpha=alpha_up,
+                                    label='Uploaded (no month)' if not label_used else '_nolegend_',
+                                    zorder=10,
+                                    **marker_kwargs_up,
+                                )
+                                label_used = True
+                else:
+                    if show_nodata_uploaded:
+                        uploaded_depth_plot_count = len(uploaded_depth)
+                        label_used = False
+                        for _sk, grp in uploaded_depth.groupby('_site_key', sort=False):
+                            g = grp.sort_values('Depth_m')
+                            ax.plot(
+                                g[X_data], g['Depth_m'],
+                                c=uploaded_style["color"], lw=lw_up, ls=ls_up, alpha=alpha_up,
+                                label='Uploaded data' if not label_used else '_nolegend_',
+                                zorder=10,
+                                **marker_kwargs_up,
+                            )
+                            label_used = True
+    else:
+        pass
     
 
      
@@ -729,7 +897,6 @@ def main():
 
     
     #Save to memory first. の場合は，ローカルに保存されないので安心
-    import io
     safe_parameter_name = envgeo_utils.safe_filename_text(X_data)
     fn = envgeo_utils.build_figure_filename(f"Fig_depth_{safe_parameter_name}", sub_title)
     img = io.BytesIO()
@@ -737,6 +904,15 @@ def main():
     img.seek(0)
      
     st.pyplot(fig)
+
+    if not uploaded_df.empty and {X_data, "Depth_m"}.issubset(uploaded_df.columns):
+        _ud_excluded = len(uploaded_df) - uploaded_depth_plot_count
+        st.caption(
+            f":blue[Uploaded overlay: {uploaded_depth_plot_count:,} / "
+            f"{len(uploaded_df):,} plotted"
+            + (f" ({_ud_excluded:,} excluded due to missing values)." if _ud_excluded else ".")
+            + "]"
+        )
 
     btn = st.download_button(
        label="Download image",
@@ -763,12 +939,14 @@ def main():
 
     # Keep map controls compact so the map remains visible after Streamlit reruns.
     # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
-    with st.popover("Map controls", use_container_width=True):
+    with st.popover(
+        "Map controls", **envgeo_utils.stretch_width_kwargs(st.popover)
+    ):
         map_mode = st.radio(
             "Map style", 
             envgeo_utils.MAP_MODE_OPTIONS, 
             horizontal=True,
-            key="map_style_31_auto",
+            key="map_style_depth_profile",
             help=getattr(envgeo_utils, "MAP_STYLE_HELP_TEXT", "Choose the background map style for the sampling-location map."),
         )
     st.caption(f"Map style: {map_mode}")
@@ -842,35 +1020,69 @@ def main():
 
     # 4. 背景スタイルの適用
     fig_map = envgeo_utils.apply_map_style(fig_map, map_mode)
-    
-    
 
+    _depth_color_range = (
+        (lim_min_X, lim_max_X) if lim_min_X < lim_max_X else None
+    )
+    fig_map, uploaded_map_count = envgeo_user_data.add_uploaded_map_overlay(
+        fig_map,
+        uploaded_df,
+        uploaded_style,
+        color_column=X_data,
+        colorscale=c_scale_profile,
+        color_range=_depth_color_range,
+        show_nodata=show_nodata_uploaded,
+    )
 
     # 5. レイアウト設定 (ここが幅を広げる決め手)
     fig_map.update_layout(
         mapbox=dict(
             center=dict(lat=center_lat, lon=center_lon),
-            zoom=auto_zoom
+            zoom=auto_zoom,
+            domain=dict(x=[0.0, 1.0], y=[0.0, 1.0]),
         ),
-        margin=dict(l=0, r=0, t=0, b=0),
-        # widthを指定せず autosize を True にすることで、コンテナいっぱいに広がる
-        autosize=True, 
+        margin=dict(l=0, r=0, t=0, b=0, autoexpand=False),
+        autosize=True,
         coloraxis_colorbar=dict(
             title=plot_element,
-            x=1.0,           # カラーバーを右端に寄せる
-            xanchor='right'
-        )
+            x=0.98,
+            xanchor='right',
+            bgcolor='rgba(255,255,255,0.75)',
+            bordercolor='rgba(150,150,150,0.5)',
+            borderwidth=1,
+        ),
+        legend=dict(
+            x=0.01,
+            y=0.01,
+            xanchor='left',
+            yanchor='bottom',
+            bgcolor='rgba(255,255,255,0.85)',
+            bordercolor='rgba(150,150,150,0.5)',
+            borderwidth=1,
+        ),
     )
 
     # 6. 表示 
     # ID重複を割けるために，Keyを追加。　修正後（一意のキーを追加）　
     # マウスホイールでのズームが強制的に有効
     st.plotly_chart(
-        fig_map, 
-        # width="stretch", #Streramlitあげたら復活させる  
+        fig_map,
         key="depth_profile",
-        config={'scrollZoom': True, 'displayModeBar': True} # ズームを有効化
+        config={'scrollZoom': True, 'displayModeBar': True},
+        **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
     )
+
+    if not uploaded_df.empty:
+        if uploaded_map_count:
+            st.caption(
+                f":blue[Uploaded locations: {uploaded_map_count:,} / "
+                f"{len(uploaded_df):,} plotted on the map.]"
+            )
+        else:
+            st.caption(
+                ":orange[Uploaded data: no rows with valid Latitude_degN "
+                "and Longitude_degE found.]"
+            )
 
 
 

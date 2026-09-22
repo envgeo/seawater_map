@@ -1,17 +1,16 @@
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 21 16:00:21 2023
+Interactive 2D/2.5D visualizer for EnvGeo-Seawater data.
 
-@author: Toyoho Ishimura @Kyoto-U
-
-2026/02/10 update 
+Created: 2023-05-21
+Author: Toyoho Ishimura, Kyoto University
+Last updated: 2026-09-22
 """
 
 
 # --- Version info ---
-version = "1.3.0" #v220_20260317
+version = "1.3.2"  # 2026-09-22
 
 # ToDo
 
@@ -224,7 +223,6 @@ import math
 import envgeo_utils  
 import pandas as pd
 import numpy as np
-pd.set_option('future.no_silent_downcasting', True)
 
 
 
@@ -232,7 +230,10 @@ def main():
     
     # 注意書き
     st.header(f'Interactive 2D/2.5D Visualizer ({version})')
-    st.caption("Use interactive Plotly selection to link T-S, isotope, or custom 2D plots with sampling locations.")
+    st.caption(
+        "Use this Plotly page for interactive data exploration. "
+        "For publication- or presentation-ready static figures, use the corresponding individual pages."
+    )
     
 
     ############################################################
@@ -252,7 +253,7 @@ def main():
     ##############################################################################
     # データソース選択
     ##############################################################################
-    ref_data = st.radio("Data source (see Home > About)", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True, args=[1, 0])
+    ref_data = st.radio("Data source (see Home > About)", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True)
 
 
 
@@ -345,7 +346,6 @@ def main():
         "Plot type",
         (fig_type_d18Osal, fig_type_dD_d18O, fig_type_TS, fig_type_custom_xy),
         horizontal=True,
-        args=[1, 0],
         help="Choose the interactive Plotly view to display.",
     )
     
@@ -390,10 +390,10 @@ def main():
             plot_bgcolor="white",
             paper_bgcolor="white",
             
-            # 1. 全体サイズを固定
-            width=850,   # 右側のマージンを考慮して少し広めに設定
+            # Keep the desktop height while allowing the width to follow its container.
+            # PCの高さは維持し、横幅は表示領域に合わせる。
             height=600,
-            autosize=False,
+            autosize=True,
             
             xaxis=dict(
                 title=x_label,
@@ -419,9 +419,9 @@ def main():
                 yanchor='middle'
             ),
             
-            # 3. マージンの設定
-            # 右側(r)を150px程度確保することで、文字が長くても枠サイズに影響を与えない
-            margin=dict(l=80, r=150, t=50, b=80), 
+            # Keep enough room for labels and the colorbar without squeezing
+            # the plot excessively on narrow screens.
+            margin=dict(l=60, r=90, t=50, b=70),
             
             font=dict(size=12)
         )
@@ -582,8 +582,7 @@ def main():
         fig_xy.update_layout(
             hovermode="closest",
             hoverdistance=5,
-            width=800,
-            margin=dict(l=80, r=200, t=50, b=80, autoexpand=False),
+            margin=dict(l=60, r=90, t=50, b=70, autoexpand=False),
             coloraxis_colorbar=dict(x=1.02, xanchor="left", len=0.8),
             xaxis=dict(
                 zeroline=False,
@@ -605,13 +604,14 @@ def main():
             ),
         )
 
-        selected_points = plotly_events(
-            fig_xy,
-            select_event=True,
-            key=f"{key_prefix}_event",
-            override_height=600,
-            override_width=850,
-        )
+        with envgeo_utils.bounded_container(850):
+            selected_points = plotly_events(
+                fig_xy,
+                select_event=True,
+                key=f"{key_prefix}_event",
+                override_height=600,
+                override_width="100%",
+            )
         show_selection_tip()
 
         selected_indices_key = f"{key_prefix}_selected_indices"
@@ -680,7 +680,9 @@ def main():
             ),
         )
 
-        with st.popover("Map controls", use_container_width=True):
+        with st.popover(
+            "Map controls", **envgeo_utils.stretch_width_kwargs(st.popover)
+        ):
             map_mode = st.radio(
                 "Map style",
                 envgeo_utils.MAP_MODE_OPTIONS,
@@ -697,9 +699,9 @@ def main():
 
         st.plotly_chart(
             fig_map,
-            use_container_width=True,
             key=f"{key_prefix}_map",
             config={"scrollZoom": True, "displayModeBar": True},
+            **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
         )
 
         envgeo_utils.display_isotope_table(df1)
@@ -768,9 +770,8 @@ def main():
         fig_fixed_TS.update_layout(
             hovermode='closest', # 近くの点を探し回るのをやめる
             hoverdistance=5,     # 反応する距離を大幅に小さくする（初期値は20程度）
-            width=800, 
             height=600, 
-            margin=dict(l=80, r=200, t=50, b=80, autoexpand=False), 
+            margin=dict(l=60, r=90, t=50, b=70, autoexpand=False),
             coloraxis_colorbar=dict(
                 x=1.02, 
                 xanchor='left',
@@ -789,13 +790,14 @@ def main():
     
 
         # ③ 表示枠（窓枠）の設定
-        selected_points = plotly_events(
-            fig_fixed_TS, 
-            select_event=True, 
-            key="ts_zoom_event",
-            override_height=600, 
-            override_width=850
-        )
+        with envgeo_utils.bounded_container(850):
+            selected_points = plotly_events(
+                fig_fixed_TS,
+                select_event=True,
+                key="ts_zoom_event",
+                override_height=600,
+                override_width="100%",
+            )
         show_selection_tip()
         
         # --- 【選択個数の処理】 ---
@@ -882,7 +884,9 @@ def main():
         
         # Keep map controls compact so the map remains visible after Streamlit reruns.
         # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
-        with st.popover("Map controls", use_container_width=True):
+        with st.popover(
+            "Map controls", **envgeo_utils.stretch_width_kwargs(st.popover)
+        ):
             map_mode_ts = st.radio(
                 "Map style", 
                 envgeo_utils.MAP_MODE_OPTIONS, 
@@ -907,10 +911,9 @@ def main():
         # マウスホイールでのズームが強制的に有効
         st.plotly_chart(
             fig_ts_map, 
-            # width="stretch", # Streamlitあげた復活させる
-            use_container_width=True,
             key="3d_visualizer_map_TS",
-            config={'scrollZoom': True, 'displayModeBar': True} # ズームを有効化
+            config={'scrollZoom': True, 'displayModeBar': True}, # ズームを有効化
+            **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
         )
         
             
@@ -1055,8 +1058,7 @@ def main():
         fig_d18O.update_layout(
             hovermode='closest', # 近くの点を探し回るのをやめる
             hoverdistance=5,     # 反応する距離を大幅に小さくする（初期値は20程度）
-            width=800, 
-            margin=dict(l=80, r=200, t=50, b=80, autoexpand=False), 
+            margin=dict(l=60, r=90, t=50, b=70, autoexpand=False),
             coloraxis_colorbar=dict(x=1.02, xanchor='left', len=0.8),
             xaxis=dict(
                 zeroline=False, zerolinewidth=1, zerolinecolor='grey',
@@ -1072,10 +1074,14 @@ def main():
     
     
     
-        selected_points_d18o = plotly_events(
-            fig_d18O, select_event=True, key="d18o_zoom_event",
-            override_height=600, override_width=850
-        )
+        with envgeo_utils.bounded_container(850):
+            selected_points_d18o = plotly_events(
+                fig_d18O,
+                select_event=True,
+                key="d18o_zoom_event",
+                override_height=600,
+                override_width="100%",
+            )
         show_selection_tip()
     
             
@@ -1141,7 +1147,9 @@ def main():
         
         # Keep map controls compact so the map remains visible after Streamlit reruns.
         # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
-        with st.popover("Map controls", use_container_width=True):
+        with st.popover(
+            "Map controls", **envgeo_utils.stretch_width_kwargs(st.popover)
+        ):
             map_mode_d18o = st.radio(
                 "Map style", 
                 envgeo_utils.MAP_MODE_OPTIONS, 
@@ -1165,10 +1173,9 @@ def main():
         # マウスホイールでのズームが強制的に有効
         st.plotly_chart(
             fig_map_d18o, 
-            # width="stretch", # Streamlitあげた復活させる
-            use_container_width=True,
             key="3d_visualizer_map_d18O",
-            config={'scrollZoom': True, 'displayModeBar': True} # ズームを有効化
+            config={'scrollZoom': True, 'displayModeBar': True}, # ズームを有効化
+            **envgeo_utils.stretch_width_kwargs(st.plotly_chart),
         )
         
         

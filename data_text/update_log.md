@@ -2,7 +2,104 @@
 
 Detailed development log for recent EnvGeo-Seawater updates.
 
-## Unreleased
+## 1.3.2 - 2026-09-22
+
+### Release summary
+
+- Established the shared browser-upload workflow across the active specialist pages and the new public `User Data Check & Quick Visualizer`.
+- Made selected `Uploaded data` available through common Data filtering and integrated it into compatible calculations while preserving foreground marker rendering.
+- Improved Vertical Section upload handling and colorbar controls; its interpolation remains an experimental workflow requiring scientific validation.
+- Restored consistent tab styling under Streamlit 1.63 and documented the planned retirement of the legacy local user-data workbook.
+- Verified the current 1.3.2 consolidation in the Streamlit 1.63 / Plotly 5.24 environment: 108 pytest tests passed.
+
+### Detailed development log
+
+### 2026-09-22
+
+- Renamed page 05 to `User Data Check & Quick Visualizer` and its source file to `05_User_Data_Check_Quick_Visualizer.py`; removed the beta label because the page is now the public user-data entry point.
+- Planned the conditional retirement of `dataset/91_USER_UPLOAD_UNPUB.xlsx`. Browser CSV/XLSX upload is now the normal user-data workflow; the legacy workbook and its `envgeo_utils.py` `Unpublished dataset` loader stay in place until live references, tests, samples, and documentation have been audited and replaced.
+- Changed page 05 from upload-only `User Data Quick Visualizer` into `User Data Check & Quick Visualizer`. It now places the shared reference-plus-upload Data filtering workflow after the upload controls and applies the selected combined dataframe to Overview & Quality, arbitrary 2D, Salinity-d18O, Temperature-Salinity, arbitrary 3D/4D, 2D Map, Geographic 3D, and filtered CSV export. Summary, upload preview, data table, and quality checks formerly separated across Integrated Visualizer tabs are consolidated into this user-facing entry page; page 90 remains available during migration.
+- Improved page 05 with shared ocean-region presets, Atlantic/Pacific-centred Geographic 3D, common color-palette selection, page-04-style depth-map presentation, bounded rich hover metadata, and Arrow-safe mixed identifier previews. The map and geographic 3D view use the same filtered integrated dataframe.
+- Improved: unified all tab interfaces in Home, Integrated Visualizer beta, User Data Quick Visualizer, and Vertical Section Visualizer with the blue card-style selected-tab treatment from Earthquake Advanced. The styling supports light/dark themes and narrow screens; Vertical Section Color/Line tabs now also include purpose icons.
+- Changed the former 3D/4D Visualizer Uploader into the public `User Data Quick Visualizer`: it now provides shared-session CSV/XLSX upload, recognized/editable columns, quality review, arbitrary numeric-column 2D and 3D/4D scatter plots, longitude-latitude-depth geographic 3D, optional reference context, a plotted-row cap, and interactive HTML export. It remains the dedicated upload-first route for 4D exploration.
+- Maintenance: standardized the leading headers of every Python source, helper tool, and test. Existing module explanations remain; each now explicitly identifies its Python 3 executable declaration, UTF-8 declaration, known creation/author metadata or a maintainer when creation metadata was not recorded, and its last-updated date.
+- Changed the selected-data regressions in Salinity-d18O Relationship and Custom Parameter Plot beta, and the Scatter/Contour calculations in Isotope & Hydrographic Mapping, to use the local integrated dataframe of reference rows plus the `Uploaded data` rows selected in Data filtering. Uploaded-only selections are therefore calculation inputs too. When Mapping cannot perform linear contour interpolation because fewer than three points are selected or locations are collinear/duplicated, it now safely falls back to nearest-neighbour interpolation. The frontmost uploaded-marker redraw remains in place.
+- Restored the prior Integrated-style workflow for Vertical Section Visualizer: `Uploaded data` appears in Data filtering → Select sub-dataset. When selected there, valid uploaded rows follow the common filters and are combined locally with reference rows for section projection, interpolation, contours, and observed-depth seafloor fallback; deselecting it removes them from both section calculation and display. The maximum valid-row safety limit applies to the combined section input.
+- Fixed Uploaded data-only selection in Vertical Section Visualizer. The common filter now receives a local reference-plus-upload dataframe, so selecting only `Uploaded data` no longer produces a false “no data found” state. Optional absent upload columns use safe filter defaults; the section still requires valid longitude, latitude, depth, and target values.
+- Added the filtered Uploaded data count in parentheses beside the main `data found` total when Vertical Section Visualizer uses its Uploaded data sub-dataset.
+- Extended the local reference-plus-upload Data filtering workflow to Salinity-d18O Relationship, Isotope & Hydrographic Mapping, T-S Diagram, Custom Parameter Plot beta, and Depth Profile. Each now exposes `Uploaded data` in Select sub-dataset and applies the common filters to selected uploaded rows without changing source files. Mapping keeps uploaded rows out of contour interpolation to avoid silently changing the calculated field.
+- Ensured uploaded rows are always rendered in the foreground across all upload-enabled figures. In particular, Vertical Section now redraws selected uploaded section points as the final outlined trace even when they are included in the interpolation input.
+- Reduced the default uploaded-marker size in Depth Profile from 140 to 10, with a 1-unit minimum, so dense uploaded profiles begin with unobtrusive markers while retaining manual size control.
+- Fixed uploaded-data-only filtering in Depth Profile: valid selected uploaded rows now satisfy the profile drawing check even when no reference rows remain. Added uploaded-only AppTests across pages 31, 32, 34, 35, 37, and 53; also made Salinity-d18O Relationship skip its selected-reference regression safely when no reference rows are selected.
+- Added an `Uploaded data` item inside the shared Data filtering form for all native-overlay pages (31, 32, 34, 35, 37, and 53). It provides overlay visibility and optional application of the common time, position, depth, salinity, isotope, and temperature ranges without merging uploaded rows into reference data. Vertical Section now passes only these filtered uploaded rows to its A-B selector map before the existing 3,000-point display cap is applied.
+- Added selected-target availability reporting to Vertical Section Visualizer: it now shows valid versus missing/invalid values for the active target parameter, alongside the existing count of rows ready for section plotting. Uploaded markers are now also visible while drawing an A-B line on the Folium selector map; both the selector and the Section Map report coordinate-based overlay counts and exclusions.
+- Expanded Vertical Section Visualizer color controls with the shared EnvGeo colormap choices plus adjustable horizontal colorbar thickness, length, font size, and approximate tick count. Colorbar ticks now use horizontal, human-readable rounded values instead of densely angled decimal labels.
+- Matched the Vertical Section Visualizer data-source selector to the other pages by displaying its three choices horizontally on one line.
+- Aligned the Vertical Section Visualizer sidebar with the other visualization pages: the three shared user-data upload panels now appear first, followed by the common Data filtering form with the same dataset/transect selectors, Month segmented control, area preset, range sliders, Apply buttons, and filtered-data summary. Section-specific, bathymetry, and display controls follow afterward.
+- Added native shared-upload overlays to Vertical Section Visualizer beta. Uploaded longitude, latitude, depth, and selected target values are projected onto the active A-B corridor or the matching Axis-based coordinate and drawn as distinct foreground markers on both section plots and the section map; they remain excluded from reference filtering, interpolation, and seafloor estimation. Registered page 53 as a native overlay owner in Integrated Visualizer and added standalone/embedded AppTests.
+- Confirmed 87 passing tests in the Streamlit 1.42 baseline environment and 12 targeted upload-overlay AppTests in the Streamlit 1.63 environment after the page 53 rollout, sidebar alignment, and colorbar controls.
+- Expanded uploaded-location map hover text to show available uploaded metadata and experimental fields, including Year, Month, Cruise, Station, and arbitrary user columns. Quality-report internals remain hidden; hover content is bounded to avoid slow maps for unusually wide tables.
+- Added Month alias recognition for `month`, `sampling_month`, `sample_month`, and the Japanese label `月`, plus an editable Month assignment in Depth Profile so uploaded profiles retain month-based coloring when labels differ.
+- Added a shared optional line-style extension to uploaded marker controls and enabled it for Depth Profile. Users can now adjust uploaded profile line width and choose dotted, dashed, solid, or dash-dot lines while preserving the previous dotted 2.0-width default.
+- Added the uploaded-data quality-check expander to Depth Profile and placed it above the profile figure, consistent with the other upload-enabled pages.
+- Extended Custom Parameter Plot beta so uploaded-only numeric fields can be selected as axes, values missing the selected shared color parameter use the fixed marker color instead of being excluded, and figure-size, font-size, and tick-count controls use a compact two-column layout.
+- Expanded common upload AppTests for the five upload-enabled pages, Integrated embedding ownership, Depth Profile line controls, and uploaded-only Custom Parameter Plot axes. Confirmed 83 passing tests in the Streamlit 1.42 baseline environment and 8 targeted AppTests in the Streamlit 1.63 environment.
+
+### 2026-09-21
+
+- Fixed Integrated Visualizer so `uses_native_upload_overlay` recognizes every Full-existing-page workflow that has its own upload panel (Salinity-d18O Relationship, Isotope & Hydrographic Mapping, T-S Diagram, Custom Parameter Plot beta, Depth Profile) instead of only T-S Diagram. Previously, opening any of the other pages through Integrated's Full existing page mode with uploaded data present silently merged the uploaded rows into the reference dataset via the legacy `load_isotope_data` patch (affecting background statistics and, for the Mapping page, the contour interpolation) while also rendering a duplicate native upload panel. Added a regression test asserting `NATIVE_UPLOAD_OVERLAY_PAGES` stays in sync with pages that actually implement `envgeo_user_data.render_upload_panel` and the `INTEGRATED_EMBEDDED_PAGE_KEY` check.
+- Registered Custom Parameter Plot beta in Integrated Visualizer's Full-existing-page workflow list so its already-implemented upload overlay is reachable from Integrated, not only as a standalone page.
+- Fixed Depth Profile so the uploaded-overlay caption is always shown once required columns are assigned, including when every uploaded row is excluded (missing/invalid X parameter or depth); it now reports "0 / N plotted (N excluded due to missing values)" instead of showing nothing, matching the other upload-enabled pages.
+- Added the shared uploaded-location overlay to the Isotope & Hydrographic Mapping page: longitude and latitude columns (the only required roles) are auto-detected or manually assigned, the currently selected parameter (d18O, dD, d-excess, Salinity, Temperature) drives shared-colorbar coloring when available, frontmost outlined markers (zorder=10) appear on both the Scatter Map and the Contour Map without being mixed into the griddata interpolation, the Plotly Sampling Location Map gains an `add_uploaded_map_overlay` overlay, automatic map framing includes uploaded locations, and a quality-check expander is shown when uploaded data is present.
+- Added the shared uploaded-location overlay to the Salinity-d18O Relationship map, including frontmost outlined markers, shared d18O colors or fixed-color fallback, automatic map framing, and an explanation when coordinates are unavailable.
+- Fixed quality flags being cleared when T-S or another individual page reconfirmed automatically recognized upload columns; existing flags are now preserved and merged with any new flags found after manual column assignment.
+- Added uploaded sampling locations to the T-S Diagram map when valid longitude and latitude are available, using frontmost outlined markers, shared d18O map colors when possible, fixed-color fallback, and uploaded locations in automatic map framing.
+- Extracted the shared upload, editable column-assignment, and marker-style sidebar panels into `envgeo_user_data.py`, retaining page-specific plotting in each visualization page.
+- Added uploaded-data support to Salinity-d18O Relationship with automatic/manual Salinity and d18O assignment, shared-colorbar or fixed-color markers, quality reporting, and frontmost Matplotlib overlay rendering.
+- Added a pilot `Uploaded data columns` panel between upload and marker controls in T-S Diagram, with editable automatic assignments and explicit manual selection for unknown temperature and salinity labels.
+- Added a shared manual column-mapping helper that retains original experimental columns and reapplies standard numeric conversion and quality checks.
+- Clarified the final user-data workflow: every supported page registers uploads in shared session state, User Data Validator applies the same core quality rules regardless of upload origin, and Integrated's uploader is retired only after all target-page overlays and equivalent Validator checks are verified.
+- Replaced the active 50m and 110m coastline Excel assets with CSV files and centralized CSV loading in `envgeo_utils.py`.
+- Removed the legacy direct Japan-coastline Excel dependency from the local 3D/4D uploader and moved the superseded 10m, 50m, 110m, and Japan coastline workbooks to the workspace archive.
+- Refined the upload migration strategy: extract Shared-filter beta into an independent User Data Validator, keep individual visualization pages as first-class workflows, and retain Integrated Visualizer as a working migration fallback until it can become a hidden development archive.
+- Added incremental migration rules so each change is limited to one shared component or one page, with the existing workflow retained until its replacement passes tests and screen-level checks.
+- Planned a focused `envgeo_user_data.py` module for shared upload processing and UI instead of continuing to enlarge `envgeo_utils.py`.
+
+### 2026-09-20
+
+- Added shared, memory-only upload state so prepared user data can be reused across Integrated Visualizer and individual pages during the same Streamlit session.
+- Moved CSV/Excel reading, upload preparation, template generation, quality-row extraction, numeric conversion, quality normalization, and d-excess calculation into reusable `envgeo_utils.py` functions.
+- Added initial user-data upload, quality review, marker styling, shared-colorbar coloring, and frontmost overlay plotting to Temperature-Salinity Diagram.
+- Grouped upload and uploaded-marker controls into two collapsed panels at the top of the T-S Diagram sidebar, separate from reference-data filters and figure controls.
+- Prevented duplicate upload controls and double plotting when T-S Diagram is opened inside Integrated Visualizer: Integrated owns file upload, while the native T-S page owns marker styling and overlay rendering.
+- Documented the accepted Integrated Visualizer architecture and migration plan in dedicated English and Japanese strategy files, retaining individual pages as first-class workflows.
+- Added unambiguous Japanese aliases for longitude, latitude, depth, temperature, and salinity upload columns.
+- Expanded upload tests and confirmed 65 passing tests plus successful T-S Diagram AppTest runs with and without shared uploaded data.
+
+### 2026-09-19
+
+- Updated the development version to 1.3.1 for the Python 3.10-3.12 and Streamlit 1.42-1.63 compatibility cycle.
+- Set the test-site Streamlit requirement range to 1.42-1.63 while retaining Plotly 5.24 as the release baseline.
+- Fixed Matplotlib/Cartopy figure-state conflicts in Correlation Overview and Salinity-d18O Relationship by drawing on explicit GeoAxes, saving explicit figures, and closing completed figures.
+- Disabled exploratory `print()` output in Correlation Overview to keep Streamlit server logs readable.
+- Restored automatic Custom Parameter Plot axis and color ranges when switching data sources by keeping widget state separate for each dataset.
+- Replaced Custom Parameter Plot mathtext isotope labels with Unicode labels to avoid a Matplotlib parsing error on Streamlit Cloud.
+- Matched the Vertical Section Visualizer page-title size to the other main visualization pages.
+- Adopted a staged Plotly migration policy: move to MapLibre APIs while still using Plotly 5.24, then verify the same code with Plotly 6.7 and 7.1.
+- Confirmed the long-term plan to add memory-only user-data upload and overlay plotting to individual pages through shared utility functions and staged tests.
+- Defined Correlation Overview as an archive display of the original hand-written exploratory workflow; it is excluded from new-feature and upload integration work.
+- Clarified sidebar update behavior with red captions for settings that require an Apply button and blue captions for settings that update automatically.
+- Changed Interactive 3D/4D figure-scale controls and Isotope & Hydrographic Mapping display controls to update automatically, removing mixed manual and automatic behavior within those sections.
+- Added a trial responsive layout to Interactive 2D/2.5D plots: desktop width remains capped at 850 px while the plots shrink to the available width on narrow screens.
+- Renamed the current interactive page files to include `[Interactive]`, making their exploratory Plotly role clear in the Streamlit page list and repository.
+
+### 2026-09-18
+
+- Started compatibility testing with a separate Python 3.12.14 / Streamlit 1.63.0 Conda environment while retaining the verified Streamlit 1.42 environment.
+- Confirmed dependency consistency, 57 passing Seawater tests, 9 passing Earthquake tests with 4 optional skips, and successful Seawater Home startup on the new environment.
+- Added a separate Streamlit 1.63 / Plotly 5.24.1 comparison environment after identifying Plotly 7 Mapbox API removal as the main source of interactive map errors; documented the migration policy and results in dedicated development notes.
+- Added shared compatibility handling for full-width Streamlit elements and Pandas future options, removing repeated deprecation warnings while retaining Streamlit 1.42 support.
+- Re-ran 57 Seawater tests in both Streamlit 1.42 and 1.63 environments and confirmed clean initial rendering of all pages in Streamlit 1.63.
 
 ### Version 1.3.0 concise summary - 2026-09-11
 
@@ -16,6 +113,12 @@ Detailed development log for recent EnvGeo-Seawater updates.
 - Improved project documentation, Japanese README content, update logs, and repository cleanup toward a future public release.
 - Expanded pytest coverage for public structure, data loading, quality rules, filename helpers, and core utility behavior.
 
+### 2026-09-17
+
+- Clarified that the Interactive 2D/2.5D and 3D/4D Visualizers are Plotly-based exploration tools, while publication- and presentation-ready static figures should be created with the corresponding individual pages.
+- Added `TODO_Japanese.md` and linked the English and Japanese ToDo files for easier local development tracking.
+- Reduced `91_EnvGeo_Earthquake.py` to a lightweight redirect page because the active Earthquake implementation is maintained in the dedicated application.
+
 ### 2026-09-16
 
 - Renamed the former 3D/4D pages to `Interactive 2D/2.5D Visualizer` and `Interactive 3D/4D Visualizer`, with shorter page filenames.
@@ -25,6 +128,10 @@ Detailed development log for recent EnvGeo-Seawater updates.
 - Added a `Full custom X-Y-Z-color` mode to the 4D Visualizer custom view so users can choose all three axes and the color parameter.
 - Clarified 3D/4D Visualizer labels so map-depth scale settings are identified as Fig.3-Fig.6 controls and sampling-location map settings are labeled separately.
 - Standardized data-table wording: sidebar-filtered results are labeled `Filtered dataset`, while Plotly Box/Lasso outputs remain `Box/Lasso-selected dataset`.
+- Applied low-risk cleanup from an external code review, including clearer radio-widget calls, idiomatic empty `else` blocks, top-level imports, and removal of a no-op uploaded-marker colorscale setting.
+- Added Claude review follow-up items to `TODO.md` for future data-source selector, auto-zoom, month-display, XY scatter, legacy-variable, and upload-loader refactoring.
+- Applied additional low-risk cleanup from the full-file Claude review, including boolean empty-data checks, removal of unused 4D variables, corrected Custom plot exclusion counts, removal of unused month-display variables, and safer Vertical Section color-scale/import handling.
+- Added publication/package follow-up notes to `TODO.md` for research-impact citations, paper figures, packaging, development requirements, dependency pins, and future refactoring.
 
 ### 2026-09-14
 
@@ -103,7 +210,7 @@ Detailed development log for recent EnvGeo-Seawater updates.
 - Changed the shared standard map background from `carto-positron` to API-key-free `open-street-map` because CARTO basemaps now require API keys.
 - Added CSV and PDF report export to the environment checker for runtime, dependency, and project-file diagnostics.
 - Kept the Streamlit environment checker implementation in `tools/env_check_streamlit.py` and added `pages/99_Environment_Check.py` as a local-development sidebar wrapper.
-- Updated `requirements.txt` to match the current Anaconda `envgeo_streamlit142` environment and document the verified Python 3.10 dependency set.
+- Updated `requirements.txt` to match the current Anaconda `envgeo_st142_py310_plotly5` environment and document the verified Python 3.10 dependency set.
 - Expanded shared ocean-region map presets for Japan-adjacent seas, Kuroshio/Oyashio regions, North Pacific, tropical Pacific, Indian Ocean, Atlantic Ocean, Mediterranean Sea, Arctic Ocean, and Southern Ocean sectors.
 - Restored `Jet` as the default colormap for the isotope and hydrographic mapping page while keeping EnvGeo and cmocean options selectable.
 - Added cmocean/EnvGeo colormap selection to the isotope and hydrographic mapping page for both Matplotlib Cartopy maps and Plotly Mapbox maps.

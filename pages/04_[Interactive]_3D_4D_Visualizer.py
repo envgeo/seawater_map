@@ -1,16 +1,15 @@
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 21 16:00:21 2023
+Interactive 3D/4D visualizer for EnvGeo-Seawater data.
 
-@author: Toyoho Ishimura @Kyoto-U
-
-2026/04/29 update 
+Created: 2023-05-21
+Author: Toyoho Ishimura, Kyoto University
+Last updated: 2026-09-22
 """
 
 # --- Version info ---
-version = "1.3.0" #v220_20260429　mapセンター調整済
+version = "1.3.2"  # 2026-09-22
 
 # ToDo
 # 最後のマップのカラーバーの初期値を調整必要
@@ -23,13 +22,15 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 import envgeo_utils    
-pd.set_option('future.no_silent_downcasting', True)
 
 
 def main():
     
     st.header(f'Interactive 3D/4D Visualizer ({version})')
-    st.caption("Explore filtered seawater data as linked 4D scatter and map-depth views.")
+    st.caption(
+        "Use this Plotly page for interactive data exploration. "
+        "For publication- or presentation-ready static figures, use the corresponding individual pages."
+    )
 
     st.button('Reload')
 
@@ -69,7 +70,7 @@ def main():
     ##############################################################################
     # データソース選択
     ##############################################################################
-    ref_data = st.radio("Data source (see Home > About)", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True, args=[1, 0])
+    ref_data = st.radio("Data source (see Home > About)", (data_source_JAPAN_SEA, data_source_AROUND_JAPAN, data_source_GLOBAL), horizontal=True)
 
 
 
@@ -202,6 +203,7 @@ def main():
    # サイドバーの中にコンテナを作成し、境界線（border）を有効にする
     with st.sidebar.container(border=True):
         st.subheader(getattr(envgeo_utils, "MAP_DISPLAY_SETTINGS_LABEL", "Map display settings"))
+        st.caption(envgeo_utils.AUTO_APPLY_NOTE)
 
         # Match the map-center selector used in the 2D mapping page.
         # 2D マップページと同じ地図中心の切り替え UI を使う。
@@ -265,58 +267,43 @@ def main():
                 lon_center_3d,
             )
 
-        figure_scale_state_key = f"figure_scale_settings::{ref_data}::{lon_center_3d}::{region_preset_4d}"
-        if figure_scale_state_key not in st.session_state:
-            st.session_state[figure_scale_state_key] = {
-                "map_lon_raw": map_lon_default,
-                "map_lat_raw": map_lat_default,
-                "fig_depth_raw": (0, int(sld_depth_max)),
-                "marker_size": 3
-            }
+        figure_scale_state_key = (
+            f"figure_scale::{ref_data}::{lon_center_3d}::{region_preset_4d}"
+        )
+        map_lon_raw = st.slider(
+            "Map longitude range",
+            lon_slider_min,
+            lon_slider_max,
+            map_lon_default,
+            step=1,
+            key=f"{figure_scale_state_key}::longitude",
+        )
+        map_lat_raw = st.slider(
+            "Map latitude range",
+            lat_slider_min,
+            lat_slider_max,
+            map_lat_default,
+            step=1,
+            key=f"{figure_scale_state_key}::latitude",
+        )
 
-        figure_scale_settings = st.session_state[figure_scale_state_key]
+        depth_slider_max = int(sld_depth_max + 100)
+        fig_depth_min, fig_depth_max = st.slider(
+            label="Depth range for 3D view",
+            min_value=0,
+            max_value=depth_slider_max,
+            value=(0, int(sld_depth_max)),
+            step=50,
+            key=f"{figure_scale_state_key}::depth::{depth_slider_max}",
+        )
 
-        with st.form(key=f"figure_scale_form::{ref_data}::{lon_center_3d}::{region_preset_4d}"):
-            map_lon_raw_form = st.slider(
-                'Map longitude range',
-                lon_slider_min,
-                lon_slider_max,
-                figure_scale_settings["map_lon_raw"],
-                step=1
-            )
-            map_lat_raw_form = st.slider(
-                'Map latitude range',
-                lat_slider_min,
-                lat_slider_max,
-                figure_scale_settings["map_lat_raw"],
-                step=1
-            )
-
-            fig_depth_raw_form = st.slider(
-                label='Depth range for 3D view',
-                min_value=0,
-                max_value=int(sld_depth_max + 100), # 整数化して小数点を防止
-                value=figure_scale_settings["fig_depth_raw"],
-                step=50
-            )
-            
-            # サイドバーにサイズ調整を追加
-            marker_size_form = st.slider("Marker size", 1, 10, figure_scale_settings["marker_size"])
-            apply_figure_scale_settings = st.form_submit_button("Apply figure settings")
-
-        if apply_figure_scale_settings:
-            figure_scale_settings = {
-                "map_lon_raw": map_lon_raw_form,
-                "map_lat_raw": map_lat_raw_form,
-                "fig_depth_raw": fig_depth_raw_form,
-                "marker_size": marker_size_form
-            }
-            st.session_state[figure_scale_state_key] = figure_scale_settings
-
-        map_lon_raw = figure_scale_settings["map_lon_raw"]
-        map_lat_raw = figure_scale_settings["map_lat_raw"]
-        fig_depth_min, fig_depth_max = figure_scale_settings["fig_depth_raw"]
-        marker_size = figure_scale_settings["marker_size"]
+        marker_size = st.slider(
+            "Marker size",
+            1,
+            10,
+            3,
+            key=f"{figure_scale_state_key}::marker_size",
+        )
 
         map_x_range = [map_lon_raw[0], map_lon_raw[1]]
         map_y_range = [map_lat_raw[0], map_lat_raw[1]]
@@ -372,13 +359,6 @@ def main():
     plotted_num_fig1 = original_len_df1 - removed_num_fig1
     # if removed_num_fig1 > 0:
     #     st.sidebar.info(f"{plotted_num_fig1} samples were plotted and {removed_num_fig1} samples were excluded due to no data.")
-
-
-    # XYZC
-    y = df_fig1['lat']
-    x = df_fig1['lon']
-    z = df_fig1['Depth_m']
-    c = df_fig1['Temperature_degC']
 
     fig1=px.scatter_3d(df_fig1, x='Salinity', y='d18O', z='Depth_m',
                     color='Temperature_degC', 
@@ -476,13 +456,6 @@ def main():
     # if removed_num_fig2 > 0:
     #     st.sidebar.info(f"{plotted_num_fig2} samples were plotted and {removed_num_fig2} samples were excluded due to no data.")
 
-
-    # XYZC
-    y = df_fig2['lat']
-    x = df_fig2['lon']
-    z = df_fig2['Depth_m']
-    c = df_fig2['d18O']
-    
    # 3. プロット作成
     fig2=px.scatter_3d(df_fig2, x='Salinity', y='Temperature_degC', z='Depth_m',
                     color='d18O', 
@@ -578,15 +551,6 @@ def main():
     plotted_num_fig3 = original_len_df1 - removed_num_fig3
     # if removed_num_fig3 > 0:
     #     st.sidebar.info(f"{plotted_num_fig3} samples were plotted and {removed_num_fig3} samples were excluded due to no data.")
-
-
-    # XYZC
-    y = df_fig3['lat']
-    x = df_fig3['lon_plot']
-    z = df_fig3['Depth_m']
-    c = df_fig3['d18O']
-    
-
 
     # --- envgeo_utils を使って読み込み ---
     coastline_x, coastline_y = envgeo_utils.load_coastline_data(ref_data)
@@ -707,14 +671,6 @@ def main():
     plotted_num_fig4 = original_len_df1 - removed_num_fig4
     # if removed_num_fig4 > 0:
     #     st.sidebar.info(f"{plotted_num_fig4} samples were plotted and {removed_num_fig4} samples were excluded due to no data.")
-
-
-
-    # XYZC
-    y = df_fig4['lat']
-    x = df_fig4['lon_plot']
-    z = df_fig4['Depth_m']
-    c = df_fig4['Temperature_degC']
 
 
     # --- envgeo_utils を使って読み込み ---
@@ -845,14 +801,6 @@ def main():
     #     st.sidebar.info(f"{plotted_num_fig5} samples were plotted and {removed_num_fig5} samples were excluded due to no data.")
 
      
-    
-    # XYZC
-    y = df_fig5['lat']
-    x = df_fig5['lon_plot']
-    z = df_fig5['Depth_m']
-    c = df_fig5['Salinity']
-
-
     
     # --- envgeo_utils を使って読み込み ---
     coastline_x, coastline_y = envgeo_utils.load_coastline_data(ref_data)
@@ -990,14 +938,6 @@ def main():
     #     st.sidebar.info(f" {plotted_num_fig6} samples were plotted and {removed_num_fig6} samples were excluded due to calculation errors.")
 
         
-    
-    # XYZC
-    y = df_fig6['lat']
-    x = df_fig6['lon_plot']
-    z = df_fig6['Depth_m']
-    c = df_fig6['d-excess']
-    
-
     
     # --- 海岸線の座標データをenvgeo_utils を使って読み込み ---
     coastline_x, coastline_y = envgeo_utils.load_coastline_data(ref_data)
@@ -1359,7 +1299,6 @@ def main():
                     y=custom_coastline_y_plot,
                     z=[fig_depth_min] * len(custom_coastline_x_plot),
                     mode="lines",
-                    marker=dict(size=3),
                     name="coastline",
                     line=dict(color="blue", width=0.8),
                     hoverinfo="none",
@@ -1371,7 +1310,6 @@ def main():
                     y=custom_coastline_y_plot,
                     z=[fig_depth_max] * len(custom_coastline_x_plot),
                     mode="lines",
-                    marker=dict(size=3),
                     name="coastline",
                     line=dict(color="gray", width=0.5),
                     hoverinfo="none",
@@ -1571,7 +1509,9 @@ def main():
 
     # Keep map controls compact so the map remains visible after Streamlit reruns.
     # Streamlitの再実行後も地図が見つけやすいよう、地図設定をポップオーバーに集約する。
-    with st.popover("Map detail settings", use_container_width=True):
+    with st.popover(
+        "Map detail settings", **envgeo_utils.stretch_width_kwargs(st.popover)
+    ):
         map_mode = st.radio(
             "Map style", 
             envgeo_utils.MAP_MODE_OPTIONS, 

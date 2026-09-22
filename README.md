@@ -8,7 +8,7 @@ EnvGeo-Seawater is an interactive platform for exploring seawater isotope and hy
 [![Python](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Current version:** 1.3.0
+**Current development version:** 1.3.2 (2026-09-22)
 
 **An interactive platform for exploring seawater isotope and hydrographic data.**
 
@@ -45,14 +45,14 @@ The Streamlit app uses `home.py` for the about, data-source, manual,
 update-log, and Japanese information tabs. The `pages/` directory contains the
 main visualization tools, along with selected beta and local-development pages:
 
-- `pages/03_2Dplus_Visualizer.py`  
+- `pages/03_[Interactive]_2Dplus_Visualizer.py`
   Interactive 2D/2.5D plots for isotope-hydrographic relationships and selected sample locations.
 
-- `pages/04_3D_4D_Visualizer.py`  
+- `pages/04_[Interactive]_3D_4D_Visualizer.py`
   Interactive 3D/4D seawater visualizer for longitude, latitude, depth, and selected variables.
 
-- `pages/05_3D4D_Visualizer_Uploader.py`  
-  Development-oriented 3D/4D uploader for Excel-based custom datasets. This page is likely to remain an advanced or private workflow unless its role is redesigned.
+- `pages/05_User_Data_Check_Quick_Visualizer.py`
+  User Data Check & Quick Visualizer for reference and CSV/XLSX upload data. It combines shared filtering, missing-value and quality review, 2D Map, Salinity-d18O, Temperature-Salinity, arbitrary 2D/3D/4D, geographic 3D, and filtered CSV export.
 
 - `pages/31_Salinity-d18O_Relationship.py`  
   Salinity-δ18O relationship plots with optional regression lines.
@@ -69,8 +69,8 @@ main visualization tools, along with selected beta and local-development pages:
 - `pages/35_Custom_Parameter_Plot_beta.py`  
   Experimental custom 2D parameter plots with selectable X axis, Y axis, color, and marker size.
 
-- `pages/51_Correlation_Overview.py`  
-  Exploratory correlation overview page. This page preserves the original exploratory workflow used during development.
+- `pages/51_Correlation_Overview.py`
+Archive display of the original hand-written exploratory workflow used during development. It is retained as a development record; no new features are planned.
 
 - `pages/53_Vertical_Section_Visualizer.py`  
   Vertical Section Visualizer beta. This experimental page is used to refine section-line selection, interpolation, bathymetry handling, and vertical-section plotting.
@@ -103,20 +103,21 @@ from public deployment if the public app should only show visualization pages.
 
 ## User Data Integration
 
-`91_USER_UPLOAD_UNPUB.xlsx` is provided as a template for user-defined comparison data.
+Use the browser upload controls in the visualization pages to load CSV or XLSX
+measurements for the current Streamlit session. The `Data Check & Quick
+Visualizer` is the upload-first entry point for quality review and simple
+2D--4D exploration; supported specialist pages also expose `Uploaded data` in
+their shared Data filtering controls.
 
-- Replace the sample rows with your own measurements  
-- Keep the same column structure  
-- Run the app locally to integrate your dataset  
-
-This allows direct comparison between user datasets and curated reference
-datasets in selected workflows. User-data support is currently most actively
-tested in the integrated beta workflow and will be expanded through shared
-utility functions.
+`dataset/91_USER_UPLOAD_UNPUB.xlsx` remains temporarily as a legacy local
+sample/reference input. It is a planned removal candidate: keep it only until
+the live loader reference, tests, and documentation have been audited and
+replaced where necessary. New user data should be uploaded through the browser
+rather than copied into that workbook.
 
 Uploaded files are intended to be handled in memory during the current
-Streamlit session only. The integrated beta workflow does not save uploaded
-files or merged user/reference datasets to local or server storage.
+Streamlit session only. The app does not save uploaded files or merged
+user/reference datasets to local or server storage.
 
 ---
 
@@ -161,10 +162,10 @@ Unpublished or restricted datasets are **not included**.
 
 ## Installation & Requirements
 
-The currently verified environment is **Python 3.10.15** in the Anaconda
-`envgeo_streamlit142` environment. Python 3.12 support should be re-verified
-with the dependency set and Streamlit pages before it is recommended as the
-default environment.
+Compatibility checks currently cover **Python 3.10.15 / Streamlit 1.42** and
+**Python 3.12.14 / Streamlit 1.63**, with Plotly 5.24 retained as the release
+baseline. See `docs/streamlit_migration.md` for the tested environment matrix
+and remaining interactive checks.
 
 ### 💡 Special Note for macOS (Apple Silicon) Users:
 To avoid build errors with geospatial libraries, it is highly recommended to use **Conda** to install core dependencies before running pip:
@@ -271,7 +272,7 @@ Project checklists and longer development notes are kept under `docs/`.
   Figures and example outputs used in README and documentation.
 
 - `coastline/`  
-  Local coastline coordinate files for map and 3D reference overlays.
+  Local 50m and 110m coastline coordinate CSV files for map and 3D reference overlays.
 
 - `test/`  
   Basic pytest tests for imports, dataset loading, numeric conversion, gap-row

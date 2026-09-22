@@ -6,7 +6,7 @@ EnvGeo-Seawater は、海水の安定同位体・水文データを探索する�
 [![Python](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**現在のバージョン:** 1.3.0
+**現在の開発バージョン:** 1.3.2（2026-09-22）
 
 **海水同位体・水文データを、地図・断面・T-S図・3D/4D表示で探索する研究用Webアプリです。**
 
@@ -41,14 +41,14 @@ EnvGeo-Seawater は、海洋地球化学研究における海水同位体デー�
 
 Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、主要な可視化ツールに加えて、一部の beta ページやローカル開発用ページも含まれます。
 
-- `pages/03_2Dplus_Visualizer.py`  
+- `pages/03_[Interactive]_2Dplus_Visualizer.py`
   同位体・水文データの関係と観測地点を確認する 2D/2.5D 可視化ページ。
 
-- `pages/04_3D_4D_Visualizer.py`  
+- `pages/04_[Interactive]_3D_4D_Visualizer.py`
   経度、緯度、水深、選択変数を扱う 3D/4D 可視化ページ。
 
-- `pages/05_3D4D_Visualizer_Uploader.py`  
-  Excel形式のユーザーデータを扱う開発・高度利用向けの 3D/4D uploader ページ。今後の役割を再設計しない限り、公開メインページではなく、開発用または非公開寄りのワークフローとして扱う予定です。
+- `pages/05_User_Data_Check_Quick_Visualizer.py`
+  参照・CSV/XLSXアップロードデータを扱う User Data Check & Quick Visualizer。共通フィルタ、欠損・品質確認、2D Map、Salinity-d18O、Temperature-Salinity、任意2D/3D/4D、地理3D、フィルタ済みCSV出力を一つの入口へまとめます。
 
 - `pages/31_Salinity-d18O_Relationship.py`  
   塩分-δ18O 関係を表示し、必要に応じて回帰線を加えるページ。
@@ -66,7 +66,7 @@ Streamlit アプリでは、`home.py` が About、データソース、マニュ
   X軸、Y軸、色、マーカーサイズを任意の数値パラメーターから選ぶ試験的な2Dプロットページ。
 
 - `pages/51_Correlation_Overview.py`  
-  相関・概要確認用の探索的ページ。開発過程で使ってきた元の探索ワークフローを残す位置づけです。
+  手書きで開発してきた元の探索ワークフローを保存するアーカイブ表示ページです。開発記録として残し、新機能は追加しません。
 
 - `pages/53_Vertical_Section_Visualizer.py`  
   Vertical Section Visualizer beta。測線選択、補間、海底地形、鉛直断面図の表示方法を調整するための試験版ページです。
@@ -95,17 +95,17 @@ streamlit run tools/env_check_streamlit.py
 
 ## ユーザーデータの利用
 
-`91_USER_UPLOAD_UNPUB.xlsx` は、ユーザー独自データを比較表示するためのテンプレートです。
+可視化ページのブラウザアップロードから、CSV/XLSX の測定データを現在の
+Streamlit セッションへ読み込みます。`User Data Check & Quick Visualizer` は、
+品質確認と簡易2D--4D可視化のためのアップロード起点ページです。対応する個別
+ページでも、共通の Data filtering 内に `Uploaded data` が表示されます。
 
-- サンプル行を自分の測定値に置き換える
-- 列構造はそのまま維持する
-- ローカル環境でアプリを実行する
+`dataset/91_USER_UPLOAD_UNPUB.xlsx` は、当面だけ残す旧来のローカル
+サンプル／参照入力です。稼働中ローダーの参照、テスト、文書を確認して必要な
+置換を終えた後に削除する候補として扱います。新しいユーザーデータは、この
+ブックではなくブラウザからアップロードしてください。
 
-これにより、選択されたワークフロー内で、ユーザーデータを既存の参照データセットと比較できます。現在は統合 beta ワークフローを中心に試験しており、今後は共通ユーティリティとして整理しながら対応ページを広げていく予定です。
-
-アップロードファイルは、現在の Streamlit セッション中のメモリ上でのみ扱う方針です。統合 beta ワークフローでは、アップロードファイルや、参照データと一時結合したデータをローカル/サーバーへ保存しません。
-
-現在のユーザーデータ機能は Excel テンプレート中心です。今後、CSV/XLSXを直接読み込み、必須列を検証する `load_user_data()` のような仕組みに整理していく予定です。
+アップロードファイルは、現在の Streamlit セッション中のメモリ上でのみ扱う方針です。アプリは、アップロードファイルや参照データと一時結合したデータをローカル／サーバーへ保存しません。
 
 ---
 
@@ -149,9 +149,7 @@ EnvGeo-Seawater は、同位体データと水文データを統合的に探索�
 
 ## インストールと必要環境
 
-検証済み環境として、現在は **Python 3.10.15**（Anaconda `envgeo_streamlit142`）を想定しています。
-
-一部の依存ライブラリ、特に geospatial 系ライブラリや scikit-learn のバージョンにより、Python バージョンとの相性に注意が必要です。Python 3.12系への更新は、依存関係と各ページの動作を再確認してから行う予定です。
+現在は **Python 3.10.15 / Streamlit 1.42** と **Python 3.12.14 / Streamlit 1.63** の両環境で互換性を確認し、Plotly 5.24をリリース基準として維持しています。検証環境の組合せと残りの対話操作確認は `docs/streamlit_migration_Japanese.md` を参照してください。
 
 ### macOS Apple Silicon ユーザー向けメモ
 
@@ -265,7 +263,7 @@ pytest
   READMEやドキュメントで使う図・出力例。
 
 - `coastline/`  
-  地図や3D表示で使う海岸線座標ファイル。
+  地図や3D表示で使う50m・110m海岸線座標CSVファイル。
 
 - `test/`  
   基本的な pytest テスト。
