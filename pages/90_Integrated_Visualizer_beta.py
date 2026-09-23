@@ -22,10 +22,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+import envgeo_user_data
 import envgeo_utils
 
 
-version = "1.3.2"
+version = "1.3.3"
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -37,7 +38,7 @@ FULL_PAGE_WORKFLOWS = {
     "T-S Diagram": "34_T-S_diagram.py",
     "Custom Parameter Plot beta": "35_Custom_Parameter_Plot_beta.py",
     "Depth Profile": "37_Depth_Profile.py",
-    "Correlation Overview": "51_Correlation_Overview.py",
+    "Correlation Overview": "80_Correlation_Overview.py",
     "Vertical Section beta": "53_Vertical_Section_Visualizer.py",
 }
 
@@ -159,10 +160,9 @@ def render_upload_panel():
     uploaded_df = envgeo_utils.get_uploaded_data()
     with st.sidebar.expander("Uploaded data overlay", expanded=False):
         st.caption(envgeo_utils.AUTO_APPLY_NOTE)
-        st.caption(
-            "Uploaded files are used only in the current Streamlit session and "
-            "are not saved to local or server storage."
-        )
+        # Browser uploads are not saved to local or server storage; use the
+        # shared note so this page matches the individual upload panels.
+        st.caption(envgeo_user_data.BROWSER_UPLOAD_NOTE)
         st.download_button(
             "Download CSV template",
             data=_upload_template_csv(),
@@ -189,6 +189,7 @@ def render_upload_panel():
             type=["xlsx", "xls", "csv"],
             key=f"integrated_uploaded_file_{upload_generation}",
         )
+        st.caption(envgeo_user_data.UPLOAD_COORDINATE_NOTE)
         if uploaded_file is None:
             return uploaded_df
 
@@ -527,6 +528,24 @@ def _plotly_color_scale_args(df, color_column, colormap_label=None):
     return {}
 
 
+def _uploaded_rows_for_view(uploaded_df, required_columns, view_label):
+    """Return upload rows usable in one view without assuming mapped columns.
+
+    任意形式のアップロード表では、各ビューに必要な標準列が未対応の場合がある。
+    その場合も参照データの図を止めず、当該ビューのアップロード重ね描きだけを省略する。
+    """
+    missing_columns = [
+        column for column in required_columns if column not in uploaded_df.columns
+    ]
+    if missing_columns:
+        st.caption(
+            "Uploaded data are not overlaid in "
+            f"{view_label}: missing {', '.join(missing_columns)}."
+        )
+        return pd.DataFrame(columns=required_columns)
+    return uploaded_df.dropna(subset=required_columns).copy()
+
+
 def render_summary(df, quality_df, uploaded_quality_df=None):
     st.subheader("Filtered Dataset")
     if uploaded_quality_df is None:
@@ -593,15 +612,20 @@ def render_map(df, uploaded_df=None, uploaded_style=None):
             map_mode = st.radio(
                 "Map Style",
                 envgeo_utils.MAP_MODE_OPTIONS,
+                index=envgeo_utils.MAP_MODE_DEFAULT_INDEX,
                 horizontal=True,
                 key="integrated_map_style",
             )
 
     # Keep the map close to the tab top after Streamlit reruns.
     # Streamlitの再実行後も地図がすぐ見えるよう、設定UIはポップオーバーに集約する。
+    _eff_90_pre, _fell_90_pre = envgeo_utils.resolve_map_mode(map_mode)
+    _map_style_label = (
+        f"Coastline (offline)  ← {map_mode} 縮退" if _fell_90_pre else _eff_90_pre
+    )
     st.caption(
         f"Color: {color_column} | Colormap: {colormap_label} | "
-        f"Region: {region_label} | Map Style: {map_mode}"
+        f"Region: {region_label} | Map Style: {_map_style_label}"
     )
 
     if region_label == envgeo_utils.MAP_REGION_AUTO:
@@ -619,7 +643,12 @@ def render_map(df, uploaded_df=None, uploaded_style=None):
         height=560,
         **_plotly_color_scale_args(clean, color_column, colormap_label),
     )
+    if _fell_90_pre:
+        st.warning(envgeo_utils.OFFLINE_FALLBACK_WARNING)
     fig = envgeo_utils.apply_map_style(fig, map_mode)
+    envgeo_utils.add_coastline_overlay(fig)
+    if _eff_90_pre == "Coastline (offline)":
+        envgeo_utils.add_graticule_overlay(fig)
     fig.update_layout(
         mapbox=dict(center=dict(lat=center_lat, lon=center_lon), zoom=auto_zoom),
         autosize=True,
@@ -627,9 +656,13 @@ def render_map(df, uploaded_df=None, uploaded_style=None):
     )
 
     if uploaded_df is not None and not uploaded_df.empty:
-        uploaded_style = uploaded_style or render_uploaded_marker_style_controls()
-        uploaded_clean = uploaded_df.dropna(subset=["Latitude_degN", "Longitude_degE"]).copy()
+        uploaded_clean = _uploaded_rows_for_view(
+            uploaded_df,
+            ["Latitude_degN", "Longitude_degE"],
+            "Map",
+        )
         if not uploaded_clean.empty:
+            uploaded_style = uploaded_style or render_uploaded_marker_style_controls()
             use_colorbar = _can_use_current_colorbar(
                 uploaded_style, uploaded_clean, color_column
             )
@@ -726,9 +759,13 @@ def render_ts_diagram(df, uploaded_df=None, uploaded_style=None):
     )
 
     if uploaded_df is not None and not uploaded_df.empty:
-        uploaded_style = uploaded_style or render_uploaded_marker_style_controls()
-        uploaded_clean = uploaded_df.dropna(subset=["Salinity", "Temperature_degC"]).copy()
+        uploaded_clean = _uploaded_rows_for_view(
+            uploaded_df,
+            ["Salinity", "Temperature_degC"],
+            "T-S Diagram",
+        )
         if not uploaded_clean.empty:
+            uploaded_style = uploaded_style or render_uploaded_marker_style_controls()
             use_colorbar = _can_use_current_colorbar(
                 uploaded_style, uploaded_clean, color_column
             )
@@ -821,9 +858,13 @@ def render_salinity_d18o(df, uploaded_df=None, uploaded_style=None):
     )
 
     if uploaded_df is not None and not uploaded_df.empty:
-        uploaded_style = uploaded_style or render_uploaded_marker_style_controls()
-        uploaded_clean = uploaded_df.dropna(subset=["Salinity", "d18O"]).copy()
+        uploaded_clean = _uploaded_rows_for_view(
+            uploaded_df,
+            ["Salinity", "d18O"],
+            "Salinity-d18O",
+        )
         if not uploaded_clean.empty:
+            uploaded_style = uploaded_style or render_uploaded_marker_style_controls()
             use_colorbar = _can_use_current_colorbar(
                 uploaded_style, uploaded_clean, color_column
             )
