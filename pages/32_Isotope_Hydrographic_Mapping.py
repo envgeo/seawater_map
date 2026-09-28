@@ -12,7 +12,7 @@ Last updated: 2026-09-22
 
 
 # --- Version info ---
-version = "1.3.3"  # 2026-09-23
+version = "1.3.4"  # 2026-09-28
 
 # ToDo
 # このバージョンは補完計算の調整が必要
@@ -35,6 +35,7 @@ from scipy.interpolate import griddata # コンターマップ用
 import cartopy.io.shapereader as shapereader  # ローカル NE land shapefile 読み込み用
 import io # ファイル処理用
 import pathlib
+import envgeo_assets  # CWD-independent asset resolver (Sprint 1)
 import warnings
 
 
@@ -158,8 +159,8 @@ def get_parameter_color_range_defaults(parameter, ref_data, data_source_global):
 # without any external Natural Earth download, even in offline environments.
 # Path is resolved relative to this script's directory so it works regardless
 # of the working directory when Streamlit launches the page.
-_NE50M_LAND_DIR = (
-    pathlib.Path(__file__).parent.parent / "coastline" / "natural_earth_50m_land"
+_NE50M_LAND_DIR = envgeo_assets.asset_path(
+    "coastline/natural_earth_50m_land", required=False
 )
 _NE50M_LAND_SHP = _NE50M_LAND_DIR / "ne_50m_land.shp"
 _NE50M_LAND_REQUIRED_EXTS = (".shp", ".shx", ".dbf")

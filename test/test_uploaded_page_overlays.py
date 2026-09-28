@@ -313,6 +313,7 @@ def test_uploaded_only_subdataset_does_not_raise(page_name, data):
     assert not app.exception
 
 
+@pytest.mark.skip(reason="Stable seawater_map release excludes development Page 90.")
 def test_integrated_views_skip_upload_overlays_when_required_columns_are_absent():
     """Arbitrary uploaded columns must not stop the Map, T-S, or Salinity-d18O tabs.
 

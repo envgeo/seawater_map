@@ -4,7 +4,7 @@ Use this checklist before uploading a test site, updating GitHub, creating a rel
 
 ## 1. Local Environment
 
-### Verified for the 1.3.3 release candidate (2026-09-23)
+### Release candidate 1.3.4 (2026-09-28)
 
 - [x] Python 3.12 / Streamlit 1.63 / Plotly 5.24 environment used for the
   final test run.
@@ -32,7 +32,7 @@ streamlit run home.py
 ```
 
 - [ ] Confirm `home.py` opens successfully.
-- [ ] Confirm the app version is shown as `1.3.3 (2026-09-23)`.
+- [ ] Confirm the app version is shown as `1.3.4 (2026-09-28)`.
 - [ ] Confirm the Home tabs load: Main, About, Data Sources, Manual, Update History, and Japanese information where applicable.
 
 ## 3. Sidebar And Filtering
@@ -57,7 +57,6 @@ Open each page and perform a light visual check.
 - [ ] `37_Depth_Profile.py`
 - [ ] `80_Correlation_Overview.py`
 - [ ] `53_Vertical_Section_Visualizer.py`
-- [ ] `90_Integrated_Visualizer_beta.py`
 
 For each page:
 
@@ -79,11 +78,11 @@ For each page:
 
 ## 6. User Data Upload
 
-- [ ] Confirm an optional `local_data/user_data.xlsx` is labeled `User Excel data`
-      and appended once to each reference source without entering browser-upload
-      session state.
-- [ ] Confirm a deployment without a local user table loads bundled reference
-      data normally.
+- [ ] Confirm the bundled zero-value sample `local_data/user_data.xlsx` is
+      labeled `User Excel data` and appended once to each reference source
+      without entering browser-upload session state.
+- [ ] Confirm the public sample contains no researcher measurements and that
+      researcher-owned data are configured through an external path.
 - [ ] Confirm the integrated beta upload workflow still works.
 - [ ] Confirm uploaded data are visually distinguishable from reference data.
 - [ ] Confirm uploaded data remain session-only and are not saved to disk or server storage.
@@ -93,7 +92,7 @@ For each page:
 
 ## 7. Local-Only And Development Pages
 
-- [ ] Decide whether `pages/99_Environment_Check.py` should be included in the current deployment.
+- [x] Exclude `pages/99_Environment_Check.py` from the public repository and deployment; retain it only in the local development working copy.
 - [x] `pages/05_User_Data_Check_Quick_Visualizer.py` is the public User Data Check & Quick Visualizer for upload-first quality review and 2D/3D/4D exploration.
 - [ ] Decide whether beta pages should be shown publicly, hidden, or documented as experimental.
 - [ ] Confirm no private notes, restricted data, or unpublished datasets are included in public deployment files.

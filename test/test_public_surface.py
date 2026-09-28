@@ -68,8 +68,6 @@ def test_pages_directory_contains_only_stable_or_explicit_beta_pages():
         "05_User_Data_Check_Quick_Visualizer.py",
         "80_Correlation_Overview.py",
         "53_Vertical_Section_Visualizer.py",
-        "90_Integrated_Visualizer_beta.py",
-        "91_EnvGeo_Earthquake.py",
     }
     local_only_pages = {"99_Environment_Check.py"}
 

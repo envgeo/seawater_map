@@ -26,10 +26,11 @@ from scipy.io import netcdf_file
 
 import envgeo_utils
 import envgeo_user_data
+import envgeo_assets  # CWD-independent asset resolver (Sprint 1)
 
 
 
-DEFAULT_GEBCO_PATH = "data_beta/GEBCO_2025_6min.nc"
+DEFAULT_GEBCO_PATH = envgeo_assets.asset_path("data_beta/GEBCO_2025_6min.nc", required=False)
 MAX_MAP_POINTS = 50000
 DEFAULT_MAX_ROWS_FOR_SECTION_PLOT = 3000
 # grid_res の最大値(180)では対象グリッドが 180x180=32,400 点になる。

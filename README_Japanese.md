@@ -6,7 +6,7 @@ EnvGeo-Seawater は、海水の安定同位体・水文データを探索する�
 [![Python](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**現在の開発バージョン:** 1.3.3（2026-09-23）
+**現在の安定版バージョン:** 1.3.4（2026-09-28）
 
 **海水同位体・水文データを、地図・断面・T-S図・3D/4D表示で探索する研究用Webアプリです。**
 
@@ -39,7 +39,7 @@ EnvGeo-Seawater は、海洋地球化学研究における海水同位体デー�
 
 ## 主要ページ
 
-Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、主要な可視化ツールに加えて、一部の beta ページやローカル開発用ページも含まれます。
+Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、正式版として選択した10個の可視化ツールを収録し、このReleaseに残すbetaワークフローは明記します。
 
 - `pages/03_[Interactive]_2Dplus_Visualizer.py`
   同位体・水文データの関係と観測地点を確認する 2D/2.5D 可視化ページ。
@@ -71,25 +71,19 @@ Streamlit アプリでは、`home.py` が About、データソース、マニュ
 - `pages/53_Vertical_Section_Visualizer.py`  
   Vertical Section Visualizer beta。測線選択、補間、海底地形、鉛直断面図の表示方法を調整するための試験版ページです。
 
-- `pages/90_Integrated_Visualizer_beta.py`  
-  試作統合ページ。既存の可視化ワークフローを1ページ内から選択実行できる互換モード、既存ページへのユーザーデータ一時結合、海域プリセット付きの共通フィルタ・タブ切り替えモードを含みます。独立アップロードページはアップロード起点の別ワークフローのため、統合ページ内の選択肢からは外しています。
-
-- `pages/99_Environment_Check.py`  
-  ローカル開発用の環境診断ラッパーページ。ローカル環境確認には有用ですが、公開 Streamlit サイドバーに表示するページではありません。
-
 以前の独立した about ページは `home.py` に統合しました。
 
 ---
 
 ## ローカル環境診断ツール
 
-配布パッケージには、ローカル環境確認用の Streamlit 診断ツールを含めています。Python パスや依存パッケージを確認するためのローカル用ツールです。診断結果は CSV または PDF レポートとして保存できます。
+インストール済み配布パッケージには、ローカル環境確認用の Streamlit 診断ツールを含めています。Python パスや依存パッケージを確認するためのローカル用ツールです。診断結果は CSV または PDF レポートとして保存できます。
 
 ```bash
-streamlit run tools/env_check_streamlit.py
+envgeo-seawater-check
 ```
 
-ローカル開発中は、`pages/99_Environment_Check.py` から同じ診断機能をサイドバーに表示できます。公開アプリで可視化ページだけを表示したい場合は、このページを除外または非表示にする方針です。
+source checkoutでは、同じ診断を`streamlit run tools/env_check_streamlit.py`で起動できます。開発用の`pages/99_Environment_Check.py`ラッパーは、インストール済みpackageや公開deploymentには含めないため、通常のアプリナビゲーションには公開可視化ページだけが表示されます。
 
 ---
 

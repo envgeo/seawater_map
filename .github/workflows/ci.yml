@@ -1,0 +1,67 @@
+name: EnvGeo-Seawater CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-wheel:
+    name: Python ${{ matrix.python-version }} test and wheel check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: "3.10"
+            artifact-suffix: py310
+          - python-version: "3.12"
+            artifact-suffix: py312
+    env:
+      PYTHONNOUSERSITE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      ENVGEO_DISABLE_LOCAL_USER_DATA: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Configure temporary dependency caches
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/matplotlib" "$RUNNER_TEMP/cache"
+          echo "MPLCONFIGDIR=$RUNNER_TEMP/matplotlib" >> "$GITHUB_ENV"
+          echo "XDG_CACHE_HOME=$RUNNER_TEMP/cache" >> "$GITHUB_ENV"
+
+      - name: Install test environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Run tests without runtime network dependency
+        run: python -m pytest -q test
+
+      - name: Build wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+
+      - name: Verify isolated wheel contents and imports
+        shell: bash
+        run: |
+          test -f dist/envgeo_seawater-*.whl
+          python -m venv "$RUNNER_TEMP/envgeo-wheel-venv"
+          "$RUNNER_TEMP/envgeo-wheel-venv/bin/python" -m pip install dist/envgeo_seawater-*.whl
+          cd "$RUNNER_TEMP"
+          PYTHONNOUSERSITE=1 "$RUNNER_TEMP/envgeo-wheel-venv/bin/python" -c "import importlib.resources as resources; import pathlib; import envgeo_seawater; root = resources.files('envgeo_seawater'); pages = [path for path in root.joinpath('pages').iterdir() if path.suffix == '.py']; assert len(pages) == 10; assert not root.joinpath('pages/99_Environment_Check.py').is_file(); assert not root.joinpath('pages/90_Integrated_Visualizer_beta.py').is_file(); assert not root.joinpath('pages/91_EnvGeo_Earthquake.py').is_file(); assert root.joinpath('tools/env_check_streamlit.py').is_file(); assert not root.joinpath('data_beta/make_lightweight_gebco.py').is_file(); assert 'site-packages' in str(pathlib.Path(envgeo_seawater.__file__).resolve())"
+
+      - name: Upload wheel for workflow inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: envgeo-seawater-wheel-${{ matrix.artifact-suffix }}
+          path: dist/envgeo_seawater-*.whl
+          if-no-files-found: error

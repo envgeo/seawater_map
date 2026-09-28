@@ -12,8 +12,15 @@ import py_compile
 import re
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
+_INTEGRATED_BETA_PAGE = ROOT / "pages" / "90_Integrated_Visualizer_beta.py"
+_INTEGRATED_BETA_SKIP = pytest.mark.skipif(
+    not _INTEGRATED_BETA_PAGE.is_file(),
+    reason="Stable seawater_map release excludes development Page 90.",
+)
 
 
 def _markdown_image_paths(markdown_text: str):
@@ -124,6 +131,7 @@ def test_3d_4d_visualizer_selected_table_includes_quality_columns():
 
 # The integrated beta page should support uploaded user data without replacing stable pages.
 # 統合betaページが、安定版ページを置き換えずにユーザーデータのアップロード比較に対応していることを確認する。
+@_INTEGRATED_BETA_SKIP
 def test_integrated_beta_page_includes_upload_overlay_workflow():
     page_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"
@@ -176,6 +184,7 @@ def test_integrated_beta_page_includes_upload_overlay_workflow():
 # Dense Plotly Express scatter plots may use WebGL traces, so uploaded overlays should use
 # Scattergl too. This keeps user data visible above the reference dataset.
 # 点数の多いPlotly Expressの散布図ではWebGL描画になるため、アップロード点もScatterglで重ねる。
+@_INTEGRATED_BETA_SKIP
 def test_integrated_beta_upload_overlays_use_scattergl_for_2d_plotly_views():
     page_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"
@@ -197,6 +206,7 @@ def test_integrated_beta_upload_overlays_use_scattergl_for_2d_plotly_views():
 
 # The integrated map should use shared ocean-region presets.
 # 統合ページの地図が、共通定義された海域プリセットを使うことを確認する。
+@_INTEGRATED_BETA_SKIP
 def test_integrated_beta_map_uses_shared_region_presets():
     page_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"
@@ -216,14 +226,10 @@ def test_integrated_beta_map_uses_shared_region_presets():
 # 抽出データ概要は、個別ページ共通処理と統合ページの両方からCSV出力できる。
 def test_filtered_data_summary_csv_export_is_available():
     utils_text = (ROOT / "envgeo_utils.py").read_text(encoding="utf-8")
-    integrated_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
-        encoding="utf-8"
-    )
 
     assert "build_filtered_report_csv" in utils_text
     assert "render_filtered_report_download" in utils_text
     assert "Download filtered-data summary CSV" in utils_text
-    assert "render_filtered_report_download" in integrated_text
 
 
 # The filtered data table should explain quality-flag criteria near the table.
@@ -241,6 +247,7 @@ def test_sidebar_filtered_table_mentions_quality_flag_criteria():
 
 # The integrated Quality Flags tab should show criteria before any tables.
 # 統合ページのQuality Flagsタブでは、表を見る前に品質フラグ基準が見えるようにする。
+@_INTEGRATED_BETA_SKIP
 def test_integrated_quality_tab_mentions_quality_flag_criteria():
     page_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"
@@ -256,6 +263,7 @@ def test_integrated_quality_tab_mentions_quality_flag_criteria():
 
 # The shared-filter beta tabs should use compact icon labels like the earthquake Advanced page.
 # Shared-filter betaのタブはearthquake Advancedに近い、見分けやすい短いラベルにする。
+@_INTEGRATED_BETA_SKIP
 def test_integrated_shared_filter_tabs_use_readable_icon_labels():
     page_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"
@@ -309,6 +317,7 @@ def test_parameter_mapping_uses_shared_colormap_helpers():
 
 # The public user-data entry page has its own workflow and is not a page-90 full-page target.
 # 公開ユーザーデータ入口は独自の流れを持つため、統合betaの既存ページ選択肢には含めない。
+@_INTEGRATED_BETA_SKIP
 def test_integrated_beta_excludes_user_data_quick_visualizer_from_full_page_workflows():
     page_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"
@@ -328,6 +337,7 @@ def test_integrated_beta_excludes_user_data_quick_visualizer_from_full_page_work
 # 実際に持つFULL_PAGE_WORKFLOWSページと過不足なく一致していなければならない。ここから
 # 漏れると、Integrated側の旧結合フォールバックがアップロードデータを参照データへ無断で
 # 混入させ、そのページが独自実装を持つ場合はアップロードUIも二重表示される。
+@_INTEGRATED_BETA_SKIP
 def test_native_upload_overlay_pages_match_actual_page_implementations():
     integrated_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"
@@ -379,6 +389,7 @@ def test_native_upload_overlay_pages_match_actual_page_implementations():
 
 # Uploaded user files should stay in memory during the Streamlit session.
 # ユーザーのアップロードファイルを、ローカル/サーバーへ保存しない方針を確認する。
+@_INTEGRATED_BETA_SKIP
 def test_integrated_beta_uploads_are_memory_only():
     page_text = (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").read_text(
         encoding="utf-8"

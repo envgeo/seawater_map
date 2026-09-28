@@ -9,7 +9,7 @@ Last updated: 2026-09-22
 """
 
 # --- バージョン管理の設定 ---
-version = "1.3.3"  # 2026-09-23
+version = "1.3.4"  # 2026-09-28
 fig_title = "envgeo-seawater-database"  # 2026/02/12
     
 
@@ -26,6 +26,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 import cartopy.crs as ccrs
 import envgeo_utils  # 作った設定ファイルを読み込む
+import envgeo_assets  # CWD-independent asset resolver (Sprint 1)
 
 
 @st.cache_data(show_spinner=False)
@@ -477,7 +478,7 @@ def main():
         
         
         st.caption('Cruise area reference (2015-2021)')
-        st.image("data/sites_20230515.gif") 
+        st.image(str(envgeo_assets.asset_path("data/sites_20230515.gif")))
     
           
           

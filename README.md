@@ -8,7 +8,7 @@ EnvGeo-Seawater is an interactive platform for exploring seawater isotope and hy
 [![Python](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Current development version:** 1.3.3 (2026-09-23)
+**Current stable version:** 1.3.4 (2026-09-28)
 
 **An interactive platform for exploring seawater isotope and hydrographic data.**
 
@@ -43,7 +43,8 @@ The platform is designed to support both **exploratory data analysis** and **rep
 
 The Streamlit app uses `home.py` for the about, data-source, manual,
 update-log, and Japanese information tabs. The `pages/` directory contains the
-main visualization tools, along with selected beta and local-development pages:
+ten selected stable visualization tools, including the clearly labelled beta
+workflows retained in this release:
 
 - `pages/03_[Interactive]_2Dplus_Visualizer.py`
   Interactive 2D/2.5D plots for isotope-hydrographic relationships and selected sample locations.
@@ -75,29 +76,25 @@ Archive display of the original hand-written exploratory workflow used during de
 - `pages/53_Vertical_Section_Visualizer.py`  
   Vertical Section Visualizer beta. This experimental page is used to refine section-line selection, interpolation, bathymetry handling, and vertical-section plotting.
 
-- `pages/90_Integrated_Visualizer_beta.py`  
-  Experimental integrated visualizer. It can run the original visualization workflows inside one beta page, temporarily merge uploaded user data into those workflows, and test a shared-filter tab workflow with ocean-region map presets for future integration. The standalone uploader page remains separate because it uses its own upload-first workflow.
-
-- `pages/99_Environment_Check.py`  
-  Local-development wrapper for the environment checker. It is useful for local diagnostics but is not intended for the public Streamlit deployment sidebar.
-
 The former standalone about page was merged into `home.py`.
 
 ---
 
 ## Local Diagnostic Tool
 
-The package includes a local Streamlit-based environment checker. It is intended
-for local use when confirming Python paths and installed dependency versions.
-The diagnostic results can be exported as CSV or PDF reports:
+The installed package includes a local Streamlit-based environment checker. It
+is intended for local use when confirming Python paths and installed dependency
+versions. The diagnostic results can be exported as CSV or PDF reports:
 
 ```bash
-streamlit run tools/env_check_streamlit.py
+envgeo-seawater-check
 ```
 
-For local development, `pages/99_Environment_Check.py` can also expose the same
-diagnostic workflow in the Streamlit sidebar. It should be excluded or hidden
-from public deployment if the public app should only show visualization pages.
+In a source checkout, the equivalent command is
+`streamlit run tools/env_check_streamlit.py`. The development-only
+`pages/99_Environment_Check.py` wrapper is not included in the installed
+package or public deployment, so the normal application navigation contains
+only public visualization pages.
 
 ---
 
