@@ -20,7 +20,7 @@ EnvGeo-Seawater has been used for exploratory analysis of seawater isotope datas
 
 EnvGeo-Seawater is a web-based interactive visualization platform for marine geochemical and hydrographic datasets, including stable water isotopes (δ¹⁸O, δD), salinity, temperature, and depth.
 
-It integrates curated regional datasets (e.g., around Japan) and major global datasets (~50,000 records), enabling consistent cross-comparison under unified analytical conditions.
+It integrates curated regional datasets (e.g., around Japan) and major global datasets (~50,000 records) through a shared display schema and documented provenance. Analytical comparability is stated for the relevant source datasets, not assumed for every dataset in the collection.
 
 The platform is designed to support both **exploratory data analysis** and **reproducible research workflows** in marine geochemistry and oceanography.
 
@@ -163,11 +163,14 @@ This ensures that observed patterns reflect environmental signals rather than me
 
 ## Data Availability
 
-All datasets included in this repository are either publicly available or redistributed in accordance with their respective licenses.
+The current scholarly-use package contains source-cited datasets with documented
+provenance and source-to-workbook transformations. Inclusion does not transfer
+ownership of a dataset or determine how future datasets will be handled. See
+`docs/dataset_redistribution_audit.md` and
+`docs/provenance_inventory.md` for the current record.
 
-- Provided in a standardized format for immediate use  
-
-Unpublished or restricted datasets are **not included**.
+- Provided in a standardized format for immediate use
+- Unpublished or restricted datasets are **not included**
 
 ---
 
@@ -200,10 +203,14 @@ pip install -r requirements.txt
 ```bash
 git clone https://github.com/envgeo/seawater_map.git
 cd seawater_map
-pip install -r requirements.txt
-streamlit run home.py
+python -m pip install .
+envgeo-seawater
 ```
 Then open the local URL shown in the terminal (typically http://localhost:8501).
+
+For development from a source checkout, `python -m pip install -r requirements.txt`
+followed by `streamlit run home.py` remains available. A downloaded release wheel
+can be installed with `python -m pip install path/to/envgeo_seawater-1.3.4-py3-none-any.whl`.
 
 ---
 

@@ -8,9 +8,9 @@ Use this checklist before uploading a test site, updating GitHub, creating a rel
 
 - [x] Python 3.12 / Streamlit 1.63 / Plotly 5.24 environment used for the
   final test run.
-- [x] `python -m pytest -q test` completed: **302 passed, 1 warning**.
-  The warning is Pytest's future deprecation notice for a class-scoped fixture;
-  it is not an application test failure and remains a maintenance follow-up.
+- [x] Stable CI run #2 (2026-09-28) completed on Python 3.10 and 3.12:
+  tests, wheel build, isolated-wheel installation, and one wheel artifact per
+  Python version all succeeded.
 
 - [ ] Confirm the intended Python environment is active.
 - [ ] Confirm one of the tested baselines is active: Python 3.10.15 / Streamlit 1.42 or Python 3.12.14 / Streamlit 1.63, both with Plotly 5.24.
@@ -55,6 +55,7 @@ Open each page and perform a light visual check.
 - [ ] `34_T-S_diagram.py`
 - [ ] `35_Custom_Parameter_Plot_beta.py`
 - [ ] `37_Depth_Profile.py`
+- [ ] `05_User_Data_Check_Quick_Visualizer.py`
 - [ ] `80_Correlation_Overview.py`
 - [ ] `53_Vertical_Section_Visualizer.py`
 
@@ -83,7 +84,7 @@ For each page:
       without entering browser-upload session state.
 - [ ] Confirm the public sample contains no researcher measurements and that
       researcher-owned data are configured through an external path.
-- [ ] Confirm the integrated beta upload workflow still works.
+- [ ] Confirm the User Data Check & Quick Visualizer upload workflow works.
 - [ ] Confirm uploaded data are visually distinguishable from reference data.
 - [ ] Confirm uploaded data remain session-only and are not saved to disk or server storage.
 - [ ] Confirm common column aliases are standardized where supported.
@@ -149,7 +150,7 @@ pytest
   - T-S page opens.
   - Mapping page opens.
   - Depth Profile opens.
-  - Integrated Visualizer beta opens if included.
+  - User Data Check & Quick Visualizer opens.
 
 ## 12. Zenodo / DOI Preparation
 

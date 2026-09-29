@@ -18,7 +18,7 @@ EnvGeo-Seawater は、海洋地球化学研究における海水同位体デー�
 
 対象とするデータは、安定水同位体（δ18O、δD）、塩分、水温、水深などを含む海洋地球化学・水文データです。
 
-日本周辺の地域データセットと、約5万件規模の全球データセットを統合し、共通した条件で比較・可視化できるようにしています。
+日本周辺の地域データセットと、約5万件規模の全球データセットを、共通の表示スキーマと記録済みの来歴情報により統合しています。分析上の厳密な比較可能性は、収録したすべてのデータに一律に仮定せず、該当する出典データセットごとに示します。
 
 このアプリは、海洋地球化学・海洋学における **探索的データ解析** と **再現可能な研究ワークフロー** の両方を支援することを目的としています。
 
@@ -146,12 +146,10 @@ EnvGeo-Seawater は、同位体データと水文データを統合的に探索�
 
 ## データ公開方針
 
-このリポジトリに含まれるデータは、公開データ、または各データ提供元の条件に沿って再配布可能なデータです。
+現行の学術利用packageには、出典引用、来歴、出典からworkbookへの変換記録を持つデータセットを収録します。同梱はデータの所有権を移転せず、将来追加するデータの扱いを自動的に決めるものでもありません。現時点の記録は`docs/dataset_redistribution_audit_Japanese.md`および`docs/provenance_inventory_Japanese.md`を参照してください。
 
 - アプリで直接利用できる標準化済み形式で提供
 - 未公表データや制限付きデータは含めない方針
-
-正式な公開・リリース前には、各データセットのライセンス、再配布条件、推奨引用を再確認する必要があります。
 
 ---
 
@@ -182,8 +180,8 @@ pip install -r requirements.txt
 ```bash
 git clone https://github.com/envgeo/seawater_map.git
 cd seawater_map
-pip install -r requirements.txt
-streamlit run home.py
+python -m pip install .
+envgeo-seawater
 ```
 
 ターミナルに表示されるローカルURLをブラウザで開きます。通常は次のURLです。
@@ -191,6 +189,8 @@ streamlit run home.py
 ```text
 http://localhost:8501
 ```
+
+source checkoutで開発する場合は、従来どおり`python -m pip install -r requirements.txt`の後に`streamlit run home.py`でも起動できます。ダウンロードしたrelease wheelは、`python -m pip install path/to/envgeo_seawater-1.3.4-py3-none-any.whl`で導入できます。
 
 ---
 

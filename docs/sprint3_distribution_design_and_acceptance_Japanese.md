@@ -69,9 +69,10 @@ source treeとwheelステージング領域の外側とした。検証したwhee
 - `pip check`は依存関係破損なしだった。`pyproject.toml`のlicenseは移植性のある明示table形式を
   用い、Python 3.12 Apple Silicon向けwheelを選べる`pyproj==3.6.1`を宣言した。これにより、
   互換しないsource-onlyの最新版へ解決される状態を回避した。
-- 新規環境のインストール先からpackageを読み込み、正式版として選択した10ページと診断ツールが存在し、
-  Page 90、91、99およびGEBCO生成scriptがないことを確認する。checkout外CWDから両console commandがStreamlit起動引数を
-  受け付け、診断ツール本体もアプリ例外なしで実行した。
+- 新規環境のインストール先からpackageを読み込み、12公開ページと診断ツールが存在し、page 99および
+  GEBCO生成scriptがないことを確認した。この記録は後の安定版対象分離より前のものである。安定版
+  `seawater_map` packageは10ページに限定し、CIでPage 90、91、99がないことを確認する。checkout外CWD
+  から両console commandがStreamlit起動引数を受け付け、診断ツール本体もアプリ例外なしで実行した。
 - インストール済みファイルを使い、Home、Page 32、34、53をアプリ例外なしで実行した。個別ページには
   checkout互換のtop-level importが残るため、従来どおりlauncherが設定する互換import pathが必要である。
 - `ENVGEO_LOCAL_USER_DATA_PATH`で外部CSVを指定し、`User Excel data`として1行を読めた。この確認中に

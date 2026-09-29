@@ -83,8 +83,10 @@ wheel staging trees. The verified wheel SHA-256 was
   source-only resolver result.
 - The installed package resolved in the new environment, contained 12 public
   pages and the diagnostic tool, and did not contain page 99 or the GEBCO
-  generation script. Both console commands accepted their Streamlit launch
-  arguments from the external working directory, and the diagnostic tool
+  generation script. This predated the later stable-scope split: the stable
+  `seawater_map` package is limited to 10 pages and its CI verifies that pages
+  90, 91, and 99 are absent. Both console commands accepted their Streamlit
+  launch arguments from the external working directory, and the diagnostic tool
   executed without an application exception.
 - Home and Pages 32, 34, and 53 executed without application exceptions using
   the installed files. The established launcher-compatible import path remains
