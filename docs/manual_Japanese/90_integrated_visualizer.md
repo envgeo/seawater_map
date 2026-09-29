@@ -1,5 +1,7 @@
 # Integrated Visualizer beta
 
+> **開発履歴記録。** このページの説明は開発／公開前repository用です。安定版`seawater_map` Releaseには含めません。
+
 ## このページでできること
 
 既存可視化ページ、共通フィルタ、ユーザーデータ比較、簡易チェックを統合するための beta ページです。

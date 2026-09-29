@@ -2,6 +2,13 @@
 
 Japanese version: [TODO_Japanese.md](TODO_Japanese.md)
 
+> **Historical and forward-looking development backlog.** Some items were
+> completed for the stable 1.3.4 release after this list was written. This file
+> is not the current release checklist. References to Page 90 apply to the
+> development/pre-release repository; Page 90 is not included in stable
+> `seawater_map`. Use `docs/release_checklist.md` and
+> `docs/stable_release_publication_notes.md` for current release decisions.
+
 This file records development notes that should not be forgotten during local
 cleanup and refactoring. Items here can be moved into README, documentation, or
 GitHub issues when they become stable enough.

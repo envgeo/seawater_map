@@ -2,6 +2,11 @@
 
 英語版: [TODO.md](TODO.md)
 
+> **開発履歴と将来計画のbacklog。** この一覧の作成後、安定版1.3.4で完了した項目があります。
+> 現在のRelease checklistではありません。Page 90への言及は開発／公開前repositoryに適用し、
+> Page 90は安定版`seawater_map`には含めません。現在のRelease判断には
+> `docs/release_checklist_Japanese.md`と`docs/stable_release_publication_notes_Japanese.md`を使用します。
+
 このファイルには、ローカルでの整理・改修作業中に忘れないようにするための開発メモを記録します。内容が十分に固まった項目は、README、詳細ドキュメント、またはGitHub Issuesへ移すことができます。
 
 原則として、英語版の `TODO.md` と同じ内容を保ちます。ファイル名、関数名、画面上のUIラベルは、コードとの対応を確認しやすいように英語表記を残します。

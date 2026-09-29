@@ -71,16 +71,16 @@ pytest -q test/test_envgeo_utils.py test/test_repository_health.py
 - README 内の画像リンクが実在するファイルを指していること。
 - 公開リリースに必要な基本文書が存在すること。
 - 4D Visualizer の選択データ表に品質情報列が含まれること。
-- Integrated Visualizer beta にアップロードデータ重ね描き機能が残っていること。
-- アップロードデータの重ね描きが WebGL 系 trace として扱われること。
-- 統合ページの地図が共通海域プリセットを使うこと。
+- 開発／公開前repositoryにPage 90がある場合は、アップロード重ね描き、WebGL trace、
+  共通海域presetを確認する。安定版repositoryではPage 90を意図して含めないため、
+  これらのPage 90専用確認はskipする。
 - 抽出データ概要の CSV 書き出しが利用できること。
 - 品質フラグ基準が関連する表の近くに表示されること。
 - Shared-filter beta のタブが読みやすい短いラベルになっていること。
 - 標準地図背景が API key を要求する CARTO ではなく OpenStreetMap であること。
 - Mapping ページが共通カラーマップ関数を使うこと。
-- 独立 uploader が Integrated Visualizer の full-page workflow から除外されていること。
-- ユーザーアップロードファイルをローカル/サーバーへ保存しない方針であること。
+- Page 90がある場合は、独立uploaderがIntegrated Visualizerのfull-page workflowから
+  除外されていること。ユーザーupload fileをローカル／serverへ保存しない方針であること。
 
 ### `test/test_public_surface.py`
 

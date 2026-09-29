@@ -1,4 +1,7 @@
-# Streamlit 1.63移行記録
+# Streamlit 1.63移行記録（履歴記録）
+
+この文書は過去のローカル互換性作業の記録です。現在の安定版の対応範囲を示すものではありません。
+現在のRelease境界は`release_checklist_Japanese.md`と`stable_release_publication_notes_Japanese.md`を参照してください。
 
 この文書には、検証済みのStreamlit 1.42環境から移行する際の環境構成、互換性確認、判断理由を記録します。残作業は非公開のローカル作業メモで管理します。
 
@@ -68,7 +71,7 @@ Interactive 2D/2.5D VisualizerのBox/Lasso連動には `streamlit-plotly-events=
 
 ```bash
 conda activate envgeo_st163_py312_plotly5
-cd "/Users/toyoho/Documents/study/704-Python/Webアプリ_main134_20230513/Streamlit_EnvGeo2/envgeo_seawater_v130"
+cd /path/to/envgeo_seawater_v130
 python -m streamlit run home.py --server.port 8504
 ```
 

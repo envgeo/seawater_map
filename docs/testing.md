@@ -72,16 +72,18 @@ This file currently checks:
 - README image links point to existing files.
 - Key project documents exist.
 - 4D Visualizer selected-data tables include quality information.
-- Integrated Visualizer beta keeps upload-overlay support.
-- Uploaded-data overlays use WebGL-compatible traces where needed.
-- Integrated map views use shared ocean-region presets.
+- Where Page 90 exists in the development/pre-release repository, its
+  upload-overlay, WebGL trace, and shared-region-preset checks run. The stable
+  repository intentionally skips these Page 90-specific checks because the
+  page is absent.
 - Filtered-data summary CSV export is available.
 - Quality-flag criteria are shown near relevant tables.
 - Shared-filter beta tabs use readable compact labels.
 - Standard map style avoids CARTO tiles that require API keys.
 - Mapping pages use shared colormap helpers.
-- The standalone uploader is excluded from Integrated Visualizer full-page workflows.
-- Uploaded user files are handled in memory during the Streamlit session.
+- Where Page 90 exists, the standalone uploader is excluded from its full-page
+  workflows. Uploaded user files are handled in memory during the Streamlit
+  session.
 
 ### `test/test_public_surface.py`
 

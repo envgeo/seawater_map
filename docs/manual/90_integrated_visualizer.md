@@ -1,5 +1,9 @@
 # Integrated Visualizer beta
 
+> **Development-history record.** This page is documented for the
+> development/pre-release repository only. It is not included in the stable
+> `seawater_map` release.
+
 ## What This Page Does
 
 This beta page tests integrated workflows that combine existing visualization pages, shared filtering, upload comparison, and quick visual checks.

@@ -3,6 +3,11 @@
 Decision date: 2026-09-20  
 Last updated: 2026-09-22
 
+> **Historical development record.** This document describes the Page 90
+> migration strategy in the development/pre-release repository. Page 90 is not
+> included in the stable `seawater_map` release and this document is not a
+> current stable-release workflow guide.
+
 ## 1.3.2 Implementation Update
 
 The planned independent User Data Validator is now implemented as the public

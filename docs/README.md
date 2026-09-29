@@ -2,10 +2,16 @@
 
 This directory collects project documents that are too detailed for the top-level README.
 
+[日本語版](README_Japanese.md)
+
 ## Current Documents
 
-- `release_checklist.md`  
+- `release_checklist.md` / `release_checklist_Japanese.md`
   Checklist for local testing, Streamlit deployment, GitHub release preparation, and Zenodo/DOI archiving.
+
+- `stable_release_publication_notes.md` / `stable_release_publication_notes_Japanese.md`
+  Concise stable-release scope, excluded material, data and private-file rules,
+  and the required GitHub Release / Zenodo sequence.
 
 - `testing.md` / `testing_Japanese.md`  
   Public-facing explanation of the current pytest suite, its scope, limitations, and planned expansion.
@@ -17,9 +23,9 @@ This directory collects project documents that are too detailed for the top-leve
   Accepted architecture and migration policy for individual pages, shared user-data upload, and Integrated Visualizer.
 
 - `development_notes.md` / `development_notes_Japanese.md`
-  Internal 1.3.3 release-preparation notes: offline-map design, user-data
+  Historical 1.3.3 development notes: offline-map design, user-data
   architecture, bundled geospatial assets, deferred work, and safe cleanup
-  conditions.
+  conditions. They are technical history, not the current release checklist.
 
 - `offline_operation_log.md` / `offline_operation_log_Japanese.md`
   Current offline/degraded-network map behavior, self-contained HTML exports,
@@ -32,6 +38,3 @@ This directory collects project documents that are too detailed for the top-leve
 
 - `joss_checklist.md`  
   Checklist for future JOSS resubmission, including tests, documentation, examples, citation, license, and archival DOI.
-
-- `development_notes.md`  
-  Notes on the EnvGeo module design, UI policy, user-data upload design, and future integration with related EnvGeo applications.

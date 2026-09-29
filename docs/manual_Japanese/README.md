@@ -2,7 +2,7 @@
 
 このマニュアルは、EnvGeo-Seawater の全体的な使い方と、各ページの操作方法をまとめるためのものです。
 
-Markdown 形式で作成しているため、GitHub、JOSS関連資料、研究室ホームページ、WordPress記事などへ再利用しやすい構成です。
+Markdown形式で作成しているため、GitHub、JOSS関連資料、研究室ホームページ、WordPress記事などへ再利用しやすい構成です。下記のPage 90は開発履歴として残す記録だけであり、安定版`seawater_map` Releaseには含まれません。
 
 ## 目次
 
@@ -17,7 +17,7 @@ Markdown 形式で作成しているため、GitHub、JOSS関連資料、研究�
 - [Custom Parameter Plot beta](35_custom_parameter_plot.md)
 - [Depth Profile](37_depth_profile.md)
 - [Vertical Section Visualizer beta](53_vertical_section.md)
-- [Integrated Visualizer beta](90_integrated_visualizer.md)
+- [Integrated Visualizer beta — 開発履歴（安定版には含めない）](90_integrated_visualizer.md)
 
 ## 読み方
 

@@ -1,6 +1,9 @@
-# EnvGeo-Seawater 開発メモ — 1.3.3
+# EnvGeo-Seawater 開発履歴メモ — 1.3.3
 
-内部引継ぎ用のメモです。ユーザーマニュアルや公開リリースの主張ではありません。
+透明性のために残す技術的な履歴です。1.3.3前後の開発状態を記録したものであり、
+ユーザーマニュアル、現在のRelease主張、現在のRelease checklistではありません。Page 90への
+言及は開発／公開前repositoryについての記録であり、Page 90は安定版`seawater_map` Releaseには
+意図して含めません。現在の安定版範囲は`stable_release_publication_notes_Japanese.md`を参照してください。
 
 ## 現在の区切り
 
@@ -22,7 +25,7 @@ About／Japaneseタブで表示）、`README.md`、`README_Japanese.md`、
 それ以前にAIツールへの言及がリポジトリ内に無いか検索したが見つからず、
 リポジトリ内で確認できる最も古いAI支援作業の記録は、
 `data_text/update_log.md`の1.3.2作業記録内の「Claude review」関連の記述と、
-`Claude outputs/`内のセッションログ（2026-09-21付）であり、いずれも1.3.0
+公開repository外に保管する開発session記録（2026-09-21付）であり、いずれも1.3.0
 以降である。開示文では「バージョン1.3以降...本格的に活用」とし、
 「1.3より前は一切使っていない」という証明不能な断定は避けている
 （意図的な選択）。これは正確な言い方であり、リポジトリ内に1.3より前の
@@ -32,14 +35,13 @@ About／Japaneseタブで表示）、`README.md`、`README_Japanese.md`、
 **ツール名を明記した根拠：** 「OpenAI Codex」「Anthropic Claude Code」は、
 既にリポジトリ内で一貫して使われているツール名（例：
 `53_Vertical_Section_Visualizer.py`のヘッダー「Developed and improved
-with assistance from Codex」、`update_log.md`内の「Claude review」の記述、
-`Claude outputs/`ディレクトリ）であり、推測ではなく確認済みの事実として
+with assistance from Codex」、`update_log.md`内の「Claude review」の記述であり、
+推測ではなく確認済みの事実として
 扱った。
 
 **モデル名・バージョンについて、確認できたことと確認できなかったこと：**
 リポジトリ内でモデルのバージョン文字列を検索した結果、確認できたのは
-「Claude Sonnet 4.6」（`Claude outputs/handoff_to_codex.md`および
-`Claude outputs/worklog_upload_overlay_rollout.md`、いずれも2026-09-21付）
+「Claude Sonnet 4.6」（公開repository外に保管する2026-09-21付の開発session記録）
 の1件のみ。Codex側のモデル/バージョン識別子はリポジトリ内のどこにも
 記録が無い。今回の作業方針（不明なモデル名・バージョンは推測で書かない）
 に従い、`paper.md`ではこの確認済みの1件（Claude Sonnet 4.6）のみを名指しし、

@@ -1,6 +1,11 @@
-# EnvGeo-Seawater Development Notes — 1.3.3
+# EnvGeo-Seawater Historical Development Notes — 1.3.3
 
-Internal handoff notes. These are not a user manual or a release claim.
+Historical technical record retained for transparency. It describes the
+development state around 1.3.3 and is not a user manual, current release
+claim, or current release checklist. References to Page 90 describe the
+development/pre-release repository; Page 90 is intentionally absent from the
+stable `seawater_map` release. For the current stable scope, see
+`stable_release_publication_notes.md`.
 
 ## Current Boundary
 
@@ -24,8 +29,8 @@ history and `home.py`'s `render_update_history()` place 1.3.0 at
 2026-09-11. Searching the repository for existing AI-tool mentions before
 that point found none; the earliest in-repo evidence of AI-assisted work
 is inside `data_text/update_log.md`'s 1.3.2 development log ("Claude
-review" entries) and the `Claude outputs/` session logs (dated
-2026-09-21), both after the 1.3.0 boundary. The disclosure text says
+review" entries) and development-session records held outside the public
+repository (dated 2026-09-21), both after the 1.3.0 boundary. The disclosure text says
 "from version 1.3 onward... substantial use" without asserting "zero AI
 use before 1.3" as a hard, provable claim — this is a deliberate choice to
 stay defensible; it is accurate that no earlier disclosure or session
@@ -35,14 +40,13 @@ positive proof of absence of any AI use.
 **Basis for naming specific tools:** "OpenAI Codex" and "Anthropic Claude
 Code" are the tool names already used consistently in-repo — e.g. the
 `53_Vertical_Section_Visualizer.py` header ("Developed and improved with
-assistance from Codex"), `update_log.md`'s "Claude review" entries, and
-the `Claude outputs/` directory. These were treated as confirmed, not
-inferred.
+assistance from Codex") and `update_log.md`'s "Claude review" entries. These
+were treated as confirmed, not inferred.
 
 **Model/version specificity — what is confirmed vs. not:** grepping the
 repository for model-version strings found exactly one: "Claude Sonnet
-4.6" in `Claude outputs/handoff_to_codex.md` and
-`Claude outputs/worklog_upload_overlay_rollout.md` (dated 2026-09-21). No
+4.6" in a development-session record held outside the public repository
+(dated 2026-09-21). No
 Codex model/version string (e.g. a specific GPT/Codex model identifier) is
 recorded anywhere in the repository. Per the task instructions for this
 round, unconfirmed model/version details were not guessed; `paper.md`

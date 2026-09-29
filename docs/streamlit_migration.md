@@ -1,4 +1,8 @@
-# Streamlit 1.63 Migration Log
+# Streamlit 1.63 Migration Log (Historical Record)
+
+This record documents earlier local compatibility work. It is not the current
+stable-release support statement; see `release_checklist.md` and
+`stable_release_publication_notes.md` for the current release boundary.
 
 This document records environment configurations, compatibility findings, and
 decisions made during migration from the verified Streamlit 1.42 environment.
@@ -102,7 +106,7 @@ Start the compatibility environment with:
 
 ```bash
 conda activate envgeo_st163_py312_plotly5
-cd "/Users/toyoho/Documents/study/704-Python/Webアプリ_main134_20230513/Streamlit_EnvGeo2/envgeo_seawater_v130"
+cd /path/to/envgeo_seawater_v130
 python -m streamlit run home.py --server.port 8504
 ```
 
