@@ -39,7 +39,7 @@ EnvGeo-Seawater は、海洋地球化学研究における海水同位体デー�
 
 ## 主要ページ
 
-Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、主要な可視化ツールに加えて、一部の beta ページやローカル開発用ページも含まれます。
+Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、以下の安定版でサポートする可視化ツールを収録します。開発専用ページとローカル診断ページは、このレポジトリおよびReleaseから除外します。公開範囲は`docs/stable_release_publication_notes_Japanese.md`を参照してください。
 
 - `pages/03_[Interactive]_2Dplus_Visualizer.py`
   同位体・水文データの関係と観測地点を確認する 2D/2.5D 可視化ページ。
@@ -245,6 +245,8 @@ pytest
 
 公開前チェックリストや開発メモなど、READMEより詳しい補助ドキュメントは `docs/` にまとめます。
 
+- [図付きオンライン利用ガイド](https://envgeo.github.io/seawater_map/): 安定版向けの英日ページ別操作手順を公開しています。
+
 - `docs/release_checklist.md`  
   ローカル確認、Streamlit公開、GitHubリリース、Zenodoアーカイブ前の確認リスト。
 
@@ -252,7 +254,7 @@ pytest
   pytest 群の内容、現在のテスト範囲、限界、今後の拡充予定の説明。
 
 - `docs/manual_Japanese/`  
-  各ページの詳細マニュアルを今後整備するための日本語マニュアル骨組み。
+  オンライン利用ガイドで公開する、日本語ページ別マニュアルのMarkdown原稿。
 
 ---
 
@@ -376,12 +378,12 @@ AIツールはあくまで支援ツールであり、著者・共同開発者と
 本プロジェクトで公開する内容についての責任は、すべて著者が負います。この
 方針の詳細は `docs/development_notes_Japanese.md` を参照してください。
 
-## Live Demo
+## 公開デモ
 
-Primary stable demo:
+安定版デモ：
 https://envgeo-seawater-map.streamlit.app
 
-Stable demo with experimental updates:
+実験的更新を含むデモ：
 https://envgeo-seawater-pre.streamlit.app
 
 ---

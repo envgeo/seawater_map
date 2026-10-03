@@ -12,7 +12,7 @@ JOSS向けsoftware recordに用います。
 ### Release candidate 1.3.4（2026-09-28）
 
 - [x] 最終試験にはPython 3.12／Streamlit 1.63／Plotly 5.24環境を使用した。
-- [x] 安定版CI run #2（2026-09-28）はPython 3.10と3.12で成功した。test、wheel作成、
+- [x] 安定版CI run #5（2026-10-03）はPython 3.10と3.12で成功した。test、wheel作成、
   隔離wheel導入、Python版ごとのwheel artifact保存を完了した。
 
 ### 既に行った手動smoke確認（release commit後に再確認する）
@@ -131,14 +131,14 @@ pytest
 
 ## 9. 文書
 
-- [ ] `README.md`が現在の公開状態を反映することを確認する。
-- [ ] `README_Japanese.md`が現在の公開状態を反映することを確認する。
-- [ ] `data_text/update_log.md`に最新の未release変更があることを確認する。
-- [ ] `data_text/update_log_Japanese.md`に最新の未release変更があることを確認する。
-- [ ] betaおよびlocal-development pageが明確に説明されることを確認する。
-- [ ] 引用・data sourceの案内が理解できることを確認する。
-- [ ] 精査済みmanualを基に、図付きの英日静的ドキュメントwebsiteを作成または更新する。安定版の公開範囲だけを説明し、private path、個人データ、token、内部記録を含めない。
-- [ ] GitHub Pagesでドキュメントwebsiteを公開し、公開URL、navigation、図、linkを確認する。
+- [x] `README.md`が現在の公開状態を反映することを確認した。
+- [x] `README_Japanese.md`が現在の公開状態を反映することを確認した。
+- [x] `data_text/update_log.md`に最新の未release変更があることを確認した。
+- [x] `data_text/update_log_Japanese.md`に最新の未release変更があることを確認した。
+- [x] beta、archive、local-development pageが明確に説明されることを確認した。
+- [x] 引用・data sourceの案内が理解できることを確認した。
+- [x] 精査済みmanualを基に、図付きの英日静的ドキュメントwebsiteを作成した。安定版の公開範囲だけを説明し、private path、個人データ、token、内部記録を含めないことを確認した。
+- [x] GitHub Pagesでドキュメントwebsiteを公開し、公開URL、navigation、図、linkを確認した：<https://envgeo.github.io/seawater_map/>。
 - [ ] 安定版URL、release version、公開ページ範囲、ドキュメントURL、Zenodo DOIが確定した後に、研究室websiteを更新する。安定版`seawater_map`の説明と一致させ、NASA GISSとPAGES CoralHydro2kを含む引用付き約50,000件のデータ、ユーザーデータのアップロード／プロット機能を記載する。旧いversion番号、DOIの保留表現、安定版から除外したページの説明を残さない。
 
 ## 10. GitHub Release準備
@@ -169,16 +169,32 @@ pytest
   - Depth Profileが開く。
   - User Data Check & Quick Visualizerが開く。
 
-## 12. Zenodo／DOI準備
+## 12. Package indexでの公開（PyPI）
 
+- [ ] 想定した最終distribution artifactをbuildし、`twine check`を実行する。
+- [ ] 想定artifactをTestPyPIへuploadし、新しいmacOS environmentでinstallする。
+      必要なcompiled geospatial prerequisiteだけをconda-forgeから入れ、その後に
+      `pip`で本packageをinstallする。
+- [ ] TestPyPI installationからappを起動し、短いsmoke testを繰り返す。
+- [ ] 最終tagの確認後、同じreview済みartifactをPyPIの`envgeo-seawater`として公開する。
+      Trusted Publishingまたは安全な手動uploadを使用し、PyPI tokenをcommitしない。
+- [ ] 新しいmacOS environmentで`pip install envgeo-seawater`と起動確認を再現する。
+- [ ] conda-forge recipe/feedstockは有用な後続改善とする。ただしPyPI経路を確認できれば、
+      v1.3.4とJOSS再投稿のblockerとはしない。
+
+## 13. Zenodo／DOI準備
+
+- [ ] GitHub Release作成前に、`seawater_map` GitHub repositoryをZenodoで有効化し、
+      tag付きReleaseが自動archiveされるようにする。
 - [ ] Zenodo archiveを作る前にGitHub Releaseが最終版であることを確認する。
 - [ ] title、author、affiliation、license、descriptionを確認する。
 - [ ] archiveしたversionがRelease tagと一致することを確認する。
 - [ ] wheel SHA-256を記録する場合は、clean tagged checkoutから再作成したwheelの値だけを使う。
       CI wheel artifactは確認根拠であり、ReleaseまたはZenodoの配布fileではない。
-- [ ] archive作成後、READMEとcitation fileにDOIを記録する。
+- [ ] archive作成後に、version DOIとconcept DOIをREADMEとcitation filesへ記録する。
+      DOIを事前予約しない限り、このfollow-up document commitはimmutableなtag付きarchiveには含まれない。
 
-## 13. JOSS向けの後続作業
+## 14. JOSS向けの後続作業
 
 - [ ] 再投稿前に別途`docs/joss_checklist.md`を作成する。
 - [ ] pytest coverageが表面的なものだけでなく意味を持つことを確認する。

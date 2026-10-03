@@ -43,7 +43,9 @@ The platform is designed to support both **exploratory data analysis** and **rep
 
 The Streamlit app uses `home.py` for the about, data-source, manual,
 update-log, and Japanese information tabs. The `pages/` directory contains the
-main visualization tools, along with selected beta and local-development pages:
+supported stable visualization tools listed below. Development-only and local
+diagnostic pages are excluded from this repository and release; see
+`docs/stable_release_publication_notes.md` for the public scope.
 
 - `pages/03_[Interactive]_2Dplus_Visualizer.py`
   Interactive 2D/2.5D plots for isotope-hydrographic relationships and selected sample locations.
@@ -271,6 +273,8 @@ The current test suite and its limitations are described in `docs/testing.md`.
 
 Project checklists and longer development notes are kept under `docs/`.
 
+- [Figure-supported online user guide](https://envgeo.github.io/seawater_map/): public English and Japanese, page-by-page operating guidance for the stable release.
+
 - `docs/release_checklist.md`  
   Release and deployment checklist for local testing, Streamlit deployment,
   GitHub release preparation, and Zenodo archiving.
@@ -279,7 +283,7 @@ Project checklists and longer development notes are kept under `docs/`.
   Overview of the pytest suite, current coverage, limitations, and planned test expansion.
 
 - `docs/manual/`  
-  Page-by-page user manual skeletons for future detailed documentation and website reuse.
+  Source Markdown for the page-by-page manual published through the online user guide.
 
 ---
 
