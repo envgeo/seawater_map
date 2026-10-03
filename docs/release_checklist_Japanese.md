@@ -9,7 +9,7 @@ JOSS向けsoftware recordに用います。
 
 ## 1. ローカル環境
 
-### Release candidate 1.3.4（2026-09-28）
+### 安定版1.3.4（2026-10-03）
 
 - [x] 最終試験にはPython 3.12／Streamlit 1.63／Plotly 5.24環境を使用した。
 - [x] 安定版CI run #5（2026-10-03）はPython 3.10と3.12で成功した。test、wheel作成、
@@ -143,11 +143,11 @@ pytest
 
 ## 10. GitHub Release準備
 
-- [ ] 対象repositoryとbranchを確認する。
+- [x] 安定版Releaseの対象を`seawater_map` repositoryの`main` branchとして確認した。
 - [ ] temporary file、private file、downloadしたreport、local cache fileがstageされていないことを確認する。
 - [ ] commit前に変更ファイルを確認する。
-- [ ] Release準備範囲を説明する明確なcommit messageを使う。
-- [ ] ローカル確認と公開test deployment確認の後にだけRelease tagを打つ。
+- [x] Release準備範囲を説明する明確なcommit message（`948b384`）を使用した。
+- [x] ローカル確認とCIの確認後に、review済みstable commitへ`v1.3.4` tagを付けた。
 
 ## 11. Streamlit deployment
 
@@ -171,31 +171,32 @@ pytest
 
 ## 12. Package indexでの公開（PyPI）
 
-- [ ] 想定した最終distribution artifactをbuildし、`twine check`を実行する。
-- [ ] TestPyPI project pageでREADMEの表示を確認する。PyPI upload前に、repository内では
+- [x] 想定した最終distribution artifactをbuildし、`twine check`を実行した。
+- [x] TestPyPI project pageでREADMEの表示を確認した。PyPI upload前に、repository内では
       有効でもpackage index上では切れる相対link・画像参照を、必要に応じて永続的な
       GitHubまたはGitHub Pagesの絶対URLへ置換する。TestPyPIの配布fileはimmutableなので、
       そこで見つかった相対linkの不備は、別サービスであるPyPI upload前に最終sourceで修正する。
-- [ ] 想定artifactをTestPyPIへuploadし、新しいmacOS environmentでinstallする。
+- [x] 想定artifactをTestPyPIへuploadし、新しいmacOS environmentでinstallした。
       必要なcompiled geospatial prerequisiteだけをconda-forgeから入れ、その後に
       `pip`で本packageをinstallする。
-- [ ] TestPyPI installationからappを起動し、短いsmoke testを繰り返す。
-- [ ] 最終tagの確認後、同じreview済みartifactをPyPIの`envgeo-seawater`として公開する。
+- [x] TestPyPI installationからappを起動し、短いsmoke testを繰り返した。
+- [x] 最終tagの確認後、同じreview済みartifactをPyPIの`envgeo-seawater`として公開した。
       Trusted Publishingまたは安全な手動uploadを使用し、PyPI tokenをcommitしない。
-- [ ] 新しいmacOS environmentで`pip install envgeo-seawater`と起動確認を再現する。
+- [x] 新しいmacOS environmentで`pip install envgeo-seawater`と起動確認を再現した。
 - [ ] conda-forge recipe/feedstockは有用な後続改善とする。ただしPyPI経路を確認できれば、
       v1.3.4とJOSS再投稿のblockerとはしない。
 
 ## 13. Zenodo／DOI準備
 
-- [ ] GitHub Release作成前に、`seawater_map` GitHub repositoryをZenodoで有効化し、
+- [x] GitHub Release作成前に、`seawater_map` GitHub repositoryをZenodoで有効化し、
       tag付きReleaseが自動archiveされるようにする。
-- [ ] Zenodo archiveを作る前にGitHub Releaseが最終版であることを確認する。
+- [x] Zenodo archiveを作る前にGitHub Releaseが最終版であることを確認した。
 - [ ] title、author、affiliation、license、descriptionを確認する。
-- [ ] archiveしたversionがRelease tagと一致することを確認する。
-- [ ] wheel SHA-256を記録する場合は、clean tagged checkoutから再作成したwheelの値だけを使う。
+- [x] archiveしたversionがRelease tag `v1.3.4`と一致することを確認した。
+- [x] wheel SHA-256は、clean tagged checkoutから再作成したwheelの値だけを記録した。
       CI wheel artifactは確認根拠であり、ReleaseまたはZenodoの配布fileではない。
-- [ ] archive作成後に、version DOIとconcept DOIをREADMEとcitation filesへ記録する。
+- [x] archive作成後に、version DOI（`10.5281/zenodo.23117784`）とconcept DOI
+      （`10.5281/zenodo.23117783`）をREADMEとcitation filesへ記録した。
       DOIを事前予約しない限り、このfollow-up document commitはimmutableなtag付きarchiveには含まれない。
 
 ## 14. JOSS向けの後続作業

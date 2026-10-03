@@ -2,17 +2,24 @@
 
 新しい項目を上に追加します。`未リリース` 内でも更新日ごとにまとめます。今後のリリースノートを整理しやすくするため、`追加`、`変更`、`改善`、`修正`、`削除`、`準備` などの分類を使います。
 
-## v1.3.4に向けた未リリースの保守・文書整備
+## v1.3.4 — 安定版リリース（2026-10-03）
 
-この節には、v1.3.3後から正式なv1.3.4リリースまでの作業を記録する。直下の要約は
-現在のRelease candidateの範囲を示し、その後の項目は日付を含む技術・文書整備の履歴として残す。
-
-### 現在のRelease candidate要約
-
-- v1.3.4をRelease candidateに設定した。GitHub ActionsではPython 3.10と3.12で、
-  隔離wheelの作成と検証を行う。
-- `seawater_map`の安定版公開範囲を、Seawaterの10ページとして定義した。開発用の
-  Page 90・91とローカル診断用Page 99は、安定版、GitHub Release、Zenodo archiveに含めない。
+- review済みstable commit `948b384`をGit tag `v1.3.4`として作成し、GitHub Release
+  **EnvGeo-Seawater v1.3.4**を公開した。
+- package `envgeo-seawater` 1.3.4を
+  [PyPI](https://pypi.org/project/envgeo-seawater/1.3.4/)へ公開した。公開前には
+  [TestPyPI](https://test.pypi.org/project/envgeo-seawater/1.3.4/)で確認し、wheelと
+  source distributionはいずれも`twine check`を通過した。
+- Apple Silicon macOSのcleanなConda Python 3.12環境で、文書化したconda-forgeの
+  geospatial prerequisite導入後に本PyPIから再導入した。`pip check`が成功し、
+  `envgeo-seawater`が正常に起動することを確認した。
+- GitHub ReleaseをZenodoの[record 23117784](https://zenodo.org/records/23117784)として
+  archiveした。v1.3.4を利用した成果では固定版 DOI
+  <https://doi.org/10.5281/zenodo.23117784>を引用する。全versionを指すconcept DOIは
+  <https://doi.org/10.5281/zenodo.23117783>である。
+- `seawater_map`で公開する安定版の範囲を、Seawaterの10ページ（03、04、05、31、32、34、35、37、53、
+  履歴archiveのPage 80）として確定した。開発用Page 90・91とローカル診断Page 99は、安定版、
+  PyPI distribution、GitHub Release、Zenodo archiveから除外する。
 - 現行の全`dataset/*.xlsx` workbookを、引用付きの学術利用参照コレクションとして維持する。
   来歴、元データの引用、記録済みのアプリ側変換はRelease記録に残し、このpackage判断で
   workbookの観測値は変更していない。
@@ -23,7 +30,7 @@
 - 図付きの英日利用ガイドをGitHub Pagesで公開した：<https://envgeo.github.io/seawater_map/>。
   HomeのManual tabと日本語tabから詳細ガイドへ直接移動できるようにし、短いアプリ内ガイドも維持した。
 
-### 準備作業の履歴
+### リリース準備作業の履歴
 
 - Home内容: 安定版の公開範囲、ブラウザアップロードの利用境界、引用案内、Homeの短い案内と英日ページ別manualの役割分担を明確化した。日本語概要から古いbrowser制約と同時アクセス制約の案内を削除した。
 

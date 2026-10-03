@@ -2,10 +2,9 @@
 
 [日本語版](release_metadata_draft_Japanese.md)
 
-This is a transfer-ready draft for the final GitHub Release and Zenodo record.
-It is **not** a release record: the tag date, clean-build wheel checksum, and
-Zenodo version DOI must be filled only after the reviewed stable commit has
-been tagged and archived.
+This is the finalized metadata record for the v1.3.4 GitHub Release and Zenodo
+archive. The immutable release archive is the tagged commit; this document is
+the subsequent public documentation record.
 
 ## Core metadata
 
@@ -19,8 +18,11 @@ been tagged and archived.
 | Affiliation | Graduate School of Human and Environmental Studies, Kyoto University, Japan |
 | License | MIT |
 | Source repository | <https://github.com/envgeo/seawater_map> |
-| Release date | Set from the final Git tag; do not reuse the release-candidate date automatically. |
-| Version DOI | Not yet assigned. Add only after the Zenodo archive is published. |
+| Release date | 2026-10-03 |
+| Release commit | `948b384455480f06b7a9b6b0a7a3e53af7135e35` |
+| Version DOI | <https://doi.org/10.5281/zenodo.23117784> |
+| Concept DOI (all versions) | <https://doi.org/10.5281/zenodo.23117783> |
+| Zenodo record | <https://zenodo.org/records/23117784> |
 
 ## Short description
 
@@ -44,15 +46,16 @@ The stable public repository contains pages 03, 04, 05, 31, 32, 34, 35, 37,
 local diagnostic Page 99, are excluded from the stable release, its wheel,
 GitHub Release, and Zenodo archive.
 
-## Finalization steps
+## Release completion record
 
-1. Create the final commit and confirm its GitHub Actions CI result.
-2. Tag that exact stable commit as `v1.3.4`.
-3. Build the wheel from a clean checkout of the tag and record its SHA-256.
-4. Create the GitHub Release from the tag, using the title and description
-   above.
-5. Publish the matching Zenodo archive; then add its version DOI to
-   `CITATION.cff`, README citation text, and this record.
+1. The reviewed commit was tagged as `v1.3.4` and released on GitHub.
+2. A clean tagged checkout produced a wheel with SHA-256
+   `ae3cf31365758b639e08d41497ac15452a8738db07f422b973b969c5eb3258f7`.
+3. The matching source distribution SHA-256 is
+   `8b319ac4b3176c7280be402b858fa2e2da17e3deac476ce064b7cb9baf29e61c`.
+4. PyPI and TestPyPI installations were verified on a clean macOS environment.
+5. Zenodo archived the GitHub Release as record 23117784. The version DOI is
+   used for citations; the concept DOI is used for the README badge.
 
 The citation instruction remains: cite EnvGeo-Seawater **and** each original
 data provider used in the analysis.

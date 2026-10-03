@@ -9,7 +9,7 @@ the tagged GitHub Release, Zenodo archive, and JOSS-facing software record.
 
 ## 1. Local Environment
 
-### Release candidate 1.3.4 (2026-09-28)
+### Stable release 1.3.4 (2026-10-03)
 
 - [x] Python 3.12 / Streamlit 1.63 / Plotly 5.24 environment used for the
   final test run.
@@ -158,11 +158,11 @@ pytest
 
 ## 10. GitHub Release Preparation
 
-- [ ] Confirm the repository destination and branch.
+- [x] Confirmed the `seawater_map` repository and `main` branch as the stable-release destination.
 - [ ] Confirm no temporary files, private files, downloaded reports, or local cache files are staged.
 - [ ] Review changed files before committing.
-- [ ] Use a clear commit message describing the release-preparation scope.
-- [ ] Tag the release only after local checks and public test deployment checks pass.
+- [x] Used a clear release-preparation commit message (`948b384`).
+- [x] Tagged the reviewed stable commit as `v1.3.4` after the local and CI checks.
 
 ## 11. Streamlit Deployment
 
@@ -186,35 +186,36 @@ pytest
 
 ## 12. Package-index publication (PyPI)
 
-- [ ] Build and run `twine check` on the intended final distribution artifact.
-- [ ] Inspect the TestPyPI project page for README rendering. Before the PyPI
+- [x] Built the intended final distribution artifact and ran `twine check`.
+- [x] Inspected the TestPyPI project page for README rendering. Before the PyPI
       upload, replace README links and image references that are relative to the
       repository with durable absolute GitHub or GitHub Pages URLs as needed.
       TestPyPI files are immutable; a broken relative link found there must be
       corrected in the final source before the separate PyPI upload.
-- [ ] Upload the intended artifact to TestPyPI and install it in a new macOS
+- [x] Uploaded the intended artifact to TestPyPI and installed it in a new macOS
       environment. Use conda-forge only for compiled geospatial prerequisites
       where required, then install this package with `pip`.
-- [ ] Confirm the TestPyPI installation can launch the application and repeat
+- [x] Confirmed the TestPyPI installation can launch the application and repeated
       the short smoke test.
-- [ ] After the final tag is verified, publish the same reviewed artifact to
+- [x] After the final tag was verified, published the same reviewed artifact to
       PyPI as `envgeo-seawater`, using Trusted Publishing or a secure manual
       upload; never commit a PyPI token.
-- [ ] Repeat the clean macOS `pip install envgeo-seawater` and launch check.
+- [x] Repeated the clean macOS `pip install envgeo-seawater` and launch check.
 - [ ] A conda-forge recipe/feedstock is a useful later improvement, but is not
       a v1.3.4 blocker once the PyPI path is verified.
 
 ## 13. Zenodo / DOI Preparation
 
-- [ ] Enable the `seawater_map` GitHub repository in Zenodo before creating the
+- [x] Enabled the `seawater_map` GitHub repository in Zenodo before creating the
       GitHub Release, so that the tagged release is automatically archived.
-- [ ] Confirm the GitHub release is final before creating the Zenodo archive.
+- [x] Confirmed the GitHub Release was final before creating the Zenodo archive.
 - [ ] Confirm title, authors, affiliations, license, and description.
-- [ ] Confirm the archived version matches the release tag.
-- [ ] Record a wheel SHA-256 only for a wheel rebuilt from the clean tagged
+- [x] Confirmed the archived version matches release tag `v1.3.4`.
+- [x] Recorded the wheel SHA-256 from a wheel rebuilt from the clean tagged
       checkout. CI wheel artifacts are inspection evidence, not release or
       Zenodo distribution files.
-- [ ] Record the version DOI and concept DOI in the README and citation files
+- [x] Recorded the version DOI (`10.5281/zenodo.23117784`) and concept DOI
+      (`10.5281/zenodo.23117783`) in the README and citation files
       after the archive is created. This follow-up documentation commit is not
       part of the immutable tagged archive unless a DOI was reserved in advance.
 
