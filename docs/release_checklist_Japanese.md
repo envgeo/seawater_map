@@ -4,6 +4,9 @@
 
 テストサイトの更新、GitHub更新、Release作成、Zenodoへのversion archiveの前に、このchecklistを使います。
 
+`seawater_map`は正式な安定版repositoryです。このchecklistは、tagを付けるGitHub Release、Zenodo archive、
+JOSS向けsoftware recordに用います。
+
 ## 1. ローカル環境
 
 ### Release candidate 1.3.4（2026-09-28）
@@ -11,6 +14,18 @@
 - [x] 最終試験にはPython 3.12／Streamlit 1.63／Plotly 5.24環境を使用した。
 - [x] 安定版CI run #2（2026-09-28）はPython 3.10と3.12で成功した。test、wheel作成、
   隔離wheel導入、Python版ごとのwheel artifact保存を完了した。
+
+### 既に行った手動smoke確認（release commit後に再確認する）
+
+以下はRelease candidateの確認中に完了した探索的な手動確認である。有用な根拠ではあるが、commit済みの
+安定版Releaseとdeploymentに対する最終手動確認の代わりにはしない。
+
+- [x] Homeが開き、ローカル専用の`99_Environment_Check.py`が公開sidebarに表示されなかった。
+- [x] Mapping、T–S Diagram、Depth Profileがアプリケーションerrorなしで開き、データ選択と
+      `Apply settings`で表示結果が更新された。
+- [x] Mappingの背景tileが表示された。
+- [x] アプリケーションerror画面は出なかった。ローカル絶対pathとcredentialらしき値については、
+      別途、公開fileとwheelの静的監査を行った。
 
 - [ ] 意図したPython環境が有効であることを確認する。
 - [ ] 検証済み基準の一つを使っていることを確認する：Python 3.10.15／Streamlit 1.42、または
@@ -54,11 +69,11 @@ streamlit run home.py
 - [ ] `31_Salinity-d18O_Relationship.py`
 - [ ] `32_Isotope_Hydrographic_Mapping.py`
 - [ ] `34_T-S_diagram.py`
-- [ ] `35_Custom_Parameter_Plot_beta.py`
+- [ ] `35_Custom_Parameter_Plot.py`
 - [ ] `37_Depth_Profile.py`
 - [ ] `05_User_Data_Check_Quick_Visualizer.py`
-- [ ] `80_Correlation_Overview.py`
 - [ ] `53_Vertical_Section_Visualizer.py`
+- [ ] `80_Correlation_Overview.py`
 
 各ページについて、次を確認します。
 
@@ -122,6 +137,9 @@ pytest
 - [ ] `data_text/update_log_Japanese.md`に最新の未release変更があることを確認する。
 - [ ] betaおよびlocal-development pageが明確に説明されることを確認する。
 - [ ] 引用・data sourceの案内が理解できることを確認する。
+- [ ] 精査済みmanualを基に、図付きの英日静的ドキュメントwebsiteを作成または更新する。安定版の公開範囲だけを説明し、private path、個人データ、token、内部記録を含めない。
+- [ ] GitHub Pagesでドキュメントwebsiteを公開し、公開URL、navigation、図、linkを確認する。
+- [ ] 安定版URL、release version、公開ページ範囲、ドキュメントURL、Zenodo DOIが確定した後に、研究室websiteを更新する。安定版`seawater_map`の説明と一致させ、NASA GISSとPAGES CoralHydro2kを含む引用付き約50,000件のデータ、ユーザーデータのアップロード／プロット機能を記載する。旧いversion番号、DOIの保留表現、安定版から除外したページの説明を残さない。
 
 ## 10. GitHub Release準備
 
@@ -156,6 +174,8 @@ pytest
 - [ ] Zenodo archiveを作る前にGitHub Releaseが最終版であることを確認する。
 - [ ] title、author、affiliation、license、descriptionを確認する。
 - [ ] archiveしたversionがRelease tagと一致することを確認する。
+- [ ] wheel SHA-256を記録する場合は、clean tagged checkoutから再作成したwheelの値だけを使う。
+      CI wheel artifactは確認根拠であり、ReleaseまたはZenodoの配布fileではない。
 - [ ] archive作成後、READMEとcitation fileにDOIを記録する。
 
 ## 13. JOSS向けの後続作業

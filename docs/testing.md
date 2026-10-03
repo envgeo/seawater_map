@@ -2,6 +2,8 @@
 
 This document explains the current pytest suite for EnvGeo-Seawater, what it checks, and what still needs to be expanded as the software matures.
 
+[日本語版](testing_Japanese.md)
+
 ## How To Run Tests
 
 Run the full test suite from the project root:
@@ -15,6 +17,21 @@ For a quick check during development, run the core utility and repository-health
 ```bash
 pytest -q test/test_envgeo_utils.py test/test_repository_health.py
 ```
+
+## Continuous Integration
+
+`.github/workflows/ci.yml` runs on Linux with Python 3.10 and 3.12 for pushes,
+pull requests, and manual dispatch. It installs `requirements-dev.txt`, runs
+the pytest suite, builds a wheel, then installs that wheel in a separate venv
+from outside the checkout. The development source clone retains 12 pages,
+including Pages 90 and 91 for pre-release work. The final wheel check verifies
+the installed package location, the 10 supported packaged pages, the diagnostic
+tool, and the absence of Pages 90, 91, 99, and the GEBCO-generation script.
+
+Dependency installation necessarily uses the package index during CI setup.
+The test and application checks themselves must not require external tiles,
+downloads, or live network services. Browser-based visual checks and online
+map behaviour remain manual QA.
 
 ## Test Files
 
@@ -72,18 +89,16 @@ This file currently checks:
 - README image links point to existing files.
 - Key project documents exist.
 - 4D Visualizer selected-data tables include quality information.
-- Where Page 90 exists in the development/pre-release repository, its
-  upload-overlay, WebGL trace, and shared-region-preset checks run. The stable
-  repository intentionally skips these Page 90-specific checks because the
-  page is absent.
+- Integrated Visualizer beta keeps upload-overlay support.
+- Uploaded-data overlays use WebGL-compatible traces where needed.
+- Integrated map views use shared ocean-region presets.
 - Filtered-data summary CSV export is available.
 - Quality-flag criteria are shown near relevant tables.
 - Shared-filter beta tabs use readable compact labels.
 - Standard map style avoids CARTO tiles that require API keys.
 - Mapping pages use shared colormap helpers.
-- Where Page 90 exists, the standalone uploader is excluded from its full-page
-  workflows. Uploaded user files are handled in memory during the Streamlit
-  session.
+- The standalone uploader is excluded from Integrated Visualizer full-page workflows.
+- Uploaded user files are handled in memory during the Streamlit session.
 
 ### `test/test_public_surface.py`
 
@@ -106,7 +121,9 @@ The current pytest suite focuses on:
 - Common utility functions.
 - Shared plotting support such as colormaps, filenames, map presets, and coastline loading.
 - Repository structure and public-facing page hygiene.
-- Integrated beta upload workflow checks.
+- Page 90 Integrated Visualizer upload-workflow checks in the
+  development/pre-release repository only; the stable repository intentionally
+  omits that page.
 
 These tests are intended to catch common breakage during refactoring and release preparation.
 

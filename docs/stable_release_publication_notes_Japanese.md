@@ -6,6 +6,8 @@
 JOSS向けsoftware recordの正規sourceとして扱います。この文書は公開範囲を短く確認するための
 メモです。詳細な確認には[Release checklist](release_checklist.md)を使います。
 
+[English version](stable_release_publication_notes.md)
+
 ## 安定版の範囲
 
 安定版packageには、`home.py`、共通アプリmodule、runtime asset、出典を記録したdatasetと、
@@ -17,7 +19,7 @@ JOSS向けsoftware recordの正規sourceとして扱います。この文書は�
 - 31 Salinity-d18O Relationship
 - 32 Isotope Hydrographic Mapping
 - 34 T-S Diagram
-- 35 Custom Parameter Plot beta
+- 35 Custom Parameter Plot
 - 37 Depth Profile
 - 53 Vertical Section Visualizer beta
 - 80 Correlation Overview archive
@@ -57,7 +59,8 @@ CI出力に残しません。
 3. Release checklistに従い、Home、Page 05、Mapping、T-S Diagram、Depth Profile、Vertical Sectionを
    含む安定版のsmoke testを行う。
 4. version、Git tag、commit ID、Python版、解決済み依存関係記録、test結果、wheel SHA-256が、
-   同一source revisionに対応することを確認する。
+   同一source revisionに対応することを確認する。CI wheel artifactは確認根拠だけであり、
+   Release記録用wheelはclean tagged checkoutから再作成する。
 5. そのtagからGitHub Release、続いてZenodo archiveを作成する。発行後にDOIをcitation資料へ追加する。
 
 ## 変更管理

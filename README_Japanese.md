@@ -6,7 +6,7 @@ EnvGeo-Seawater は、海水の安定同位体・水文データを探索する�
 [![Python](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**現在の安定版バージョン:** 1.3.4（2026-09-28）
+**現在のRelease候補バージョン:** 1.3.4（2026-09-28）
 
 **海水同位体・水文データを、地図・断面・T-S図・3D/4D表示で探索する研究用Webアプリです。**
 
@@ -18,7 +18,7 @@ EnvGeo-Seawater は、海洋地球化学研究における海水同位体デー�
 
 対象とするデータは、安定水同位体（δ18O、δD）、塩分、水温、水深などを含む海洋地球化学・水文データです。
 
-日本周辺の地域データセットと、約5万件規模の全球データセットを、共通の表示スキーマと記録済みの来歴情報により統合しています。分析上の厳密な比較可能性は、収録したすべてのデータに一律に仮定せず、該当する出典データセットごとに示します。
+日本周辺の地域データセットと、約5万件規模の全球データセットを統合し、共通した条件で比較・可視化できるようにしています。
 
 このアプリは、海洋地球化学・海洋学における **探索的データ解析** と **再現可能な研究ワークフロー** の両方を支援することを目的としています。
 
@@ -39,7 +39,7 @@ EnvGeo-Seawater は、海洋地球化学研究における海水同位体デー�
 
 ## 主要ページ
 
-Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、正式版として選択した10個の可視化ツールを収録し、このReleaseに残すbetaワークフローは明記します。
+Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、主要な可視化ツールに加えて、一部の beta ページやローカル開発用ページも含まれます。
 
 - `pages/03_[Interactive]_2Dplus_Visualizer.py`
   同位体・水文データの関係と観測地点を確認する 2D/2.5D 可視化ページ。
@@ -62,14 +62,14 @@ Streamlit アプリでは、`home.py` が About、データソース、マニュ
 - `pages/37_Depth_Profile.py`  
   δ18O、δD、d-excess、水温、塩分の深度プロファイルを表示するページ。
 
-- `pages/35_Custom_Parameter_Plot_beta.py`  
-  X軸、Y軸、色、マーカーサイズを任意の数値パラメーターから選ぶ試験的な2Dプロットページ。
+- `pages/35_Custom_Parameter_Plot.py`
+  X軸、Y軸、色、マーカーサイズを任意の数値パラメーターから選ぶ柔軟な2Dプロットページ。
 
-- `pages/80_Correlation_Overview.py`  
-  手書きで開発してきた元の探索ワークフローを保存するアーカイブ表示ページです。開発記録として残し、新機能は追加しません。
-
-- `pages/53_Vertical_Section_Visualizer.py`  
+- `pages/53_Vertical_Section_Visualizer.py`
   Vertical Section Visualizer beta。測線選択、補間、海底地形、鉛直断面図の表示方法を調整するための試験版ページです。
+
+- `pages/80_Correlation_Overview.py`
+  手書きで開発してきた元の探索ワークフローを保存するアーカイブ表示ページです。開発記録として残し、新機能は追加しません。
 
 以前の独立した about ページは `home.py` に統合しました。
 
@@ -146,10 +146,12 @@ EnvGeo-Seawater は、同位体データと水文データを統合的に探索�
 
 ## データ公開方針
 
-現行の学術利用packageには、出典引用、来歴、出典からworkbookへの変換記録を持つデータセットを収録します。同梱はデータの所有権を移転せず、将来追加するデータの扱いを自動的に決めるものでもありません。現時点の記録は`docs/dataset_redistribution_audit_Japanese.md`および`docs/provenance_inventory_Japanese.md`を参照してください。
+このリポジトリに含まれるデータは、公開データ、または各データ提供元の条件に沿って再配布可能なデータです。
 
 - アプリで直接利用できる標準化済み形式で提供
 - 未公表データや制限付きデータは含めない方針
+
+正式な公開・リリース前には、各データセットのライセンス、再配布条件、推奨引用を再確認する必要があります。
 
 ---
 
@@ -180,8 +182,8 @@ pip install -r requirements.txt
 ```bash
 git clone https://github.com/envgeo/seawater_map.git
 cd seawater_map
-python -m pip install .
-envgeo-seawater
+pip install -r requirements.txt
+streamlit run home.py
 ```
 
 ターミナルに表示されるローカルURLをブラウザで開きます。通常は次のURLです。
@@ -189,8 +191,6 @@ envgeo-seawater
 ```text
 http://localhost:8501
 ```
-
-source checkoutで開発する場合は、従来どおり`python -m pip install -r requirements.txt`の後に`streamlit run home.py`でも起動できます。ダウンロードしたrelease wheelは、`python -m pip install path/to/envgeo_seawater-1.3.4-py3-none-any.whl`で導入できます。
 
 ---
 
@@ -258,11 +258,23 @@ pytest
 
 ## ディレクトリ構成
 
-- `home.py`  
+- `home.py`
   EnvGeo-Seawater の Streamlit メインページ。
 
-- `envgeo_utils.py`  
+- `envgeo_utils.py`
   データ読み込み、データクリーニング、フィルタリング、Plotly共通レイアウト、地図スタイル、海岸線読み込み、表表示などを含む共通ユーティリティ。
+
+- `envgeo_assets.py`
+  起動ディレクトリに依存せず、アプリに同梱する読み取り専用資産へのパスを解決する。
+
+- `envgeo_user_data.py`
+  ブラウザ内だけで扱うアップロード、列の標準化、ユーザー提供データの表示補助を担う。ブラウザからのアップロードをこのモジュールがディスクへ保存することはない。
+
+- `envgeo_launcher.py`
+  インストール済みアプリを `envgeo-seawater` コマンドで起動する。
+
+- `envgeo_diagnostic_launcher.py`
+  `envgeo-seawater-check` コマンドでローカル診断ツールを起動する。公開アプリのナビゲーションとは分離されている。
 
 - `pages/`  
   アプリのサイドバーに表示される安定版の可視化ページ。
@@ -341,6 +353,16 @@ pytest
 
 詳細な出典情報は、アプリ内および `data_text/` 以下の Markdown ファイルに記載しています。
 
+## ソフトウェアと地理空間データの謝辞
+
+EnvGeo-Seawater は、アプリケーション画面に Streamlit、対話的な図に Plotly を使用しています。
+選択可能な科学カラーパレットには cmocean を用いています。T-S 図の σ0 参照等値線は、
+Gibbs SeaWater（GSW）による TEOS-10 実装を用いた明示的な近似です。観測ごとの絶対塩分・
+保存温度への変換は行っていません。Vertical Section Visualizer では、海底地形の文脈表示に限り、
+プロジェクトで軽量化した GEBCO 2025 Grid を使用できます。これは航海・安全目的の製品では
+ありません。Natural Earth は同梱する陸地資産に使用しており、帰属表示は上記に示しています。
+完全な文献情報と来歴記録は `paper.bib` および `docs/` に記載しています。
+
 ## AI支援開発と人間による監督
 
 バージョン1.3以降、EnvGeo-Seawaterの開発では、コードレビュー、実装草案の
@@ -361,6 +383,25 @@ https://envgeo-seawater-map.streamlit.app
 
 Stable demo with experimental updates:
 https://envgeo-seawater-pre.streamlit.app
+
+---
+
+## これまでの研究ワークフローでの利用
+
+EnvGeo-SeawaterがソフトウェアとしてのアーカイブDOIを取得する前から、著者および共同研究者の
+ワークフローにおいて、Kodama et al. (2024) の地域海水同位体データセットの一部を選択・探索・
+可視化するために利用されてきました。これらの研究成果では本ソフトウェアではなく元データセットの
+論文が引用されています。したがって、これらは直接のソフトウェア引用ではなく、研究ワークフローでの
+利用例です。
+
+---
+
+## 今後の発展
+
+データモデルは、出典、来歴、再配布上の位置づけが記録された後に、追加データセットを統合できるように
+設計しています。再利用可能な可視化、資産パス解決、配布の構成要素は、将来の関連EnvGeoアプリケーションを
+支えることも想定しています。これらは将来の方向性であり、v1.3.4 Release candidateに含まれる機能や
+データセットではありません。
 
 ---
 

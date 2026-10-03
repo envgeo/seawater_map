@@ -1,7 +1,15 @@
-# Sprint 3 Distribution Design and Acceptance Criteria
+# Distribution Design and Verification Record (Sprint 3)
 
-**Status:** approved design basis for Sprint 3B implementation, 2026-09-27.  
-**Scope:** EnvGeo-Seawater only. This is not a release approval.
+“Sprint 3” is the project's internal name for the development phase that
+established installable distribution, CI, and pre-release checks. It is kept
+in this title solely to preserve the historical connection to contemporaneous
+records.
+
+**Status:** Sprint 3 design and implementation-verification record; originally
+approved as the Sprint 3B design basis on 2026-09-27 and rechecked 2026-09-30.
+**Scope:** EnvGeo-Seawater development/pre-release repository only. This is
+not a release approval. The corresponding Japanese record is
+[`sprint3_distribution_design_and_acceptance_Japanese.md`](sprint3_distribution_design_and_acceptance_Japanese.md).
 
 ## Fixed boundaries
 
@@ -26,9 +34,10 @@
 
 ## Production package-data policy
 
-Include application modules, the 10 selected stable pages, runtime media/text,
+Include application modules, the 10 supported stable pages, runtime media/text,
 coastline and Natural Earth assets, GEBCO, the zero-value User Excel template,
-and the diagnostic tool implementation.
+and the diagnostic tool implementation. The development source clone retains
+Pages 90 and 91 separately for pre-release testing, but the wheel excludes them.
 
 - Keep the technical inclusion of `dataset/*.xlsx` separate from any
   redistribution or public-release decision; do not silently exclude or
@@ -41,7 +50,7 @@ and the diagnostic tool implementation.
   automatically in both installed and Cloud navigation.
 - Include the diagnostic tool without page 99 and expose it through an explicit
   command. The normal application command must expose only public pages.
-- Exclude `data_beta/make_lightweight_gebco.py`: it has no runtime reference;
+- Exclude `bathymetry/make_lightweight_gebco.py`: it has no runtime reference;
   retain it in source as the documented GEBCO-generation procedure.
 - Exclude `Claude outputs/`, cache files, build products, `.DS_Store`, internal
   review logs, and local-only diagnostic wrappers.
@@ -54,7 +63,8 @@ installs the final wheel, not the source tree.
 
 1. Wheel metadata installs declared runtime dependencies.
 2. Installed imports resolve under the fresh environment, not the checkout.
-3. All 10 selected stable pages are present; pages 90, 91, 99, and internal material are absent.
+3. All 10 supported pages are present; Pages 90, 91, 99, and internal material
+   are absent.
 4. Home and representative Pages 32, 34, and 53 start without application
    exceptions and read their required assets.
 5. Dataset workbooks, coastline CSVs, Natural Earth sidecars, GEBCO, runtime
@@ -83,10 +93,8 @@ wheel staging trees. The verified wheel SHA-256 was
   source-only resolver result.
 - The installed package resolved in the new environment, contained 12 public
   pages and the diagnostic tool, and did not contain page 99 or the GEBCO
-  generation script. This predated the later stable-scope split: the stable
-  `seawater_map` package is limited to 10 pages and its CI verifies that pages
-  90, 91, and 99 are absent. Both console commands accepted their Streamlit
-  launch arguments from the external working directory, and the diagnostic tool
+  generation script. Both console commands accepted their Streamlit launch
+  arguments from the external working directory, and the diagnostic tool
   executed without an application exception.
 - Home and Pages 32, 34, and 53 executed without application exceptions using
   the installed files. The established launcher-compatible import path remains

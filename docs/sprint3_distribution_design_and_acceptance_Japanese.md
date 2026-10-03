@@ -1,7 +1,10 @@
-# Sprint 3 配布設計と受入条件
+# 配布設計・検証記録（Sprint 3）
 
-**状態:** 2026-09-27に合意したSprint 3B実装用の設計基準。  
-**対象:** EnvGeo-Seawaterのみ。公開Releaseの承認ではない。
+「Sprint 3」は、インストール可能な配布物、CI、公開前確認を整備した開発フェーズを指すプロジェクト内の名称である。この表題では、当時の記録との履歴上のつながりを保つためだけに用いる。
+
+**状態:** Sprint 3の設計・実装検証記録。2026-09-27にSprint 3Bの設計基準として合意し、2026-09-30に再確認した。
+**対象:** EnvGeo-Seawaterの開発／公開前repositoryのみ。公開Releaseの承認ではない。英語版は
+[`sprint3_distribution_design_and_acceptance.md`](sprint3_distribution_design_and_acceptance.md)。
 
 ## 固定する境界
 
@@ -24,8 +27,9 @@
 
 ## production package-dataの方針
 
-アプリモジュール、正式版として選択した10ページ、実行時の媒体・テキスト、海岸線、Natural Earth、
-GEBCO、ゼロ値User Excelテンプレート、診断ツール本体だけを収録する。
+アプリモジュール、サポート対象の安定版10ページ、実行時の媒体・テキスト、海岸線、Natural Earth、
+GEBCO、ゼロ値User Excelテンプレート、診断ツール本体だけを収録する。開発用source cloneには
+事前検証のためPage 90・91を残すが、wheelには収録しない。
 
 - `dataset/*.xlsx`の技術的な収録確認と再配布／公開判断を分離し、このpackage作業を理由に
   データを無断で除外・公開しない。
@@ -36,7 +40,7 @@ GEBCO、ゼロ値User Excelテンプレート、診断ツール本体だけを�
   Cloud版のどちらでも自動的にナビゲーションへ表示されるためである。
 - 99ページを含めず、明示的なcommandから診断ツールを使えるようにする。通常の起動では
   公開ページだけを表示する。
-- `data_beta/make_lightweight_gebco.py`は実行時参照がないためwheelから除外する。GEBCO
+- `bathymetry/make_lightweight_gebco.py`は実行時参照がないためwheelから除外する。GEBCO
   生成手順の記録としてsource treeには残す。
 - `Claude outputs/`、cache、build成果物、`.DS_Store`、内部レビュー記録、ローカル専用
   ラッパーは除外する。
@@ -48,7 +52,7 @@ Sprint 3Cでは、system-site-packagesなし、user site-packagesなし、checko
 
 1. wheel metadataから宣言済みruntime依存関係を導入できる。
 2. import先がcheckoutではなく新規環境内である。
-3. 正式版として選択した10ページが存在し、Page 90、91、99と内部資料は存在しない。
+3. サポート対象の10ページが存在し、Page 90・91・99と内部資料は存在しない。
 4. Homeと代表的なPage 32、34、53が例外なく起動し、必要な同梱資産を読める。
 5. dataset workbook、海岸線CSV、Natural Earth sidecar、GEBCO、実行時媒体・テキスト、
    ゼロ値User Excelテンプレートを利用できる。
@@ -69,10 +73,9 @@ source treeとwheelステージング領域の外側とした。検証したwhee
 - `pip check`は依存関係破損なしだった。`pyproject.toml`のlicenseは移植性のある明示table形式を
   用い、Python 3.12 Apple Silicon向けwheelを選べる`pyproj==3.6.1`を宣言した。これにより、
   互換しないsource-onlyの最新版へ解決される状態を回避した。
-- 新規環境のインストール先からpackageを読み込み、12公開ページと診断ツールが存在し、page 99および
-  GEBCO生成scriptがないことを確認した。この記録は後の安定版対象分離より前のものである。安定版
-  `seawater_map` packageは10ページに限定し、CIでPage 90、91、99がないことを確認する。checkout外CWD
-  から両console commandがStreamlit起動引数を受け付け、診断ツール本体もアプリ例外なしで実行した。
+- 新規環境のインストール先からpackageを読み込み、サポート対象の10ページと診断ツールが存在し、
+  Page 90・91・99とGEBCO生成scriptがないことを確認した。checkout外CWDから両console commandがStreamlit起動引数を
+  受け付け、診断ツール本体もアプリ例外なしで実行した。
 - インストール済みファイルを使い、Home、Page 32、34、53をアプリ例外なしで実行した。個別ページには
   checkout互換のtop-level importが残るため、従来どおりlauncherが設定する互換import pathが必要である。
 - `ENVGEO_LOCAL_USER_DATA_PATH`で外部CSVを指定し、`User Excel data`として1行を読めた。この確認中に

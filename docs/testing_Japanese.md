@@ -2,6 +2,8 @@
 
 この文書では、EnvGeo-Seawater の現在の pytest 群が何を確認しているか、また今後どこを拡充すべきかを説明します。
 
+[English version](testing.md)
+
 ## テストの実行方法
 
 プロジェクトのルートディレクトリで、全体のテストを実行します。
@@ -15,6 +17,18 @@ pytest
 ```bash
 pytest -q test/test_envgeo_utils.py test/test_repository_health.py
 ```
+
+## 継続的インテグレーション
+
+`.github/workflows/ci.yml`は、push、pull request、手動起動時にLinux／Python 3.10と3.12で動作する。
+`requirements-dev.txt`を導入してpytestを実行し、wheelを作成した後、checkout外の別venvへそのwheelを
+導入する。開発／公開前repositoryのsource cloneには、事前検証用のPage 90・91を含む12ページを残す。
+一方、最後のwheel検査では、インストール先、packageに収録するサポート対象の10ページ、診断ツール、
+Page 90・91・99とGEBCO生成scriptの非収録を確認する。
+
+CIの環境構築時にはパッケージindexから宣言済み依存関係を取得する。一方、テストとアプリ確認そのものは
+外部タイル、外部download、実ネットワークサービスを必要としないことを原則とする。ブラウザ上の視覚確認と
+オンライン地図の挙動は、引き続き手動QAで確認する。
 
 ## テストファイル
 
@@ -71,16 +85,16 @@ pytest -q test/test_envgeo_utils.py test/test_repository_health.py
 - README 内の画像リンクが実在するファイルを指していること。
 - 公開リリースに必要な基本文書が存在すること。
 - 4D Visualizer の選択データ表に品質情報列が含まれること。
-- 開発／公開前repositoryにPage 90がある場合は、アップロード重ね描き、WebGL trace、
-  共通海域presetを確認する。安定版repositoryではPage 90を意図して含めないため、
-  これらのPage 90専用確認はskipする。
+- Integrated Visualizer beta にアップロードデータ重ね描き機能が残っていること。
+- アップロードデータの重ね描きが WebGL 系 trace として扱われること。
+- 統合ページの地図が共通海域プリセットを使うこと。
 - 抽出データ概要の CSV 書き出しが利用できること。
 - 品質フラグ基準が関連する表の近くに表示されること。
 - Shared-filter beta のタブが読みやすい短いラベルになっていること。
 - 標準地図背景が API key を要求する CARTO ではなく OpenStreetMap であること。
 - Mapping ページが共通カラーマップ関数を使うこと。
-- Page 90がある場合は、独立uploaderがIntegrated Visualizerのfull-page workflowから
-  除外されていること。ユーザーupload fileをローカル／serverへ保存しない方針であること。
+- 独立 uploader が Integrated Visualizer の full-page workflow から除外されていること。
+- ユーザーアップロードファイルをローカル/サーバーへ保存しない方針であること。
 
 ### `test/test_public_surface.py`
 
@@ -103,7 +117,8 @@ pytest -q test/test_envgeo_utils.py test/test_repository_health.py
 - 共通ユーティリティ関数。
 - カラーマップ、保存ファイル名、海域プリセット、海岸線読み込みなどの作図支援。
 - リポジトリ構成と公開ページの健全性。
-- 統合 beta のアップロードデータワークフロー。
+- 開発／公開前repositoryだけで確認する、Page 90 Integrated Visualizerのアップロードデータworkflow。
+  安定版repositoryにはこのページを意図して含めない。
 
 これらのテストは、リファクタリングや公開準備中のよくある破損を検出することを目的としています。
 

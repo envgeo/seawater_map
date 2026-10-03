@@ -7,6 +7,8 @@ It is the source repository for the GitHub Release, Zenodo archive, and
 JOSS-facing software record. This note is a concise publication boundary; use
 the [release checklist](release_checklist.md) for the detailed checks.
 
+[日本語版](stable_release_publication_notes_Japanese.md)
+
 ## Stable scope
 
 The stable package contains `home.py`, shared application modules, runtime
@@ -18,7 +20,7 @@ assets and cited datasets, and these ten Streamlit pages:
 - 31 Salinity-d18O Relationship
 - 32 Isotope Hydrographic Mapping
 - 34 T-S Diagram
-- 35 Custom Parameter Plot beta
+- 35 Custom Parameter Plot
 - 37 Depth Profile
 - 53 Vertical Section Visualizer beta
 - 80 Correlation Overview archive
@@ -66,7 +68,8 @@ value in public documentation, logs, screenshots, or CI output.
    Mapping, T-S Diagram, Depth Profile, and Vertical Section.
 4. Confirm the version, Git tag, commit ID, Python version, resolved
    dependency record, test result, and wheel SHA-256 refer to the same source
-   revision.
+   revision. A CI wheel artifact is inspection evidence only; rebuild the
+   release-record wheel from the clean tagged checkout.
 5. Create the GitHub Release and then the Zenodo archive from that tag; add the
    resulting DOI to the citation material only after it is issued.
 

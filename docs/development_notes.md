@@ -1,19 +1,22 @@
-# EnvGeo-Seawater Historical Development Notes — 1.3.3
+# EnvGeo-Seawater Historical Development Notes
 
-Historical technical record retained for transparency. It describes the
-development state around 1.3.3 and is not a user manual, current release
-claim, or current release checklist. References to Page 90 describe the
-development/pre-release repository; Page 90 is intentionally absent from the
-stable `seawater_map` release. For the current stable scope, see
-`stable_release_publication_notes.md`.
+Historical technical record retained for transparency. The 1.3.3 entries
+describe the development state at that time; they are not a user manual,
+current release claim, or current release checklist. References to Page 90
+describe the development/pre-release repository; Page 90 is intentionally
+absent from the stable `seawater_map` release. For the current stable scope,
+see `stable_release_publication_notes.md`.
 
 ## Current Boundary
 
-- Version 1.3.3 is the local release-preparation point as of 2026-09-23.
-- Plotly 5.24 remains the verified plotting baseline; Streamlit 1.63 is tested
-  through the Python 3.12 compatibility environment.
+- Version 1.3.4 is the current release candidate. Its final wheel checks pass
+  in CI on Python 3.10 and 3.12.
+- Plotly 5.24 remains the verified plotting baseline. The documented test
+  baselines are Streamlit 1.42 on Python 3.10 and Streamlit 1.63 on Python 3.12.
 - Page 05, **User Data Check & Quick Visualizer**, is the public upload-first
-  quality-check and simple-visualization page. Page 90 remains transitional.
+  quality-check and simple-visualization page. Page 90 remains only in the
+  development repository and is excluded from this stable application, public
+  documentation site, JOSS submission, and Zenodo archive.
 
 ## AI Disclosure — scope, basis, and pre-JOSS TODO (2026-09-22)
 
@@ -29,8 +32,7 @@ history and `home.py`'s `render_update_history()` place 1.3.0 at
 2026-09-11. Searching the repository for existing AI-tool mentions before
 that point found none; the earliest in-repo evidence of AI-assisted work
 is inside `data_text/update_log.md`'s 1.3.2 development log ("Claude
-review" entries) and development-session records held outside the public
-repository (dated 2026-09-21), both after the 1.3.0 boundary. The disclosure text says
+review" entries), after the 1.3.0 boundary. The disclosure text says
 "from version 1.3 onward... substantial use" without asserting "zero AI
 use before 1.3" as a hard, provable claim — this is a deliberate choice to
 stay defensible; it is accurate that no earlier disclosure or session
@@ -43,24 +45,17 @@ Code" are the tool names already used consistently in-repo — e.g. the
 assistance from Codex") and `update_log.md`'s "Claude review" entries. These
 were treated as confirmed, not inferred.
 
-**Model/version specificity — what is confirmed vs. not:** grepping the
-repository for model-version strings found exactly one: "Claude Sonnet
-4.6" in a development-session record held outside the public repository
-(dated 2026-09-21). No
-Codex model/version string (e.g. a specific GPT/Codex model identifier) is
-recorded anywhere in the repository. Per the task instructions for this
-round, unconfirmed model/version details were not guessed; `paper.md`
-names the one confirmed instance (Claude Sonnet 4.6) and explicitly flags
-that per-session model versions were not consistently tracked, leaving a
-literal "TODO" in the disclosure text itself for pre-submission
-follow-up.
+**Model/version specificity — what is confirmed vs. not:** the public
+repository does not consistently retain per-session model identifiers. This
+historical note therefore does not enumerate model versions or reproduce
+private development-session records. The public disclosure names tools and
+scope without guessing unrecorded details; any future paper revision must be
+based on author-confirmed records only.
 
 **Pre-JOSS-submission TODO:** before submitting/updating the JOSS paper,
-reconfirm and, if possible, enumerate the specific AI tool versions used
-across the development history (Codex model identifier(s); each Claude
-Code session's model, not only the one already recorded), and update
-`paper.md`'s disclosure accordingly. Do not backfill guessed version
-numbers into this or any other file in the meantime.
+reconfirm the AI-use disclosure against author-controlled records and update
+`paper.md` only where a detail is confirmed. Do not backfill guessed version
+numbers into this or any other file.
 
 ## User-Data Architecture
 
@@ -87,12 +82,14 @@ This is a follow-up backlog, not a change to the v1.3.3 scope or a claim that
 the current exploratory workflows are invalid. Verify each item against data
 provenance and intended use before implementation.
 
-- **T-S density contours:** audit the meaning and availability of `Salinity`,
-  `Temperature_degC`, pressure, latitude, and longitude in every supported
-  dataset. `gsw.sigma0` requires Absolute Salinity and Conservative
-  Temperature. Either make and test the TEOS-10 conversions (`SA_from_SP`,
-  `CT_from_t`) where justified, or label the existing contours explicitly as
-  an approximation. Do not silently change a scientific quantity.
+- **T-S density contours:** v1.3.4 labels the current `gsw.sigma0` contours
+  explicitly as approximate reference contours, using Practical Salinity and
+  in-situ temperature as approximations; the grid is also clipped to its
+  displayed domain. Any future exact TEOS-10 implementation must audit the
+  meaning and availability of `Salinity`, `Temperature_degC`, pressure,
+  latitude, and longitude in every supported dataset, then make and test
+  `SA_from_SP` and `CT_from_t` where justified. Do not silently change a
+  scientific quantity.
 - **Scientific QC and provenance:** extend the current range-based safety
   checks only after documenting dataset-specific missing-value codes, isotope
   precision/standard scale, coordinates, dates, source identifiers, and the
@@ -106,10 +103,10 @@ provenance and intended use before implementation.
 - **Testable scientific core:** move selected numerical transformations and
   scientific rules into pure functions with fixed-input reference tests before
   treating them as reproducible analysis claims.
-- **Publication engineering:** after the v1.3.3 compatibility suite is green
-  in supported environments, complete packaging, CI, citation metadata,
-  tagged release, archival DOI, and machine-readable dataset provenance before
-  making a JOSS submission claim.
+- **Publication engineering:** packaging and CI wheel verification are
+  complete for the v1.3.4 release candidate. Before making a JOSS submission
+  claim, complete citation metadata, tagged release, archival DOI, and the
+  final review of machine-readable dataset provenance.
 
 The JOSS narrative should centre on the stable data-discovery, filtering,
 quality-review, user-data comparison, and visualisation workflow. Keep
@@ -264,14 +261,15 @@ passed, 4 skipped (pre-existing).
    negative-depth flags, anonymous-cast profile-line disambiguation,
    further ODV-likeness) — the core algorithmic audit is done; remaining
    items are polish, not correctness fixes.
-3. Complete visual checks in the Streamlit 1.63 / Plotly 5.24 environment.
+3. Complete the release-checklist manual visual checks in the documented
+   Python 3.10 and 3.12 environments.
 4. Plan the MapLibre migration separately from scientific workflow changes.
-5. Decide the eventual public/archive status of page 90 only after page 05 and
-   specialist-page behavior is confirmed.
-6. Plan an `envgeo-core` coastline component: package the 50m/110m CSV assets,
-   path-safe cached loading, resolution validation, and tests. Keep each app's
-   local CSV copy until Seawater and Earthquake have migrated and been checked
-   independently; only then remove duplicated assets.
+5. Retain page 90 only as a development archive; it is not part of the stable
+   release, public documentation site, JOSS submission, or Zenodo archive.
+6. Defer any shared-core extraction. If a future independently audited domain
+   genuinely shares coastline loading, path-safe caching, resolution
+   validation, and tests, define a small shared component then; do not remove
+   working application assets merely to deduplicate them.
 
 ## Vertical Section — release and JOSS positioning (2026-09-23)
 
@@ -312,23 +310,25 @@ New tests: `test/test_natural_earth_land.py` (15 tests — presence, readability
 
 ---
 
-## Future Asset Reorganization — Packaging TODO (2026-09-23)
+## Historical asset-reorganization proposal (2026-09-23)
 
-When moving to a Python package (pyproject.toml / package data), reorganize bundled
-geographic and scientific assets. Do not reorganize yet — design a backward-compatible
-asset loader first.
+The v1.3.4 package already bundles the established asset locations through
+`pyproject.toml` package-data rules. The following is a historical proposal
+for a future reorganization, not a prerequisite for the current release. Do
+not move working assets without a backward-compatible asset-loader design and
+fresh installed-wheel verification.
 
 Candidate future layout:
 ```
 assets/
   geospatial/   ← coastline CSVs + Natural Earth land shapefile
-  bathymetry/   ← GEBCO data (currently data_beta/)
+  bathymetry/   ← GEBCO data (currently bathymetry/)
   metadata/     ← source records, licences, checksums
 ```
 
 Current locations to keep until migration is ready:
 - `coastline/` — 50m/110m CSV coastlines + `natural_earth_50m_land/` (static map land mask)
-- `data_beta/` — GEBCO (bathymetry / section analysis, page 53)
+- `bathymetry/` — GEBCO (bathymetry / section analysis, page 53)
 
 Migration requirements:
 - Asset loader must resolve relative to the installed package, not individual page `__file__`.

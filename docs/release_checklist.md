@@ -2,6 +2,11 @@
 
 Use this checklist before uploading a test site, updating GitHub, creating a release, or archiving a version with Zenodo.
 
+[日本語版](release_checklist_Japanese.md)
+
+`seawater_map` is the formal stable-release repository. Use this checklist for
+the tagged GitHub Release, Zenodo archive, and JOSS-facing software record.
+
 ## 1. Local Environment
 
 ### Release candidate 1.3.4 (2026-09-28)
@@ -11,6 +16,21 @@ Use this checklist before uploading a test site, updating GitHub, creating a rel
 - [x] Stable CI run #2 (2026-09-28) completed on Python 3.10 and 3.12:
   tests, wheel build, isolated-wheel installation, and one wheel artifact per
   Python version all succeeded.
+
+### Earlier manual smoke evidence (repeat after the release commit)
+
+The following exploratory checks were completed during the release-candidate
+review. They provide useful evidence, but do **not** replace the final manual
+check against the committed stable release and its deployment.
+
+- [x] Home opened, and the local-only `99_Environment_Check.py` page was absent
+      from the public sidebar.
+- [x] Mapping, T–S Diagram, and Depth Profile opened without an application
+      error; data selection and `Apply settings` updated the displayed result.
+- [x] A Mapping background tile loaded successfully.
+- [x] No application error screen was present. A static public-file and wheel
+      audit separately checked for absolute local paths and credential-like
+      values.
 
 - [ ] Confirm the intended Python environment is active.
 - [ ] Confirm one of the tested baselines is active: Python 3.10.15 / Streamlit 1.42 or Python 3.12.14 / Streamlit 1.63, both with Plotly 5.24.
@@ -53,11 +73,11 @@ Open each page and perform a light visual check.
 - [ ] `31_Salinity-d18O_Relationship.py`
 - [ ] `32_Isotope_Hydrographic_Mapping.py`
 - [ ] `34_T-S_diagram.py`
-- [ ] `35_Custom_Parameter_Plot_beta.py`
+- [ ] `35_Custom_Parameter_Plot.py`
 - [ ] `37_Depth_Profile.py`
 - [ ] `05_User_Data_Check_Quick_Visualizer.py`
-- [ ] `80_Correlation_Overview.py`
 - [ ] `53_Vertical_Section_Visualizer.py`
+- [ ] `80_Correlation_Overview.py`
 
 For each page:
 
@@ -123,6 +143,17 @@ pytest
 - [ ] Confirm `data_text/update_log_Japanese.md` includes the latest unreleased changes.
 - [ ] Confirm beta and local-development pages are clearly described.
 - [ ] Confirm citation and data-source guidance are understandable.
+- [ ] Create or update the bilingual, figure-supported static documentation
+  website from the reviewed manuals; verify that it describes the stable public
+  scope only and contains no private paths, data, tokens, or internal records.
+- [ ] Publish the documentation website through GitHub Pages and verify the
+  public URLs, navigation, images, and links.
+- [ ] Update the laboratory website after the stable URL, release version,
+  public-page scope, documentation URL, and Zenodo DOI are final. Keep its
+  description aligned with the stable `seawater_map` release: approximately
+  50,000 cited records including NASA GISS and PAGES CoralHydro2k, and the
+  user-data upload/plot capability. Do not retain superseded version numbers,
+  draft DOI wording, or pages excluded from the stable release.
 
 ## 10. GitHub Release Preparation
 
@@ -157,6 +188,9 @@ pytest
 - [ ] Confirm the GitHub release is final before creating the Zenodo archive.
 - [ ] Confirm title, authors, affiliations, license, and description.
 - [ ] Confirm the archived version matches the release tag.
+- [ ] Record a wheel SHA-256 only for a wheel rebuilt from the clean tagged
+      checkout. CI wheel artifacts are inspection evidence, not release or
+      Zenodo distribution files.
 - [ ] Record the DOI in the README and citation files after the archive is created.
 
 ## 13. JOSS-Oriented Follow-Up
