@@ -8,6 +8,7 @@ Markdown形式のファイルを、repository文書および今後作成する�
 
 - [概要](00_overview.md)
 - [データの絞り込み](01_data_filtering.md)
+- [データ重複チェック](06_data_overlap_check.md)
 - [ユーザーデータ確認・簡易可視化](05_user_data_check_quick_visualizer.md)
 - [インタラクティブ2Dplus可視化](03_2dplus_visualizer.md)
 - [インタラクティブ3D/4D可視化](04_3d_4d_visualizer.md)
@@ -22,7 +23,7 @@ Markdown形式のファイルを、repository文書および今後作成する�
 
 `pages/80_Correlation_Overview.py`は、開発初期の探索ワークフローを残すアーカイブです。必要最小限の互換性維持だけを行い、個別の操作マニュアルは作成しません。
 
-Page 90の開発資料は、安定版でサポートする公開インターフェースには含めないため、このcloneの外で管理します。
+[Integrated Visualizerの開発記録](90_integrated_visualizer.md)は、開発経緯を残すための資料です。Page 90は安定版および利用者向け静的ドキュメントサイトには含めません。
 
 ## 読み方
 

@@ -4,7 +4,7 @@ EnvGeo-Seawater は、海水の安定同位体・水文データを探索する�
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://envgeo.h.kyoto-u.ac.jp/sw_jpn/)
 [![Python](https://img.shields.io/badge/python-3.10--3.13%20tested-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/envgeo/seawater_map/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/envgeo/envgeo-seawater/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/626690773.svg)](https://doi.org/10.5281/zenodo.23117783)
 
 **現在の安定版:** 1.3.4（2026-10-03）
@@ -40,7 +40,7 @@ EnvGeo-Seawater は、海洋地球化学研究における海水同位体デー�
 
 ## 主要ページ
 
-Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、以下の安定版でサポートする可視化ツールを収録します。開発専用ページとローカル診断ページは、このレポジトリおよびReleaseから除外します。公開範囲は`docs/stable_release_publication_notes_Japanese.md`を参照してください。
+Streamlit アプリでは、`home.py` が About、データソース、マニュアル、更新履歴、日本語説明のタブを担当します。`pages/` ディレクトリには、主要な可視化ツールに加えて、一部の beta ページやローカル開発用ページも含まれます。
 
 - `pages/03_[Interactive]_2Dplus_Visualizer.py`
   同位体・水文データの関係と観測地点を確認する 2D/2.5D 可視化ページ。
@@ -48,8 +48,11 @@ Streamlit アプリでは、`home.py` が About、データソース、マニュ
 - `pages/04_[Interactive]_3D_4D_Visualizer.py`
   経度、緯度、水深、選択変数を扱う 3D/4D 可視化ページ。
 
-- `pages/05_User_Data_Check_Quick_Visualizer.py`
+- `pages/05_[Utils]_User_Data_Check_Quick_Visualizer.py`
   参照・CSV/XLSXアップロードデータを扱う User Data Check & Quick Visualizer。共通フィルタ、欠損・品質確認、2D Map、Salinity-d18O、Temperature-Salinity、任意2D/3D/4D、地理3D、フィルタ済みCSV出力を一つの入口へまとめます。
+
+- `pages/06_[Utils]_Data_Overlap_Check.py`
+  同梱する参照データセットと、セッション限定の一つのアップロード表について、データ重複候補を読取り専用で確認するページです。Strong／Review候補と照合根拠を出力し、元の観測値を保持したまま、任意の可逆的な表示スクリーンにも対応します。
 
 - `pages/31_Salinity-d18O_Relationship.py`  
   塩分-δ18O 関係を表示し、必要に応じて回帰線を加えるページ。
@@ -71,6 +74,12 @@ Streamlit アプリでは、`home.py` が About、データソース、マニュ
 
 - `pages/80_Correlation_Overview.py`
   手書きで開発してきた元の探索ワークフローを保存するアーカイブ表示ページです。開発記録として残し、新機能は追加しません。
+
+- `pages/90_Integrated_Visualizer_beta.py`
+  試作統合ページ。既存の可視化ワークフローを1ページ内から選択実行できる互換モード、既存ページへのユーザーデータ一時結合、海域プリセット付きの共通フィルタ・タブ切り替えモードを含みます。独立アップロードページはアップロード起点の別ワークフローのため、統合ページ内の選択肢からは外しています。
+
+- `pages/99_Environment_Check.py`
+  ローカル開発用の環境診断ラッパーページ。ローカル環境確認には有用ですが、公開 Streamlit サイドバーに表示するページではありません。
 
 以前の独立した about ページは `home.py` に統合しました。
 
@@ -150,9 +159,9 @@ EnvGeo-Seawater は、同位体データと水文データを統合的に探索�
 同梱データは公開出典の記録、またはプロジェクトが記録した学術利用方針に基づく派生workbookです。
 これは第三者データをプロジェクト所有とするものでも、出典ごとの記録を超える一般的な再配布ライセンスを
 主張するものでもありません。詳細は
-[`docs/dataset_redistribution_audit_Japanese.md`](https://github.com/envgeo/seawater_map/blob/main/docs/dataset_redistribution_audit_Japanese.md)、
-[`docs/provenance_inventory_Japanese.md`](https://github.com/envgeo/seawater_map/blob/main/docs/provenance_inventory_Japanese.md)、
-[`docs/THIRD_PARTY_NOTICES_Japanese.md`](https://github.com/envgeo/seawater_map/blob/main/docs/THIRD_PARTY_NOTICES_Japanese.md)を参照してください。
+[`docs/dataset_redistribution_audit_Japanese.md`](https://github.com/envgeo/envgeo-seawater/blob/main/docs/dataset_redistribution_audit_Japanese.md)、
+[`docs/provenance_inventory_Japanese.md`](https://github.com/envgeo/envgeo-seawater/blob/main/docs/provenance_inventory_Japanese.md)、
+[`docs/THIRD_PARTY_NOTICES_Japanese.md`](https://github.com/envgeo/envgeo-seawater/blob/main/docs/THIRD_PARTY_NOTICES_Japanese.md)を参照してください。
 
 - アプリで直接利用できる標準化済み形式で提供
 - 未公表データや制限付きデータは含めない方針
@@ -161,13 +170,13 @@ EnvGeo-Seawater は、同位体データと水文データを統合的に探索�
 
 ### データセット間の重複候補の確認
 
-NASA GISSとPAGES CoralHydro2kは、それぞれ独立に編集された統合データベースであり、同じ原観測に由来する記録を含む可能性があります。2026-10-05の読取り専用の初期スクリーニングでは、確認用の緩い閾値で**NASA GISS--CoralHydro2k間に4,068組の候補レコード対**、より厳しい位置・深度・塩分・δ18Oの閾値で**2,463組**が確認されました。これらは候補対であり、確定した一意の重複観測数ではありません。
+NASA GISSとPAGES CoralHydro2kは、それぞれ独立に編集された統合データベースであり、同じ原観測に由来する記録を含む可能性があります。**Data overlap check** ページは、これらを含む同梱データセットの組合せに加え、セッション内の1つのアップロードデータと選択した同梱参照データセットとの比較に対して、読取り専用かつ来歴を保持する候補スクリーニングを提供します。採水年・月がともに有効かつ一致することを必須とし、緯度、経度、深度、塩分、δ18Oを利用者に見える閾値で評価します。緯度と経度は、判定根拠を確認できるよう別々に比較します。
 
-日本周辺統合にもNASA GISSとの厳しい条件での候補対が**139組**あり、419行中131行を含みます。主に`Yamamoto et al. (2001)` / `PI=KAWAI`とラベル付けされた記録であり、重複として扱う前に出典単位での確認が必要です。v1.3.4では元workbookの記録を削除しません。今後のリリースで、監査可能な候補一覧、最終的な判定基準、および確認済み重複だけを統合データセットの統計・図版作成から任意に除外する機能を追加します。
+結果は、重複しない **Strong** と **Review** の候補群に分けて示されます。Strong候補は厳しい全閾値を満たします。現在の暫定既定値は、緯度≤0.1°、経度≤0.1°、深度≤5 m、塩分差≤0.1、δ18O差≤0.1‰です。Review候補は、より広い暫定既定値（順に≤0.2°、≤0.2°、≤10 m、≤0.2、≤0.2‰）内にある一方、厳しい条件では一部の項目が異なるものです。監査出力では、座標・深度、塩分、δ18O、または複数項目のどれが異なるかを記録します。これらは調整できる初期スクリーニング基準であり、普遍的な測定誤差閾値ではありません。候補は確定した重複ではありません。丸め、転記、出典データの改訂版、分析値の正規化、あるいは近接した別試料によって類似記録となる場合があります。
 
-このように、候補抽出、判定基準の文書化、解析時だけの任意の抑制、来歴の保持を組み合わせる枠組みは、今後さらに全球参照データセットを統合する際にも利用できる基盤となることを目指します。ただし、これは出典単位での確認を置き換えるものでも、すべての候補を重複と断定するものでもありません。
+このスクリーニングは元workbookを変更せず、記録を削除しません。監査用CSVのダウンロードと出典行の左右比較を提供し、出典単位の確認を支援します。共通のデータフィルタリング・サイドバーは既定では全行を保持しますが、同梱データに限り二つの可逆的な表示スクリーンを選べます。推奨する**一対一・丸め整合候補**では、選択時だけ計算し、一対一対応した候補対ごとに片側一行を非表示にします。来歴・分析メタデータがより多い行を残し、同点時には文書化した一定の優先順を使います。より広い**Strong候補**モードは一対多候補を含むため、感度確認用であり、重複の確定処理として解釈してはいけません。アップロードした利用者データを自動的に非表示にはしません。二つの独立したアップロードデータ同士の比較は、現時点では提供しません。
 
-採水年・月がともに有効かつ一致し、水平距離≤15 km、塩分差≤0.1、δ18O差≤0.1‰とした時間条件付きの確認では、深度差≤1 mでNASA--Coralに1,730組（≤3 mで1,764組）、日本周辺--NASAに両閾値とも55組の候補対がありました。出典ごとに深度の記録精度が異なるため、より広い深度許容幅は確認用の設定であり、自動削除の基準にはしません。深度閾値別の詳細表は来歴一覧に記録します。
+明示的な判定基準、候補区分、確認可能な根拠、来歴の保持、可逆的な表示による感度確認を組み合わせるこの枠組みは、全球参照データセットを統合する際に生じる品質管理上の課題に対応するためのものです。すべての候補を重複と断定するものではなく、透明な複数データセット統合のための再利用可能な基盤を目指します。
 
 ---
 
@@ -410,12 +419,12 @@ AIツールはあくまで支援ツールであり、著者・共同開発者と
 本プロジェクトで公開する内容についての責任は、すべて著者が負います。この
 方針の詳細は `docs/development_notes_Japanese.md` を参照してください。
 
-## 公開デモ
+## Live Demo
 
-安定版デモ：
+Primary stable demo:
 https://envgeo-seawater-map.streamlit.app
 
-実験的更新を含むデモ：
+Stable demo with experimental updates:
 https://envgeo-seawater-pre.streamlit.app
 
 ---
@@ -459,7 +468,7 @@ EnvGeo-Seawater では、全球スケールの分布から詳細な対話的解�
 
 統合データセットに基づく全球スケールの海水 δ18O 分布です。コンター補間により、海盆規模の大きな分布パターンを確認できます。
 
-![Global map](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/contour_map.png)
+![Global map](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/contour_map.png)
 
 ---
 
@@ -467,7 +476,7 @@ EnvGeo-Seawater では、全球スケールの分布から詳細な対話的解�
 
 近似的な σ0 参照等値線（実用塩分 ≈ 絶対塩分；現場水温 ≈ 保存温度）を重ねた T-S 図です。水塊の識別や、同位体と水文構造の関係を調べるために利用できます。
 
-![TS diagram](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/ts_diagram.png)
+![TS diagram](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/ts_diagram.png)
 
 ---
 
@@ -475,7 +484,7 @@ EnvGeo-Seawater では、全球スケールの分布から詳細な対話的解�
 
 経度、緯度、水深、δ18O などの変数を組み合わせた多次元可視化です。空間勾配と鉛直構造を同時に探索できます。
 
-![4D](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/4d_d18O.png)
+![4D](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/4d_d18O.png)
 
 ---
 
@@ -483,8 +492,8 @@ EnvGeo-Seawater では、全球スケールの分布から詳細な対話的解�
 
 T-S 空間と地理的位置を連動させた可視化です。T-S図で選択したデータ群に対応する採水地点を地図上で確認できます。
 
-![](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/selection_map.png)
-![Highlight the corresponding sampling locations on the map.](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/selection_ts.png)
+![](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/selection_map.png)
+![Highlight the corresponding sampling locations on the map.](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/selection_ts.png)
 
 ---
 

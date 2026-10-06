@@ -10,6 +10,7 @@ the future bilingual static documentation website.
 
 - [Overview](00_overview.md)
 - [Data Filtering](01_data_filtering.md)
+- [Data Overlap Check](06_data_overlap_check.md)
 - [User Data Check & Quick Visualizer](05_user_data_check_quick_visualizer.md)
 - [Interactive 2Dplus Visualizer](03_2dplus_visualizer.md)
 - [Interactive 3D/4D Visualizer](04_3d_4d_visualizer.md)
@@ -26,8 +27,9 @@ the future bilingual static documentation website.
 exploratory workflow. It receives only essential compatibility maintenance and
 has no separate operational manual.
 
-Page 90 development material is maintained outside the stable-release clone
-because it is not part of the supported public interface.
+The [Integrated Visualizer development record](90_integrated_visualizer.md)
+is retained for historical context. Page 90 is not part of the stable release
+or its user-facing documentation website.
 
 ## Suggested reading order
 

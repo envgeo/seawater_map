@@ -64,7 +64,8 @@ def test_pages_directory_contains_only_stable_or_explicit_beta_pages():
         "34_T-S_diagram.py",
         "35_Custom_Parameter_Plot.py",
         "37_Depth_Profile.py",
-        "05_User_Data_Check_Quick_Visualizer.py",
+        "05_[Utils]_User_Data_Check_Quick_Visualizer.py",
+        "06_[Utils]_Data_Overlap_Check.py",
         "80_Correlation_Overview.py",
         "53_Vertical_Section_Visualizer.py",
     }

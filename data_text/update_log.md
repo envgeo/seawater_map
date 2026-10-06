@@ -2,6 +2,50 @@
 
 Detailed development log for recent EnvGeo-Seawater updates.
 
+## Unreleased — Overlap-audit refinement and user documentation (2026-10-06)
+
+- Grouped the two supporting pages in the Streamlit sidebar as **[Utils]**:
+  User Data Check & Quick Visualizer and Data Overlap Check. Their page titles
+  and functions are unchanged.
+- Added a bilingual **Data Overlap Check** manual and documented the shared
+  source-reference filter. The audit page retains original source workbooks
+  and never removes observations.
+- Added an explicit provisional subset of Strong candidates: all compared
+  values must be compatible with decimal precision inferred from imported
+  numeric values, and a deterministic one-to-one pairing prevents a source
+  row from being linked to multiple records in the same year-month group.
+  This exported list is for source review; it is not a confirmed-duplicate or
+  exclusion list.
+- Added an opt-in, reversible duplicate-display screen to the common sidebar.
+  It calculates only when selected, retains all records by default, and can
+  hide either the one-to-one rounding-compatible subset (recommended) or the
+  broader Strong screen for sensitivity checks. It never edits bundled
+  workbooks, source values, or session-only uploaded data.
+- Documented the current adjustable provisional defaults: Strong requires
+  latitude/longitude ≤0.1°, depth ≤5 m, salinity ≤0.1, and δ18O ≤0.1‰;
+  Review uses ≤0.2°, ≤10 m, ≤0.2, and ≤0.2‰. These are screening criteria,
+  not universal measurement-error thresholds.
+- Recorded a post-stabilization plan to split the growing shared utility
+  module by responsibility without changing public application behavior.
+
+## Unreleased — CoralHydro2k citation-helper update (2026-10-06)
+
+- Completed the project-added compact `reference` field for all 18,598
+  CoralHydro2k records. The 3,258 previously blank labels were filled only
+  from retained `Dataset citation` metadata using seven reviewed source-level
+  mappings; observation values and full source/provenance fields were not
+  changed.
+- Versioned the edited source-preserving workbook as
+  `71_GLOBAL_Atwood_et_al_2026_v02.xlsx` and updated the application asset
+  path, overlap-check catalogue, bilingual provenance records, and current
+  checksum record. Public-clone synchronization and release packaging remain
+  pending.
+- Added the shared **Reference / Citation** sidebar filter above **Area /
+  Transect**. All bundled seawater rows have a source-reference label.
+  Browser-uploaded rows without an optional reference field receive the
+  display-only fallback label `No reference recorded`, so they remain usable
+  with the shared filter.
+
 ## Unreleased — Cross-dataset overlap screening (2026-10-05)
 
 - Recorded a read-only initial overlap screen for the bundled NASA GISS,
@@ -57,10 +101,11 @@ Detailed development log for recent EnvGeo-Seawater updates.
   version DOI, <https://doi.org/10.5281/zenodo.23117784>, for work using
   v1.3.4. The all-versions concept DOI is
   <https://doi.org/10.5281/zenodo.23117783>.
-- Defined the stable public scope as the 10 Seawater pages in `seawater_map`:
-  03, 04, 05, 31, 32, 34, 35, 37, 53, and historical archive page 80.
+
+### Release-preparation history
+- Defined the stable public scope as the 10 Seawater pages in `seawater_map`.
   Development Pages 90 and 91, and local diagnostic Page 99, are excluded from
-  the stable release, PyPI distribution, GitHub Release, and Zenodo archive.
+  the stable release, GitHub Release, and Zenodo archive.
 - Retained every current `dataset/*.xlsx` workbook as a cited scholarly-use
   reference collection. Provenance, source citations, and documented
   application-side transformations remain part of the release record; the
@@ -77,7 +122,7 @@ Detailed development log for recent EnvGeo-Seawater updates.
   detailed guides from the Manual and Japanese tabs while retaining its short
   in-app guide.
 
-### Release-preparation history
+### Historical preparation notes
 
 - Home content: clarified the stable public scope, browser-upload boundary,
   citation guidance, and the distinction between the short Home guide and the

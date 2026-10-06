@@ -2,11 +2,11 @@
 
 EnvGeo-Seawater is an interactive platform for exploring seawater isotope and hydrographic data.
 
-[日本語版 README](https://github.com/envgeo/seawater_map/blob/main/README_Japanese.md)
+[日本語版 README](https://github.com/envgeo/envgeo-seawater/blob/main/README_Japanese.md)
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://envgeo.h.kyoto-u.ac.jp/sw_jpn/)
 [![Python](https://img.shields.io/badge/python-3.10--3.13%20tested-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/envgeo/seawater_map/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/envgeo/envgeo-seawater/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/626690773.svg)](https://doi.org/10.5281/zenodo.23117783)
 
 **Current stable release:** 1.3.4 (2026-10-03)
@@ -36,6 +36,7 @@ The platform is designed to support both **exploratory data analysis** and **rep
 - 🧭 3D / 4D visualization of spatial–temporal structures  
 - 📂 Session-only browser uploads and optional persistent local `User Excel data` for comparison with reference datasets
 - 🧾 Transparent data handling (filtered / excluded samples clearly reported)  
+- 🔎 Provenance-aware overlap screening plus reversible duplicate-candidate display modes for sensitivity checks
 - 🖼️ Export of publication-quality figures  
 
 ---
@@ -44,9 +45,7 @@ The platform is designed to support both **exploratory data analysis** and **rep
 
 The Streamlit app uses `home.py` for the about, data-source, manual,
 update-log, and Japanese information tabs. The `pages/` directory contains the
-supported stable visualization tools listed below. Development-only and local
-diagnostic pages are excluded from this repository and release; see
-`docs/stable_release_publication_notes.md` for the public scope.
+main visualization tools, along with selected beta and local-development pages:
 
 - `pages/03_[Interactive]_2Dplus_Visualizer.py`
   Interactive 2D/2.5D plots for isotope-hydrographic relationships and selected sample locations.
@@ -54,8 +53,11 @@ diagnostic pages are excluded from this repository and release; see
 - `pages/04_[Interactive]_3D_4D_Visualizer.py`
   Interactive 3D/4D seawater visualizer for longitude, latitude, depth, and selected variables.
 
-- `pages/05_User_Data_Check_Quick_Visualizer.py`
+- `pages/05_[Utils]_User_Data_Check_Quick_Visualizer.py`
   User Data Check & Quick Visualizer for reference and CSV/XLSX upload data. It combines shared filtering, missing-value and quality review, 2D Map, Salinity-d18O, Temperature-Salinity, arbitrary 2D/3D/4D, geographic 3D, and filtered CSV export.
+
+- `pages/06_[Utils]_Data_Overlap_Check.py`
+  Read-only cross-dataset overlap screening for bundled reference datasets and one session-only uploaded table. It separates Strong and Review candidates, exports matching evidence, and supports optional reversible display screening while preserving all source records.
 
 - `pages/31_Salinity-d18O_Relationship.py`  
   Salinity-δ18O relationship plots with optional regression lines.
@@ -77,6 +79,12 @@ diagnostic pages are excluded from this repository and release; see
 
 - `pages/80_Correlation_Overview.py`
 Archive display of the original hand-written exploratory workflow used during development. It is retained as a development record; no new features are planned.
+
+- `pages/90_Integrated_Visualizer_beta.py`
+  Experimental integrated visualizer. It can run the original visualization workflows inside one beta page, temporarily merge uploaded user data into those workflows, and test a shared-filter tab workflow with ocean-region map presets for future integration. The standalone uploader page remains separate because it uses its own upload-first workflow.
+
+- `pages/99_Environment_Check.py`
+  Local-development wrapper for the environment checker. It is useful for local diagnostics but is not intended for the public Streamlit deployment sidebar.
 
 The former standalone about page was merged into `home.py`.
 
@@ -169,9 +177,9 @@ The bundled datasets are public source records or project-derived workbooks
 included under the project's documented scholarly-use distribution decision.
 This does not make third-party records project-owned or assert a general
 redistribution licence beyond the source-specific records. See
-[`docs/dataset_redistribution_audit.md`](https://github.com/envgeo/seawater_map/blob/main/docs/dataset_redistribution_audit.md),
-[`docs/provenance_inventory.md`](https://github.com/envgeo/seawater_map/blob/main/docs/provenance_inventory.md), and
-[`docs/THIRD_PARTY_NOTICES.md`](https://github.com/envgeo/seawater_map/blob/main/docs/THIRD_PARTY_NOTICES.md).
+[`docs/dataset_redistribution_audit.md`](https://github.com/envgeo/envgeo-seawater/blob/main/docs/dataset_redistribution_audit.md),
+[`docs/provenance_inventory.md`](https://github.com/envgeo/envgeo-seawater/blob/main/docs/provenance_inventory.md), and
+[`docs/THIRD_PARTY_NOTICES.md`](https://github.com/envgeo/envgeo-seawater/blob/main/docs/THIRD_PARTY_NOTICES.md).
 
 - Provided in a standardized format for immediate use
 
@@ -180,33 +188,46 @@ Unpublished or restricted datasets are **not included**.
 ### Cross-dataset overlap screening
 
 NASA GISS and PAGES CoralHydro2k are independently curated compilations and
-can include observations inherited from the same original source. A read-only
-initial screen on 2026-10-05 identified **4,068 NASA GISS--CoralHydro2k
-candidate record pairs** at a review threshold; **2,463 pairs** met a stricter
-spatial, depth, salinity, and δ18O screen. These are candidate pairs, not
-confirmed unique duplicate observations.
+can include observations inherited from the same original source. The **Data
+overlap check** page provides a read-only, provenance-aware screen for these
+and other bundled dataset pairs, as well as one session-only uploaded table
+against a selected bundled reference dataset. It requires matching valid
+sampling year and month, then evaluates latitude, longitude, depth, salinity,
+and δ18O against user-visible thresholds. Latitude and longitude are assessed
+separately so that the matching rationale remains inspectable.
 
-The Around Japan collection also has **139 strict candidate pairs** with NASA
-GISS, covering 131 of its 419 rows. These records are principally labelled
-`Yamamoto et al. (2001)` / `PI=KAWAI`; they require source-level confirmation
-before any record is treated as a duplicate. No source workbook records are
-removed in v1.3.4. A future release will publish an auditable candidate table,
-document the final criteria, and provide an optional exclusion for only
-review-confirmed overlaps in combined-dataset statistics and figures.
+Results are reported as disjoint **Strong** and **Review** candidate classes.
+Strong candidates meet all strict thresholds: the current provisional defaults
+are ≤0.1° latitude, ≤0.1° longitude, ≤5 m depth, ≤0.1 salinity, and ≤0.1‰
+δ18O difference. Review candidates meet broader provisional defaults (≤0.2°,
+≤0.2°, ≤10 m, ≤0.2, and ≤0.2‰, respectively) but differ on one or more
+strict fields; their audit output identifies whether the difference is in
+coordinates/depth, salinity, δ18O, or multiple fields. These are adjustable
+screening criteria, not universal measurement-error thresholds. A candidate is
+not a confirmed duplicate: rounding, transcription, revised source versions,
+analytical normalization, or genuinely nearby samples can produce similar
+records.
 
-The resulting source-preserving audit pattern—candidate identification,
-documented criteria, optional analytical suppression, and retained
-provenance—is intended to provide a reusable foundation when additional global
-reference datasets are integrated. It does not replace source-level review or
-claim that every candidate is a duplicate.
+The screen never changes source workbooks or removes records. It produces
+downloadable audit tables and side-by-side source-row inspection to support
+source-level confirmation. The common data-filter sidebar retains all rows by
+default, but offers two optional and reversible bundled-data display screens:
+the recommended **one-to-one rounding-compatible** subset, and a broader
+**Strong** screen for sensitivity checks. The recommended mode calculates only
+after it is selected, hides one row per deterministic one-to-one candidate
+pair, and retains the row with more populated provenance/analytical metadata
+(with a documented tie-breaker). The broader Strong mode can include
+one-to-many candidates and must not be interpreted as confirmed
+de-duplication. Uploaded user data are not automatically suppressed;
+comparisons between two independently uploaded tables are not currently
+provided.
 
-A time-aware screen using a matching valid year and month, horizontal distance
-≤15 km, salinity difference ≤0.1, and δ18O difference ≤0.1‰ identifies 1,730
-NASA--Coral candidate pairs at a ≤1 m depth difference (1,764 at ≤3 m), and
-55 Around Japan--NASA pairs at either threshold. Depth recording precision
-varies across sources; broader depth tolerances are therefore review settings,
-not automatic deletion criteria. The detailed threshold table is maintained in
-the provenance inventory.
+This source-preserving workflow—explicit criteria, candidate classes,
+inspectable evidence, retained provenance, and reversible display
+sensitivity checks—addresses a common quality-assurance problem when global
+reference datasets are combined. It is intended as a reusable foundation for
+transparent multi-dataset integration rather than a claim that every candidate
+is a duplicate.
 
 ---
 
@@ -552,7 +573,7 @@ EnvGeo-Seawater enables multi-scale exploration of seawater isotope and hydrogra
 Spatial distribution of seawater δ18O at the global scale, based on integrated datasets (approximately 50,000 records).  
 Contour interpolation highlights large-scale oceanographic patterns and basin-scale variability.
 
-![Global map](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/contour_map.png)
+![Global map](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/contour_map.png)
 
 ---
 
@@ -561,7 +582,7 @@ Contour interpolation highlights large-scale oceanographic patterns and basin-sc
 Temperature–salinity (T–S) relationships with overlaid approximate σ0 reference contours (Practical Salinity ≈ Absolute Salinity; in-situ temperature ≈ Conservative Temperature).
 This visualization supports identification of water masses and examination of isotope–hydrography relationships.
 
-![TS diagram](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/ts_diagram.png)
+![TS diagram](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/ts_diagram.png)
 
 ---
 
@@ -570,7 +591,7 @@ This visualization supports identification of water masses and examination of is
 Multi-dimensional visualization of seawater isotope data, incorporating spatial coordinates and depth.  
 This allows exploration of vertical structure and spatial gradients simultaneously.
 
-![4D](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/4d_d18O.png)
+![4D](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/4d_d18O.png)
 
 ---
 
@@ -580,8 +601,8 @@ Linked visualization between T–S space and geographic location.
 Selected subsets in the T–S diagram are dynamically highlighted on the map, enabling intuitive interpretation of water mass origins.
 
 
-![](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/selection_map.png)
-![Highlight the corresponding sampling locations on the map.](https://raw.githubusercontent.com/envgeo/seawater_map/main/images/selection_ts.png)
+![](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/selection_map.png)
+![Highlight the corresponding sampling locations on the map.](https://raw.githubusercontent.com/envgeo/envgeo-seawater/main/images/selection_ts.png)
 
 
 ---
