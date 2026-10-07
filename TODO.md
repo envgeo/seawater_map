@@ -2,16 +2,10 @@
 
 Japanese version: [TODO_Japanese.md](TODO_Japanese.md)
 
-> **Historical and forward-looking development backlog.** Some items were
-> completed for the planned stable 1.3.4 release after this list was written. This file
-> is not the current release checklist. References to Page 90 apply to the
-> development/pre-release repository; Page 90 is not included in stable
-> `seawater_map`. Use `docs/release_checklist.md` and
-> `docs/stable_release_publication_notes.md` for current release decisions.
-
-This file records development notes that should not be forgotten during local
-cleanup and refactoring. Items here can be moved into README, documentation, or
-GitHub issues when they become stable enough.
+This file is a historical and forward-looking development backlog. Some items
+have been completed in 1.3.4; use the release checklist and stable publication
+notes for current release decisions. Items here can be moved into README,
+documentation, or GitHub issues when they become stable enough.
 
 As a general project policy, keep user-facing UI text, README files, manuals,
 testing guides, release notes, and major development policies available in both
@@ -311,26 +305,26 @@ JOSS note:
 
 ## High Priority
 
-### EnvGeo Data dataset scope and source presentation
+### EnvGeo Dataset scope and source presentation
 
-Keep the currently published Kodama et al. (2024) dataset distinct from
-future datasets while establishing a clear long-term data model.
+Keep the currently published **EnvGeo Dataset [ECS–Japan Sea]** collection
+distinct from future datasets while establishing a clear long-term data model.
 
-- Define `EnvGeo Data` as the top-level collection for seawater isotope and
+- Define `EnvGeo Dataset` as the top-level collection for seawater isotope and
   hydrographic datasets analyzed using harmonized procedures in the Ishimura
   Laboratory.
-- Describe the currently available Kodama et al. (2024) collection accurately:
-  extensive multi-year observations primarily from the East China Sea and the
-  Japan Sea.
+- Describe the currently available EnvGeo Dataset [ECS–Japan Sea] collection
+  accurately, retaining Kodama et al. (2024) as its primary reference and
+  source provenance.
 - When the corresponding research outputs are public, add the Pacific-side
   and broader northwestern-Pacific datasets as individually identified
   collection members. Do not expose unpublished data details, counts, or
   sampling locations beforehand.
 - Keep every member's publication, DOI, geographic scope, acquisition and
   transformation provenance, version, citation, and terms of use separate;
-  `EnvGeo Data` is an umbrella label, not a replacement for source citations.
+  `EnvGeo Dataset` is an umbrella label, not a replacement for source citations.
 - Refine the dataset selector and Source details after the data-model decision:
-  show `EnvGeo Data` separately from comparison datasets such as NASA GISS,
+  show `EnvGeo Dataset` separately from comparison datasets such as NASA GISS,
   PAGES CoralHydro2k, and other cited external sources.
 - Update the Home page, README, manuals, source details, and English/Japanese
   data documentation together. State that the harmonized collection is
@@ -355,7 +349,7 @@ default.
   that map-asset configuration is revised.
 - Before changing labels, explicitly review the distinction between the
   Japan Sea collection, Around Japan comparison data, global external data,
-  and the future EnvGeo Data umbrella. In particular, confirm that each
+  and the future EnvGeo Dataset umbrella. In particular, confirm that each
   workbook's assigned `Dataset` display label matches its intended UI group.
 - Treat this as a focused, tested data-configuration change. Do not combine it
   with new scientific transformations, provenance changes, or broad refactoring.

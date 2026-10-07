@@ -2,8 +2,9 @@
 
 [English version](release_metadata_draft.md)
 
-これはv1.3.4のGitHub ReleaseとZenodo archiveについて確定したメタデータ記録である。immutableな
-release archiveはtag付きcommitであり、この文書はその後に加えた公開文書の記録である。
+これは最終GitHub ReleaseとZenodo recordへ転記するための下書きである。release recordそのものではない。
+tag日、clean buildしたwheelのchecksum、Zenodoのversion DOIは、review済みstable commitをtagしてarchiveを
+作成した後にだけ確定する。
 
 ## 基本メタデータ
 
@@ -27,7 +28,7 @@ release archiveはtag付きcommitであり、この文書はその後に加え�
 
 EnvGeo-Seawaterは、海水安定同位体と水文データを探索するためのPython／Streamlitによる
 インタラクティブなplatformである。NASA GISSおよびPAGES CoralHydro2kの比較用dataset、地域参照data、
-Kodama et al. (2024)の日本周辺core collectionを含む、約50,000件の引用付きrecordを統合する。地図、
+EnvGeo Dataset [ECS–Japan Sea]中核コレクション（主要出典：Kodama et al. (2024)）を含む、約50,000件の引用付きrecordを統合する。地図、
 2D–4D可視化、塩分–同位体関係、T–S diagram、深度profile、鉛直section、利用者dataとのsession限定比較を
 提供する。
 
@@ -41,15 +42,12 @@ Kodama et al. (2024)の日本周辺core collectionを含む、約50,000件の引
 安定版public repositoryにはPage 03、04、05、31、32、34、35、37、53、および履歴archiveのPage 80を含める。
 開発用Page 90・91とローカル診断Page 99は、安定版Release、wheel、GitHub Release、Zenodo archiveから除外する。
 
-## Release完了記録
+## 最終確定の手順
 
-1. review済みcommitに`v1.3.4` tagを付け、GitHub Releaseを公開した。
-2. clean tagged checkoutから作成したwheelのSHA-256は
-   `ae3cf31365758b639e08d41497ac15452a8738db07f422b973b969c5eb3258f7`である。
-3. source distributionのSHA-256は
-   `8b319ac4b3176c7280be402b858fa2e2da17e3deac476ce064b7cb9baf29e61c`である。
-4. PyPIとTestPyPIからの導入をclean macOS環境で検証した。
-5. ZenodoはGitHub Releaseをrecord 23117784としてarchiveした。引用にはversion DOI、README
-   badgeにはconcept DOIを使用する。
+1. 最終commitを作り、GitHub Actions CIの結果を確認する。
+2. そのstable commitに`v1.3.4` tagを付ける。
+3. tagのclean checkoutからwheelを作り、SHA-256を記録する。
+4. 上記title・説明文を使い、tagからGitHub Releaseを作る。
+5. 対応するZenodo archiveを公開し、version DOIを`CITATION.cff`、READMEの引用文、この記録へ追記する。
 
 引用時には、EnvGeo-Seawater **および** 解析で使った各元データ提供者を引用する。

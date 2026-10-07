@@ -333,8 +333,6 @@ def test_integrated_views_skip_upload_overlays_when_required_columns_are_absent(
 
     任意項目のみのアップロードでも、90ページの各既存データ図がKeyErrorで停止しない。
     """
-    if not (ROOT / "pages" / "90_Integrated_Visualizer_beta.py").is_file():
-        pytest.skip("Page 90 is intentionally absent from the stable repository.")
     app = _run_page(
         "90_Integrated_Visualizer_beta.py",
         {"NovelParameter": [1.0, 2.0], "SampleID": ["A", "B"]},
@@ -740,7 +738,7 @@ def _base_row():
 
 
 def _run_page_uploaded_only(page_name, data, timeout=60):
-    """Run a page with uploaded data only (Kodama reference data excluded)."""
+    """Run a page with uploaded data only (EnvGeo reference data excluded)."""
     app = _run_page(page_name, data)
     try:
         next(
