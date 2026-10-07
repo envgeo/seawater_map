@@ -333,6 +333,10 @@ def test_integrated_views_skip_upload_overlays_when_required_columns_are_absent(
 
     任意項目のみのアップロードでも、90ページの各既存データ図がKeyErrorで停止しない。
     """
+    page_path = ROOT / "pages" / "90_Integrated_Visualizer_beta.py"
+    if not page_path.is_file():
+        pytest.skip("Integrated Visualizer beta is intentionally excluded from the stable release.")
+
     app = _run_page(
         "90_Integrated_Visualizer_beta.py",
         {"NovelParameter": [1.0, 2.0], "SampleID": ["A", "B"]},
