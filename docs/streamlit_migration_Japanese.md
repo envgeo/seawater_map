@@ -2,7 +2,7 @@
 
 この文書には、検証済みのStreamlit 1.42環境から移行する際に行った過去のローカル互換性作業を記録します。
 現在の安定版の対応範囲を示すものではありません。現行のRelease境界は`release_checklist_Japanese.md`、
-`testing_Japanese.md`、および`stable_release_publication_notes_Japanese.md`を参照してください。
+`testing_Japanese.md`、および安定版repositoryの`stable_release_publication_notes_Japanese.md`を参照してください。
 
 v1.3.4はPython >=3.10を宣言し、CIでは最終wheelをPython 3.10と3.12で検証しています。検証済みの
 アプリ基準は、Python 3.10／Streamlit 1.42／Plotly 5.24、およびPython 3.12／Streamlit 1.63／Plotly 5.24です。
@@ -16,6 +16,8 @@ Apple Silicon MacStudioで新しいConda環境を作成し、公開済みv1.3.4�
 Python 3.13では固定している`numpy==1.26.4`と`pyproj==3.6.1`がソースからビルドされた。
 pip 26.2.1と、`--no-cache-dir`を指定したpip 24.3.1の両方で成功したが、数分かかる場合があり、
 ネイティブのビルド環境に依存する。
+
+2026-10-10には、Python 3.13の導入がApple Silicon M1 MacBook Airで失敗した。NumPyのビルド前にネイティブCコンパイラが見つからなかったためである。これはM1固有の失敗例ではない。pipが対応するwheelを取得できず、ネイティブのビルド環境もない場合には、どのプラットフォームでも同じ結果になり得る。したがってPython 3.13は、すべての環境で`pip install`だけによる導入を保証するものではなく、**条件付きサポート**とする。ローカル導入はPython 3.12を推奨し、Python 3.13を使用する場合にはmacOSではAppleのCommand Line Tools、他の環境では同等のネイティブビルド環境が必要である。
 
 Python 3.9は`Requires-Python >=3.10`により意図して拒否される。Python 3.14はv1.3.4で固定した
 依存関係では未対応であり、観察した導入試行はSciPyのビルド段階で停止した。ここでの記録はpackageの
