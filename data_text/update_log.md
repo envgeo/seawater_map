@@ -2,6 +2,14 @@
 
 Detailed development log for recent EnvGeo-Seawater updates.
 
+## Unreleased — Defer static map-projection selector (2026-10-13)
+
+- Withdrew the experimental static Cartopy projection selector from the Mapping
+  page after Streamlit Community Cloud became unstable during repeated global
+  rendering. The established Plate Carrée Mapping workflow remains unchanged.
+  Projection choices will be reconsidered after a separate Cloud-safe design
+  and reproducible resource testing are available.
+
 ## Unreleased — Workflow positioning and local-use clarification (2026-10-10)
 
 - Clarified the project positioning in the bilingual README, overview manuals,
