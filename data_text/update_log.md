@@ -4,6 +4,13 @@ Detailed development log for recent EnvGeo-Seawater updates.
 
 ## Unreleased — Custom Parameter Plot location map (2026-10-15)
 
+- Removed internal overlap-provenance identifiers from Custom Parameter Plot
+  and User Data Check & Quick Visualizer axes, preview tables, and
+  user-facing downloads. They remain available only to the reversible
+  overlap-candidate display screen.
+- Restored mouse-wheel zoom and the Plotly navigation toolbar for the
+  development-only Integrated Visualizer beta shared-filter map. This change
+  is limited to the development page and is not part of the stable release.
 - Fixed the upload-only Sampling Location Map so each uploaded row is drawn
   once with the configured foreground style. When the uploaded overlay shares
   the selected colour parameter, it owns the colourbar if no reference trace
