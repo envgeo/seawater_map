@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "envgeo-seawater"
-version = "1.3.4"
+version = "1.3.5"
 description = "Interactive seawater isotope and hydrographic data visualization"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -60,9 +60,9 @@ envgeo_seawater = [
 envgeo_seawater = [
   "**/.DS_Store",
   "**/__pycache__/*",
-  "pages/99_Environment_Check.py",
   "pages/90_Integrated_Visualizer_beta.py",
   "pages/91_EnvGeo_Earthquake.py",
+  "pages/99_Environment_Check.py",
   "bathymetry/*.py",
   "Claude outputs/**",
   "docs/wheel_proof_report*.md",

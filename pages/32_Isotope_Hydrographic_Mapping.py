@@ -12,7 +12,7 @@ Last reviewed: 2026-09-30
 # =============================================================================
 # Page configuration / ページ設定
 # =============================================================================
-version = "1.3.4"
+version = "1.3.5"
 fig_title = "envgeo-seawater-database"
 
 import io
@@ -380,7 +380,7 @@ def main():
             map_lon_default = (120, 145)
             map_lat_default = (20, 45)
             lat_slider_min, lat_slider_max = 0, 70
-    
+
         elif ref_data == data_source_AROUND_JAPAN:
             # 地図の描画範囲（日本周辺）
             map_lon_default = (120, 180) if lon_center == 0 else (120, 240)
@@ -644,7 +644,7 @@ def main():
         lon_slider_min,
         lon_slider_max,
     )
-    
+
     # =============================================================================
     # Scatter or contour map / 散布図またはコンター地図
     # =============================================================================
