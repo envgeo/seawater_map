@@ -1,15 +1,12 @@
 # EnvGeo-Seawater 開発履歴メモ
 
-透明性のために残す技術的な履歴です。1.3.3の項目は当時の開発状態を記録したものであり、
-ユーザーマニュアル、現在のRelease主張、現在のRelease checklistではありません。Page 90への
-言及は開発／公開前repositoryについての記録であり、Page 90は安定版`seawater_map` Releaseには
-意図して含めません。現在の安定版範囲は`stable_release_publication_notes_Japanese.md`を参照してください。
+開発履歴のメモであり、ユーザーマニュアルや現在の公開リリースの主張ではありません。1.3.3の記録は保持し、現在の判断にはRelease checklist、更新ログ、版管理された現行文書を参照します。
 
 ## 現在の区切り
 
-- 1.3.4は現在のリリース候補であり、最終wheel確認はCI上のPython 3.10と3.12で通過している。
+- 1.3.5は現在のリリース候補であり、最終wheel確認はCI上のPython 3.10と3.12で通過している。
 - Plotly 5.24を検証済み描画基準として維持する。文書化した試験基準は、Python 3.10ではStreamlit 1.42、Python 3.12ではStreamlit 1.63である。
-- ページ05 **User Data Check & Quick Visualizer** は、公開するアップロード起点の品質確認・簡易可視化ページ。ページ90は開発repositoryにのみ残し、この安定版アプリ、公開ドキュメントサイト、JOSS投稿、Zenodo archiveから除外する。
+- ページ05 **User Data Check & Quick Visualizer** は、公開するアップロード起点の品質確認・簡易可視化ページ。ページ90は開発履歴として残すが、安定版アプリ、公開ドキュメントサイト、JOSS投稿、Zenodo archiveから除外する。
 
 ## AI開示 — 範囲・根拠・JOSS提出前のTODO（2026-09-22）
 
@@ -34,9 +31,8 @@ About／Japaneseタブで表示）、`README.md`、`README_Japanese.md`、
 **ツール名を明記した根拠：** 「OpenAI Codex」「Anthropic Claude Code」は、
 既にリポジトリ内で一貫して使われているツール名（例：
 `53_Vertical_Section_Visualizer.py`のヘッダー「Developed and improved
-with assistance from Codex」、`update_log.md`内の「Claude review」の記述であり、
-推測ではなく確認済みの事実として
-扱った。
+with assistance from Codex」、`update_log.md`内の「Claude review」の記述）であり、
+推測ではなく確認済みの事実として扱った。
 
 **モデル名・バージョンについて、確認できたことと確認できなかったこと：**
 公開repositoryには、セッションごとのモデル識別子が一貫して記録されていない。
@@ -58,11 +54,13 @@ AI利用の開示を著者が確認できる記録と照合し、確認できた
 
 ## ローカルユーザーの常時読み込み用表
 
-繰り返し使うローカルデータは、Git管理対象外の `local_data/user_data.xlsx`
-または `ENVGEO_LOCAL_USER_DATA_PATH` で指定する。共通ローダーはこれらの行に
+`local_data/user_data.xlsx` は、常時読み込みワークフローのために追跡するゼロ値の
+公開サンプルである。研究者自身のデータはローカル利用のためにこの表へ入力するか、
+`ENVGEO_LOCAL_USER_DATA_PATH` で別ファイルを指定する。commitまたは公開用コピーの
+同期前にはゼロ値サンプルへ戻し、研究データをcommitしない。共通ローダーはこれらの行に
 `User Excel data` というデータセット名を付け、選択した各参照データに結合する。
 ブラウザアップロードと同じ前処理・品質検査を適用する。ブラウザの
-`Uploaded data` は別のセッション限定データとし、同じローカル表の二重読み込みを防ぐ。
+`Uploaded data` は別のセッション限定データとし、同じ表の二重読み込みを防ぐ。
 
 ## v1.3.3後の科学的妥当性・公開準備レビュー（2026-09-23記録）
 

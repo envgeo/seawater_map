@@ -1,19 +1,25 @@
-# EnvGeo-Seawater Release Checklist
+# EnvGeo-Seawater Release Checklist（日本語版）
 
 [English version](release_checklist.md)
 
-テストサイトの更新、GitHub更新、Release作成、Zenodoへのversion archiveの前に、このchecklistを使います。
+テストサイトの公開、GitHub更新、Release作成、Zenodoでのversion archiveの前に、この確認項目を使います。
 
-`seawater_map`は正式な安定版repositoryです。このchecklistは、tagを付けるGitHub Release、Zenodo archive、
-JOSS向けsoftware recordに用います。
+この正規作業コピーのchecklistは、開発・公開前確認に用います。正式なGitHub Release、Zenodo archive、
+JOSS向けsoftware recordは、この作業コピーにtagを付けるのではなく、安定版`seawater_map` repositoryから作成します。
 
 ## 1. ローカル環境
 
-### 安定版1.3.4（2026-10-03）
+### v1.3.5 リリース候補（2026-10-16）
 
-- [x] 最終試験にはPython 3.12／Streamlit 1.63／Plotly 5.24環境を使用した。
-- [x] 安定版CI run #5（2026-10-03）はPython 3.10と3.12で成功した。test、wheel作成、
-  隔離wheel導入、Python版ごとのwheel artifact保存を完了した。
+- [x] 公開ページ範囲、v1.3.5のメタデータ、英日README・manualの表現、来歴記録、release draftを確認した。
+- [x] review済み候補について、Python 3.10 / 3.12のCI、repository-health確認、wheel buildが通過した。
+- [ ] review済みの`seawater_map` commitから、tag `v1.3.5` でGitHub Releaseを作成する。
+- [ ] 対応するZenodo archiveを確認し、固定版DOIをcitationとpaperのファイルへ記録する。
+
+### Release candidate 1.3.4（2026-09-28）
+
+- [x] 最終試験にPython 3.12／Streamlit 1.63／Plotly 5.24環境を使用した。
+- [x] `python -m pytest -q test`完了：**302 passed、1 warning**。warningはclass-scoped fixtureに関するPytestの将来非推奨通知であり、アプリ試験の失敗ではない。保守上の対応項目として残す。
 
 ### 既に行った手動smoke確認（release commit後に再確認する）
 
@@ -27,131 +33,133 @@ JOSS向けsoftware recordに用います。
 - [x] アプリケーションerror画面は出なかった。ローカル絶対pathとcredentialらしき値については、
       別途、公開fileとwheelの静的監査を行った。
 
-- [ ] 意図したPython環境が有効であることを確認する。
-- [ ] 検証済み基準の一つを使っていることを確認する：Python 3.10.15／Streamlit 1.42、または
-  Python 3.12.14／Streamlit 1.63（どちらもPlotly 5.24）。
-- [ ] `requirements.txt`が検証した環境と一致することを確認する。
-- [ ] 必要に応じてローカル環境診断ツールを起動する。
+- [ ] 想定したPython環境が有効であることを確認する。
+- [ ] 検証済み基準のいずれかが有効であることを確認する：Python 3.10.15／Streamlit 1.42、またはPython 3.12.14／Streamlit 1.63（いずれもPlotly 5.24）。
+- [ ] `requirements.txt`が検証環境と一致することを確認する。
+- [ ] 必要に応じてローカル環境チェッカーを実行する。
 
 ```bash
 streamlit run tools/env_check_streamlit.py
 ```
 
-- [ ] Release記録に必要な場合、環境reportをCSVまたはPDFとして保存する。
+- [ ] Release記録に必要なら、環境レポートをCSVまたはPDFで保存する。
 
 ## 2. 基本起動
 
-- [ ] アプリをローカルで起動する。
+- [ ] ローカルでアプリを起動する。
 
 ```bash
 streamlit run home.py
 ```
 
 - [ ] `home.py`が正常に開くことを確認する。
-- [ ] アプリに`1.3.4 (2026-09-28)`と表示されることを確認する。
-- [ ] HomeのMain、About、Data Sources、Manual、Update History、日本語情報のtabが読み込まれることを確認する。
+- [ ] アプリ版が`1.3.4 (2026-09-28)`と表示されることを確認する。
+- [ ] HomeのMain、About、Data Sources、Manual、Update History、および該当する日本語情報が開くことを確認する。
 
-## 3. Sidebarとfilter
+## 3. サイドバーとフィルター
 
-- [ ] sidebarに`Data filtering`が表示されることを確認する。
-- [ ] `Apply settings`をクリックする案内が見えることを確認する。
-- [ ] `Area filter preset`が初期Longitude／Latitude範囲を変更することを確認する。
-- [ ] area preset選択後もLongitude／Latitude sliderを手動調整できることを確認する。
-- [ ] filter変更後に`Apply settings`で図が更新されることを確認する。
-- [ ] `Details and statistics of filtered data`が開き、CSVを正しく出力できることを確認する。
+- [ ] サイドバーに`Data filtering`が表示される。
+- [ ] `Apply settings`を押す説明が表示される。
+- [ ] `Area filter preset`でLongitude／Latitudeの初期範囲が変わる。
+- [ ] area preset選択後もLongitude／Latitude sliderを手動調整できる。
+- [ ] フィルター変更後に`Apply settings`で図が更新される。
+- [ ] `Details and statistics of filtered data`が開き、CSV exportできる。
 
 ## 4. 主な可視化ページ
 
-各ページを開き、簡単な視覚確認を行います。
+各ページを開き、簡単な視覚確認を行う。
 
 - [ ] `03_[Interactive]_2Dplus_Visualizer.py`
 - [ ] `04_[Interactive]_3D_4D_Visualizer.py`
+- [ ] `05_[Utils]_User_Data_Check_Quick_Visualizer.py`
+- [ ] `06_[Utils]_Data_Overlap_Check.py` — 監査を実行し、Strong／Review結果と3種類の監査CSV downloadを確認する。
 - [ ] `31_Salinity-d18O_Relationship.py`
 - [ ] `32_Isotope_Hydrographic_Mapping.py`
 - [ ] `34_T-S_diagram.py`
 - [ ] `35_Custom_Parameter_Plot.py`
 - [ ] `37_Depth_Profile.py`
-- [ ] `05_User_Data_Check_Quick_Visualizer.py`
 - [ ] `53_Vertical_Section_Visualizer.py`
 - [ ] `80_Correlation_Overview.py`
 
-各ページについて、次を確認します。
+各ページで以下を確認する。
 
-- [ ] data source選択が動く。
-- [ ] `Apply settings`後にfilterが動く。
-- [ ] 主な図がerrorなく描画される。
-- [ ] caption、help button、labelが理解できる。
+- [ ] データソースを選択できる。
+- [ ] `Apply settings`後にフィルターが反映される。
+- [ ] 主な図がエラーなく描画される。
+- [ ] caption、help、labelが理解できる。
 - [ ] 該当する場合、`Sampling Location Map`が正しく描画される。
-- [ ] 該当する場合、`Map controls`と`Map style`が動く。
-- [ ] 明らかな文字重なりやlayout崩れがない。
+- [ ] 該当する場合、`Map controls`と`Map style`が動作する。
+- [ ] 明らかな文字重なりやレイアウト崩れがない。
 
 ## 5. 図の出力
 
-- [ ] 2D Matplotlib図の下に`Download image`が表示されることを確認する。
-- [ ] ダウンロードしたPNGが正しく開くことを確認する。
-- [ ] 特にDepth Profileで、図titleがダウンロード画像内に収まることを確認する。
-- [ ] file nameが適切で危険な文字を含まないことを確認する。
-- [ ] このReleaseで、Plotly図・地図をPlotly modebarのcamera／export機能に委ねるかを判断する。
+- [ ] 2D Matplotlib図の下に`Download image`が表示される。
+- [ ] ダウンロードしたPNGが正常に開く。
+- [ ] 特にDepth Profileで、図タイトルがダウンロード画像内に収まる。
+- [ ] ファイル名が妥当で、危険な文字を含まない。
+- [ ] 今回のReleaseで、Plotly図・地図の画像出力をPlotly modebarのcamera/exportに任せるか判断する。
 
-## 6. ユーザーデータupload
+## 6. ユーザーデータのアップロード
 
-- [ ] 同梱するゼロ値sample `local_data/user_data.xlsx`が`User Excel data`と表示され、
-  browser uploadのsession stateに入らず各参照sourceへ1回だけ加わることを確認する。
-- [ ] 公開sampleに研究者の測定値が含まれず、研究者自身のdataは外部pathで設定することを確認する。
-- [ ] User Data Check & Quick Visualizerのupload workflowが動くことを確認する。
-- [ ] upload dataが参照dataと視覚的に区別できることを確認する。
-- [ ] upload dataがsession-onlyで、diskまたはserver storageに保存されないことを確認する。
-- [ ] 対応する場合、一般的な列aliasが標準化されることを確認する。
-- [ ] 対応する場合、upload dataのquality summaryが見えることを確認する。
-- [ ] User Data Check & Quick VisualizerがCSV/XLSX uploadを受け付け、session-onlyで扱うことを確認する。
+- [ ] 同梱するゼロ値サンプル`local_data/user_data.xlsx`が`User Excel data`と表示され、browser uploadのsession stateに入らず、各参照sourceへ1回だけ追加される。
+- [ ] 公開サンプルに研究者の測定値が含まれず、研究者所有データは外部path経由で設定する。
+- [ ] 統合betaのupload workflowが動作する。
+- [ ] アップロードデータが参照データと視覚的に区別できる。
+- [ ] アップロードデータがsession内だけに保持され、ディスク・server storageへ保存されない。
+- [ ] 対応する一般的な列aliasが標準化される。
+- [ ] 対応するページでアップロードデータの品質summaryが見える。
+- [ ] User Data Check & Quick VisualizerがCSV/XLSX uploadを受け入れ、session内だけで扱う。
 
-## 7. ローカル専用・開発用ページ
+## 7. ローカル専用・開発ページ
 
-- [x] `pages/99_Environment_Check.py`を公開repositoryとdeploymentから除外し、ローカル開発作業copyだけに残す。
-- [x] `pages/05_User_Data_Check_Quick_Visualizer.py`は、upload-firstのquality確認と2D/3D/4D探索のための公開User Data Check & Quick Visualizerである。
-- [ ] beta pageを公開表示するか、隠すか、実験的と明記するかを判断する。
-- [ ] private note、制限data、未公表datasetが公開deployment fileに含まれないことを確認する。
+- [x] `pages/99_Environment_Check.py`を公開repository・deploymentから除外し、ローカル開発作業コピーにだけ残す。
+- [x] `pages/05_[Utils]_User_Data_Check_Quick_Visualizer.py`は、アップロード起点の品質確認と2D/3D/4D探索用の公開User Data Check & Quick Visualizerである。
+- [ ] 開発／テストdeploymentを確認する場合は、`pages/90_Integrated_Visualizer_beta.py`が
+      実験的機能として明確に表示されることを別途確認する。これは安定版の受入項目ではなく、
+      安定版`seawater_map`アプリケーションと利用者向けドキュメントwebsiteから除外する。
+- [ ] betaページを公開、非表示、または実験的機能として文書化するか判断する。
+- [ ] private note、制限データ、未公開データセットが公開deployment filesに含まれないことを確認する。
 
 ## 8. テスト
 
-- [ ] core test suiteを実行する。
+- [ ] 基本テスト群を実行する。
 
 ```bash
 pytest -q test/test_envgeo_utils.py test/test_repository_health.py
 ```
 
-- [ ] GitHub Release準備時は、より広いtest suiteを実行する。
+- [ ] GitHub Release準備時は広いテスト群を実行する。
 
 ```bash
 pytest
 ```
 
-- [ ] skipまたはexpected failureのtestを確認する。
-- [ ] 意図したpage list変更でtestが失敗した場合は、testを更新するか理由を記録する。
+- [ ] skipまたはexpected-failing testを確認する。
+- [ ] 意図したpage list変更でtestが失敗する場合は、testを更新するか理由を記録する。
 
 ## 9. 文書
 
 - [x] `README.md`が現在の公開状態を反映することを確認した。
 - [x] `README_Japanese.md`が現在の公開状態を反映することを確認した。
-- [x] `data_text/update_log.md`に最新の未release変更があることを確認した。
-- [x] `data_text/update_log_Japanese.md`に最新の未release変更があることを確認した。
-- [x] beta、archive、local-development pageが明確に説明されることを確認した。
-- [x] 引用・data sourceの案内が理解できることを確認した。
+- [x] `data_text/update_log.md`に最新の未公開変更があることを確認した。
+- [x] `data_text/update_log_Japanese.md`に最新の未公開変更があることを確認した。
+- [x] beta、archive、ローカル開発ページが明確に説明されていることを確認した。
+- [x] 引用・データソースの案内が理解できることを確認した。
 - [x] 精査済みmanualを基に、図付きの英日静的ドキュメントwebsiteを作成した。安定版の公開範囲だけを説明し、private path、個人データ、token、内部記録を含めないことを確認した。
 - [x] GitHub Pagesでドキュメントwebsiteを公開し、公開URL、navigation、図、linkを確認した：<https://envgeo.github.io/seawater_map/>。
 - [ ] 安定版URL、release version、公開ページ範囲、ドキュメントURL、Zenodo DOIが確定した後に、研究室websiteを更新する。安定版`seawater_map`の説明と一致させ、NASA GISSとPAGES CoralHydro2kを含む引用付き約50,000件のデータ、ユーザーデータのアップロード／プロット機能を記載する。旧いversion番号、DOIの保留表現、安定版から除外したページの説明を残さない。
 
 ## 10. GitHub Release準備
 
-- [x] 安定版Releaseの対象を`seawater_map` repositoryの`main` branchとして確認した。
-- [ ] temporary file、private file、downloadしたreport、local cache fileがstageされていないことを確認する。
+- [ ] repositoryの送付先とbranchを確認する。
+- [ ] 一時ファイル、private file、ダウンロード済みreport、ローカルcacheがstageされていない。
 - [ ] commit前に変更ファイルを確認する。
-- [x] Release準備範囲を説明する明確なcommit message（`948b384`）を使用した。
-- [x] ローカル確認とCIの確認後に、review済みstable commitへ`v1.3.4` tagを付けた。
+- [ ] Release準備の範囲を表す明確なcommit messageを使う。
+- [ ] ローカル確認と公開テストdeploymentの確認が終わるまでtagを付けない。
 
-## 11. Streamlit deployment
+## 11. Streamlit Deployment
 
-- [ ] deployment repositoryに必要なfileが含まれることを確認する。
+- [ ] deployment repositoryに必要なファイルがある。
   - `home.py`
   - `envgeo_utils.py`
   - `pages/`
@@ -160,49 +168,48 @@ pytest
   - `data_text/`
   - `coastline/`
   - `requirements.txt`
-  - deployment platformが使う場合は`runtime.txt`
-- [ ] 必要な場合、除外対象のlocal-only pageが実際に除外されていることを確認する。
-- [ ] deployment appを開き、短いsmoke testを繰り返す。
+  - deployment platformが使用する場合は`runtime.txt`
+- [ ] 必要なら、除外対象のローカル専用ページが実際に除外されている。
+- [ ] deploymentしたアプリを開き、短いsmoke testを繰り返す。
   - Homeが開く。
-  - T-S pageが開く。
-  - Mapping pageが開く。
+  - T–Sページが開く。
+  - Mappingページが開く。
   - Depth Profileが開く。
-  - User Data Check & Quick Visualizerが開く。
+  - 含める場合はIntegrated Visualizer betaが開く。
 
 ## 12. Package indexでの公開（PyPI）
 
-- [x] 想定した最終distribution artifactをbuildし、`twine check`を実行した。
-- [x] TestPyPI project pageでREADMEの表示を確認した。PyPI upload前に、repository内では
+- [ ] 想定した最終distribution artifactをbuildし、`twine check`を実行する。
+- [ ] TestPyPI project pageでREADMEの表示を確認する。PyPI upload前に、repository内では
       有効でもpackage index上では切れる相対link・画像参照を、必要に応じて永続的な
       GitHubまたはGitHub Pagesの絶対URLへ置換する。TestPyPIの配布fileはimmutableなので、
       そこで見つかった相対linkの不備は、別サービスであるPyPI upload前に最終sourceで修正する。
-- [x] 想定artifactをTestPyPIへuploadし、新しいmacOS environmentでinstallした。
+- [ ] 想定artifactをTestPyPIへuploadし、新しいmacOS environmentでinstallする。
       必要なcompiled geospatial prerequisiteだけをconda-forgeから入れ、その後に
       `pip`で本packageをinstallする。
-- [x] TestPyPI installationからappを起動し、短いsmoke testを繰り返した。
-- [x] 最終tagの確認後、同じreview済みartifactをPyPIの`envgeo-seawater`として公開した。
+- [ ] TestPyPI installationからappを起動し、短いsmoke testを繰り返す。
+- [ ] 最終tagの確認後、同じreview済みartifactをPyPIの`envgeo-seawater`として公開する。
       Trusted Publishingまたは安全な手動uploadを使用し、PyPI tokenをcommitしない。
-- [x] 新しいmacOS environmentで`pip install envgeo-seawater`と起動確認を再現した。
+- [ ] 新しいmacOS environmentで`pip install envgeo-seawater`と起動確認を再現する。
 - [ ] conda-forge recipe/feedstockは有用な後続改善とする。ただしPyPI経路を確認できれば、
       v1.3.4とJOSS再投稿のblockerとはしない。
 
 ## 13. Zenodo／DOI準備
 
-- [x] GitHub Release作成前に、`seawater_map` GitHub repositoryをZenodoで有効化し、
+- [ ] GitHub Release作成前に、`seawater_map` GitHub repositoryをZenodoで有効化し、
       tag付きReleaseが自動archiveされるようにする。
-- [x] Zenodo archiveを作る前にGitHub Releaseが最終版であることを確認した。
+- [ ] Zenodo archiveを作る前にGitHub Releaseが最終版であることを確認する。
 - [ ] title、author、affiliation、license、descriptionを確認する。
-- [x] archiveしたversionがRelease tag `v1.3.4`と一致することを確認した。
-- [x] wheel SHA-256は、clean tagged checkoutから再作成したwheelの値だけを記録した。
+- [ ] archive版がRelease tagと一致する。
+- [ ] wheel SHA-256を記録する場合は、clean tagged checkoutから再作成したwheelの値だけを使う。
       CI wheel artifactは確認根拠であり、ReleaseまたはZenodoの配布fileではない。
-- [x] archive作成後に、version DOI（`10.5281/zenodo.23117784`）とconcept DOI
-      （`10.5281/zenodo.23117783`）をREADMEとcitation filesへ記録した。
+- [ ] archive作成後に、version DOIとconcept DOIをREADMEとcitation filesへ記録する。
       DOIを事前予約しない限り、このfollow-up document commitはimmutableなtag付きarchiveには含まれない。
 
-## 14. JOSS向けの後続作業
+## 14. JOSSを見据えた次作業
 
-- [ ] 再投稿前に別途`docs/joss_checklist.md`を作成する。
-- [ ] pytest coverageが表面的なものだけでなく意味を持つことを確認する。
-- [ ] reviewerに十分なexampleとユーザー文書があることを確認する。
-- [ ] clean environmentでinstallation手順を再現できることを確認する。
-- [ ] citation instructionsにEnvGeo-Seawaterと元data providerの両方を含める。
+- [ ] 再投稿前に別途`docs/joss_checklist.md`を準備する。
+- [ ] pytest coverageが形式だけでなく意味のあるものか確認する。
+- [ ] reviewerに十分な例と利用者文書があることを確認する。
+- [ ] clean environmentでinstallation instructionsを再現できることを確認する。
+- [ ] citation instructionsにEnvGeo-Seawaterと元データ提供者の両方を含める。

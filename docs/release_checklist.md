@@ -4,18 +4,31 @@ Use this checklist before uploading a test site, updating GitHub, creating a rel
 
 [日本語版](release_checklist_Japanese.md)
 
-`seawater_map` is the formal stable-release repository. Use this checklist for
-the tagged GitHub Release, Zenodo archive, and JOSS-facing software record.
+This canonical working-copy checklist supports development and pre-release
+checks. The formal GitHub Release, Zenodo archive, and JOSS-facing record must
+be made from the stable `seawater_map` repository, not by tagging this working
+copy.
 
 ## 1. Local Environment
 
-### Stable release 1.3.4 (2026-10-03)
+### Release candidate 1.3.5 (2026-10-16)
+
+- [x] Public-page scope, v1.3.5 metadata, bilingual README/manual wording,
+  provenance records, and release drafts reviewed.
+- [x] Python 3.10 and 3.12 CI, repository-health checks, and wheel build
+  passed for the reviewed candidate.
+- [ ] Create the GitHub Release from the reviewed `seawater_map` commit with
+  tag `v1.3.5`.
+- [ ] Confirm the matching Zenodo archive and record its version-specific DOI
+  in the citation and paper files.
+
+### Release candidate 1.3.4 (2026-09-28)
 
 - [x] Python 3.12 / Streamlit 1.63 / Plotly 5.24 environment used for the
   final test run.
-- [x] Stable CI run #5 (2026-10-03) completed on Python 3.10 and 3.12:
-  tests, wheel build, isolated-wheel installation, and one wheel artifact per
-  Python version all succeeded.
+- [x] `python -m pytest -q test` completed: **302 passed, 1 warning**.
+  The warning is Pytest's future deprecation notice for a class-scoped fixture;
+  it is not an application test failure and remains a maintenance follow-up.
 
 ### Earlier manual smoke evidence (repeat after the release commit)
 
@@ -70,12 +83,13 @@ Open each page and perform a light visual check.
 
 - [ ] `03_[Interactive]_2Dplus_Visualizer.py`
 - [ ] `04_[Interactive]_3D_4D_Visualizer.py`
+- [ ] `05_[Utils]_User_Data_Check_Quick_Visualizer.py`
+- [ ] `06_[Utils]_Data_Overlap_Check.py` — run the audit, inspect Strong and Review results, and verify all three audit CSV downloads.
 - [ ] `31_Salinity-d18O_Relationship.py`
 - [ ] `32_Isotope_Hydrographic_Mapping.py`
 - [ ] `34_T-S_diagram.py`
 - [ ] `35_Custom_Parameter_Plot.py`
 - [ ] `37_Depth_Profile.py`
-- [ ] `05_User_Data_Check_Quick_Visualizer.py`
 - [ ] `53_Vertical_Section_Visualizer.py`
 - [ ] `80_Correlation_Overview.py`
 
@@ -104,7 +118,7 @@ For each page:
       without entering browser-upload session state.
 - [ ] Confirm the public sample contains no researcher measurements and that
       researcher-owned data are configured through an external path.
-- [ ] Confirm the User Data Check & Quick Visualizer upload workflow works.
+- [ ] Confirm the integrated beta upload workflow still works.
 - [ ] Confirm uploaded data are visually distinguishable from reference data.
 - [ ] Confirm uploaded data remain session-only and are not saved to disk or server storage.
 - [ ] Confirm common column aliases are standardized where supported.
@@ -114,7 +128,11 @@ For each page:
 ## 7. Local-Only And Development Pages
 
 - [x] Exclude `pages/99_Environment_Check.py` from the public repository and deployment; retain it only in the local development working copy.
-- [x] `pages/05_User_Data_Check_Quick_Visualizer.py` is the public User Data Check & Quick Visualizer for upload-first quality review and 2D/3D/4D exploration.
+- [x] `pages/05_[Utils]_User_Data_Check_Quick_Visualizer.py` is the public User Data Check & Quick Visualizer for upload-first quality review and 2D/3D/4D exploration.
+- [ ] If reviewing the development/test deployment, separately confirm that
+      `pages/90_Integrated_Visualizer_beta.py` remains clearly experimental.
+      It is not a stable-release acceptance item and is excluded from the
+      stable `seawater_map` application and user-facing documentation website.
 - [ ] Decide whether beta pages should be shown publicly, hidden, or documented as experimental.
 - [ ] Confirm no private notes, restricted data, or unpublished datasets are included in public deployment files.
 
@@ -158,11 +176,11 @@ pytest
 
 ## 10. GitHub Release Preparation
 
-- [x] Confirmed the `seawater_map` repository and `main` branch as the stable-release destination.
+- [ ] Confirm the repository destination and branch.
 - [ ] Confirm no temporary files, private files, downloaded reports, or local cache files are staged.
 - [ ] Review changed files before committing.
-- [x] Used a clear release-preparation commit message (`948b384`).
-- [x] Tagged the reviewed stable commit as `v1.3.4` after the local and CI checks.
+- [ ] Use a clear commit message describing the release-preparation scope.
+- [ ] Tag the release only after local checks and public test deployment checks pass.
 
 ## 11. Streamlit Deployment
 
@@ -182,40 +200,39 @@ pytest
   - T-S page opens.
   - Mapping page opens.
   - Depth Profile opens.
-  - User Data Check & Quick Visualizer opens.
+  - Integrated Visualizer beta opens if included.
 
 ## 12. Package-index publication (PyPI)
 
-- [x] Built the intended final distribution artifact and ran `twine check`.
-- [x] Inspected the TestPyPI project page for README rendering. Before the PyPI
+- [ ] Build and run `twine check` on the intended final distribution artifact.
+- [ ] Inspect the TestPyPI project page for README rendering. Before the PyPI
       upload, replace README links and image references that are relative to the
       repository with durable absolute GitHub or GitHub Pages URLs as needed.
       TestPyPI files are immutable; a broken relative link found there must be
       corrected in the final source before the separate PyPI upload.
-- [x] Uploaded the intended artifact to TestPyPI and installed it in a new macOS
+- [ ] Upload the intended artifact to TestPyPI and install it in a new macOS
       environment. Use conda-forge only for compiled geospatial prerequisites
       where required, then install this package with `pip`.
-- [x] Confirmed the TestPyPI installation can launch the application and repeated
+- [ ] Confirm the TestPyPI installation can launch the application and repeat
       the short smoke test.
-- [x] After the final tag was verified, published the same reviewed artifact to
+- [ ] After the final tag is verified, publish the same reviewed artifact to
       PyPI as `envgeo-seawater`, using Trusted Publishing or a secure manual
       upload; never commit a PyPI token.
-- [x] Repeated the clean macOS `pip install envgeo-seawater` and launch check.
+- [ ] Repeat the clean macOS `pip install envgeo-seawater` and launch check.
 - [ ] A conda-forge recipe/feedstock is a useful later improvement, but is not
       a v1.3.4 blocker once the PyPI path is verified.
 
 ## 13. Zenodo / DOI Preparation
 
-- [x] Enabled the `seawater_map` GitHub repository in Zenodo before creating the
+- [ ] Enable the `seawater_map` GitHub repository in Zenodo before creating the
       GitHub Release, so that the tagged release is automatically archived.
-- [x] Confirmed the GitHub Release was final before creating the Zenodo archive.
+- [ ] Confirm the GitHub release is final before creating the Zenodo archive.
 - [ ] Confirm title, authors, affiliations, license, and description.
-- [x] Confirmed the archived version matches release tag `v1.3.4`.
-- [x] Recorded the wheel SHA-256 from a wheel rebuilt from the clean tagged
+- [ ] Confirm the archived version matches the release tag.
+- [ ] Record a wheel SHA-256 only for a wheel rebuilt from the clean tagged
       checkout. CI wheel artifacts are inspection evidence, not release or
       Zenodo distribution files.
-- [x] Recorded the version DOI (`10.5281/zenodo.23117784`) and concept DOI
-      (`10.5281/zenodo.23117783`) in the README and citation files
+- [ ] Record the version DOI and concept DOI in the README and citation files
       after the archive is created. This follow-up documentation commit is not
       part of the immutable tagged archive unless a DOI was reserved in advance.
 

@@ -1,21 +1,18 @@
 # EnvGeo-Seawater Historical Development Notes
 
-Historical technical record retained for transparency. The 1.3.3 entries
-describe the development state at that time; they are not a user manual,
-current release claim, or current release checklist. References to Page 90
-describe the development/pre-release repository; Page 90 is intentionally
-absent from the stable `seawater_map` release. For the current stable scope,
-see `stable_release_publication_notes.md`.
+Historical development notes, not a user manual or a current release claim.
+The 1.3.3 entries are retained as development records. For present decisions,
+use the release checklist, update logs, and current versioned documentation.
 
 ## Current Boundary
 
-- Version 1.3.4 is the current release candidate. Its final wheel checks pass
+- Version 1.3.5 is the current release candidate. Its final wheel checks pass
   in CI on Python 3.10 and 3.12.
 - Plotly 5.24 remains the verified plotting baseline. The documented test
   baselines are Streamlit 1.42 on Python 3.10 and Streamlit 1.63 on Python 3.12.
 - Page 05, **User Data Check & Quick Visualizer**, is the public upload-first
-  quality-check and simple-visualization page. Page 90 remains only in the
-  development repository and is excluded from this stable application, public
+  quality-check and simple-visualization page. Page 90 is a retained
+  development archive and is excluded from the stable application, public
   documentation site, JOSS submission, and Zenodo archive.
 
 ## AI Disclosure — scope, basis, and pre-JOSS TODO (2026-09-22)
@@ -42,8 +39,8 @@ positive proof of absence of any AI use.
 **Basis for naming specific tools:** "OpenAI Codex" and "Anthropic Claude
 Code" are the tool names already used consistently in-repo — e.g. the
 `53_Vertical_Section_Visualizer.py` header ("Developed and improved with
-assistance from Codex") and `update_log.md`'s "Claude review" entries. These
-were treated as confirmed, not inferred.
+assistance from Codex") and `update_log.md`'s "Claude review" entries.
+These were treated as confirmed, not inferred.
 
 **Model/version specificity — what is confirmed vs. not:** the public
 repository does not consistently retain per-session model identifiers. This
@@ -69,12 +66,15 @@ numbers into this or any other file.
 
 ## Always-loaded local user table
 
-For repeated local work, use the Git-ignored `local_data/user_data.xlsx` path
-or set `ENVGEO_LOCAL_USER_DATA_PATH`. The common loader assigns these rows the
-dataset name `User Excel data` and appends them to every selected reference
-source. The same preparation and quality checks as browser uploads are applied.
-Browser `Uploaded data` remain a separate session-only category, preventing
-the local workbook from being inserted twice.
+`local_data/user_data.xlsx` is a tracked, zero-value public sample for the
+always-loaded workflow. Researchers may edit it for local use, or select a
+different file with `ENVGEO_LOCAL_USER_DATA_PATH`. Before any commit or public
+synchronization, restore the zero-value sample and never commit research data.
+The common loader assigns these rows the dataset name `User Excel data` and
+appends them to every selected reference source. The same preparation and
+quality checks as browser uploads are applied. Browser `Uploaded data` remain a
+separate session-only category, preventing the configured workbook from being
+inserted twice.
 
 ## Post-v1.3.3 scientific and release-readiness review (recorded 2026-09-23)
 
