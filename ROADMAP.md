@@ -25,8 +25,11 @@ release remains the reference for currently supported functionality.
 
 - Monitor Streamlit Community Cloud performance and resource use under normal
   interactive use.
-- Reconsider static map-projection choices only after a separately testable,
-  Cloud-safe design has been demonstrated for repeated global rendering.
+- The public static-map baseline remains the established Plate Carrée
+  longitude--latitude view. Reconsider map-projection choices only after a
+  separately testable, Cloud-safe design has been demonstrated for repeated
+  global Scatter and Contour rendering, extent changes, land/coastline output,
+  and downloaded figures in both local and Community Cloud environments.
 
 ## Maintenance and publication
 
