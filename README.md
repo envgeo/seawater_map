@@ -398,6 +398,8 @@ Project checklists and longer development notes are kept under `docs/`.
 
 - [Figure-supported online user guide](https://envgeo.github.io/seawater_map/): public English and Japanese, page-by-page operating guidance for the stable release.
 
+- [`ROADMAP.md`](ROADMAP.md): concise, public directions for work after the stable v1.3.5 release.
+
 - `docs/THIRD_PARTY_NOTICES.md`: concise source, attribution, and scope notice for bundled third-party data and geospatial assets.
 
 - `docs/release_checklist.md`  

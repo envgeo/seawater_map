@@ -327,6 +327,8 @@ GitHub Actions の CI は push、pull request、手動起動時に Linux 上の 
 
 - [図付きオンライン利用ガイド](https://envgeo.github.io/seawater_map/): 安定版向けの英日ページ別操作手順を公開しています。
 
+- [`ROADMAP_Japanese.md`](ROADMAP_Japanese.md): 安定版v1.3.5以降に検討する公開ロードマップ。
+
 - `docs/THIRD_PARTY_NOTICES_Japanese.md`: 同梱する第三者データ・地理空間資産の出典、帰属表示、適用範囲をまとめた簡潔な通知。
 
 - `docs/release_checklist.md`  
