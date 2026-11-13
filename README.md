@@ -546,7 +546,7 @@ per-observation conversion to Absolute Salinity and Conservative Temperature.
 The Vertical Section Visualizer can use a project-derived, downsampled GEBCO
 2025 Grid for seafloor context only; it is not a navigation product. Natural
 Earth supports the bundled land assets; its attribution appears above. Full
-bibliographic and provenance records are maintained in `paper.bib` and `docs/`.
+bibliographic and provenance records are maintained in `docs/`.
 
 ## AI-assisted development and human oversight
 
@@ -559,8 +559,7 @@ AI tools are used as assistants, not as authors or co-developers. Every
 adopted change is reviewed, edited, and verified by the human author before
 being merged. The author is solely responsible for all scientific and
 technical judgment, the accuracy of the software and its documentation,
-licensing, and the content published under this project. See
-`docs/development_notes.md` for more detail on this policy.
+licensing, and the content published under this project.
 
 ## Live Demo
 

@@ -31,12 +31,20 @@ release remains the reference for currently supported functionality.
   global Scatter and Contour rendering, extent changes, land/coastline output,
   and downloaded figures in both local and Community Cloud environments.
 
+## Model and proxy comparison
+
+- After a separate safety and performance assessment, consider an optional
+  model-grid layer for isotope-enabled
+  climate-model output and proxy comparison. Keep grids distinct from point
+  observations; begin with subsetted raster or contour backgrounds and retain
+  explicit experiment, variable, units, and spatial/temporal matching
+  provenance.
+
 ## Maintenance and publication
 
 - Prioritise focused bug fixes, documentation corrections, and reproducible
   releases over broad refactoring of the stable application.
-- Keep the JOSS manuscript and citation records ready for submission, while
-  checking the current journal guidance immediately before submission.
+- Keep citation records current as datasets and releases evolve.
 
 For detailed internal planning and experimental development, see the separate
 development repositories rather than this stable-release roadmap. Detailed

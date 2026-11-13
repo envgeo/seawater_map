@@ -11,8 +11,7 @@
 ## 現在の文書
 
 - `ROADMAP.md` / `ROADMAP_Japanese.md`（安定版repositoryのみ）
-  `seawater_map`で公開する簡潔な英日ロードマップ。詳細な
-  `TODO.md` / `TODO_Japanese.md`の計画記録は開発用repositoryだけに保持し、安定版には意図して含めない。
+  `seawater_map`で公開する簡潔な英日ロードマップ。詳細な計画記録は、安定版には意図して含めない。
 
 - `version_update_checklist.md` / `version_update_checklist_Japanese.md`
   版メタデータ、データ来歴、文書、clone同期、検証、GitHub Release、Zenodo DOI更新を確認する再利用用チェックリスト。
@@ -30,19 +29,11 @@
   個別ページ、共通ユーザーデータupload、Integrated Visualizerに関する構成・移行方針。
   Page 90のワークフローは開発履歴であり、安定版の公開範囲には含めない。
 
-- `development_notes.md` / `development_notes_Japanese.md`
-  オフライン地図設計、ユーザーデータ構成、地理空間asset、保留作業、安全な整理条件に関する1.3.3時点の技術的な履歴。現在のRelease checklistではない。
-
 - `citation_and_license_plan.md` / `citation_and_license_plan_Japanese.md`
-  プロジェクトの引用、第三者ソフトウェア、データ・地図asset、帰属表示、再配布条件、Zenodo、JOSSに関する公開準備チェック。
+  プロジェクトの引用、第三者ソフトウェア、データ・地図asset、帰属表示、再配布条件、Zenodoに関する公開準備チェック。
 
 - `code_guide.md` / `code_guide_Japanese.md`
   中心モジュール、ページの役割、資産ディレクトリ、コード文書化の目安を示す英日案内。
-
-- `publication_content_review_checklist.md` /
-  `publication_content_review_checklist_Japanese.md`
-  正規作業フォルダ、安定版範囲、コード、文書、データ、資産、除外対象をファイル単位で
-  確認する公開前コンテンツチェックリスト。
 
 - `sprint3_distribution_design_and_acceptance.md` /
   `sprint3_distribution_design_and_acceptance_Japanese.md`
@@ -73,9 +64,3 @@
 - `manual/` / `manual_Japanese/`
   安定版の公開ワークフローを対象とした、ページ別の英日ユーザーマニュアル。公開済みの静的
   ドキュメントサイトの内容正本であり、研究室Webサイトの案内にも再利用できます。
-
-## JOSS投稿準備
-
-現在のJOSS向け資料は`paper.md`、`paper.bib`、`CITATION.cff`、
-`release_checklist*.md`で管理します。別のJOSS checklistは、必要になった場合に追加できますが、
-現時点の投稿準備記録には必須ではありません。
